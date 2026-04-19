@@ -60,6 +60,7 @@ def evaluate(cache: dict, keys: list[str]) -> dict:
     if not y_true:
         return {"error": "no predictions", "n": 0}
     f1m = f1_score(y_true, y_pred, labels=CLASSES, average="macro", zero_division=0)
+    f1w = f1_score(y_true, y_pred, labels=CLASSES, average="weighted", zero_division=0)
     acc = sum(a == b for a, b in zip(y_true, y_pred)) / len(y_true)
     rpt = classification_report(y_true, y_pred, labels=CLASSES, zero_division=0, output_dict=True)
     cm = confusion_matrix(y_true, y_pred, labels=CLASSES).tolist()
@@ -67,6 +68,7 @@ def evaluate(cache: dict, keys: list[str]) -> dict:
         "n": len(y_true),
         "accuracy": acc,
         "f1_macro": f1m,
+        "f1_weighted": f1w,
         "mean_confidence": float(np.mean(confs)),
         "report": rpt,
         "cm": cm,
@@ -82,9 +84,17 @@ def ensemble_v4(cache: dict) -> dict | None:
     y = z["y"].astype(int)
     n = len(v4_paths)
 
+    # v4_paths are absolute; cache keys are repo-relative. Normalise to relative.
+    rel_paths: list[str] = []
+    for p in v4_paths:
+        try:
+            rel_paths.append(str(Path(p).relative_to(REPO)))
+        except ValueError:
+            rel_paths.append(p)
+
     # build VLM proba matrix; NaN = missing
     vlm = np.full((n, 5), np.nan)
-    for i, p in enumerate(v4_paths):
+    for i, p in enumerate(rel_paths):
         e = cache.get(p)
         if not e or "predicted_class" not in e or e["predicted_class"] not in CLASSES:
             continue
@@ -102,30 +112,33 @@ def ensemble_v4(cache: dict) -> dict | None:
     out: dict = {"n_overlap": n_overlap}
 
     y_sub = y[mask]
-    f1_v4 = f1_score(y_sub, v4_proba[mask].argmax(axis=1), average="macro", zero_division=0)
-    f1_vlm = f1_score(y_sub, vlm[mask].argmax(axis=1), average="macro", zero_division=0)
-    out["f1_v4_on_overlap"] = float(f1_v4)
-    out["f1_vlm_on_overlap"] = float(f1_vlm)
+    out["f1_v4_on_overlap_macro"] = float(f1_score(y_sub, v4_proba[mask].argmax(axis=1), average="macro", zero_division=0))
+    out["f1_v4_on_overlap_weighted"] = float(f1_score(y_sub, v4_proba[mask].argmax(axis=1), average="weighted", zero_division=0))
+    out["f1_vlm_on_overlap_macro"] = float(f1_score(y_sub, vlm[mask].argmax(axis=1), average="macro", zero_division=0))
+    out["f1_vlm_on_overlap_weighted"] = float(f1_score(y_sub, vlm[mask].argmax(axis=1), average="weighted", zero_division=0))
 
     # Also evaluate on FULL 240 using v4-alone (to anchor comparison)
-    f1_v4_full = f1_score(y, v4_proba.argmax(axis=1), average="macro", zero_division=0)
-    out["f1_v4_full_240"] = float(f1_v4_full)
+    out["f1_v4_full_240_macro"] = float(f1_score(y, v4_proba.argmax(axis=1), average="macro", zero_division=0))
+    out["f1_v4_full_240_weighted"] = float(f1_score(y, v4_proba.argmax(axis=1), average="weighted", zero_division=0))
 
     # Blends (on overlap only — fair comparison)
     blends = {}
     for w in [0.1, 0.2, 0.3, 0.4, 0.5]:
         blend = (1 - w) * v4_proba[mask] + w * vlm[mask]
-        blends[f"v4*{1-w:.1f} + vlm*{w:.1f}"] = float(
-            f1_score(y_sub, blend.argmax(axis=1), average="macro", zero_division=0)
-        )
+        blends[f"v4*{1-w:.1f} + vlm*{w:.1f}"] = {
+            "macro": float(f1_score(y_sub, blend.argmax(axis=1), average="macro", zero_division=0)),
+            "weighted": float(f1_score(y_sub, blend.argmax(axis=1), average="weighted", zero_division=0)),
+        }
     out["blends_on_overlap"] = blends
 
     # Hybrid on full set: v4 everywhere, VLM only where available (blend there)
-    for w in [0.2, 0.3, 0.5]:
+    for w in [0.2, 0.3, 0.5, 0.7]:
         hybrid = v4_proba.copy()
         hybrid[mask] = (1 - w) * v4_proba[mask] + w * vlm[mask]
-        f1_h = f1_score(y, hybrid.argmax(axis=1), average="macro", zero_division=0)
-        out.setdefault("blends_hybrid_full_240", {})[f"v4 + vlm*{w:.1f}where_avail"] = float(f1_h)
+        out.setdefault("blends_hybrid_full_240", {})[f"v4 + vlm*{w:.1f}where_avail"] = {
+            "macro": float(f1_score(y, hybrid.argmax(axis=1), average="macro", zero_division=0)),
+            "weighted": float(f1_score(y, hybrid.argmax(axis=1), average="weighted", zero_division=0)),
+        }
 
     return out
 
@@ -225,7 +238,7 @@ def main() -> int:
     lines.append("## Subset (stratified, person-disjoint, 5 per class)")
     lines.append("")
     if eval_subset.get("n", 0) > 0:
-        lines.append(f"n = {eval_subset['n']}  |  accuracy = **{eval_subset['accuracy']:.4f}**  |  macro-F1 = **{eval_subset['f1_macro']:.4f}**  |  mean confidence = {eval_subset['mean_confidence']:.3f}")
+        lines.append(f"n = {eval_subset['n']}  |  accuracy = **{eval_subset['accuracy']:.4f}**  |  macro-F1 = **{eval_subset['f1_macro']:.4f}**  |  weighted-F1 = **{eval_subset['f1_weighted']:.4f}**  |  mean confidence = {eval_subset['mean_confidence']:.3f}")
         lines.append("")
         lines.append(fmt_per_class(eval_subset["report"]))
         lines.append("")
@@ -236,7 +249,7 @@ def main() -> int:
     lines.append("## Full scored set")
     lines.append("")
     if eval_full.get("n", 0) > 0:
-        lines.append(f"n = {eval_full['n']} (of 240)  |  accuracy = **{eval_full['accuracy']:.4f}**  |  macro-F1 = **{eval_full['f1_macro']:.4f}**  |  mean confidence = {eval_full['mean_confidence']:.3f}")
+        lines.append(f"n = {eval_full['n']} (of 240)  |  accuracy = **{eval_full['accuracy']:.4f}**  |  macro-F1 = **{eval_full['f1_macro']:.4f}**  |  weighted-F1 = **{eval_full['f1_weighted']:.4f}**  |  mean confidence = {eval_full['mean_confidence']:.3f}")
         lines.append("")
         lines.append(fmt_per_class(eval_full["report"]))
         lines.append("")
