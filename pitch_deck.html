@@ -156,6 +156,17 @@
       vertical-align: middle;
       margin-right: 12px;
     }
+    #s1 .wordmark {
+      font-family: var(--serif);
+      font-style: italic;
+      font-weight: 500;
+      font-size: 38px;
+      line-height: 1;
+      color: var(--accent);
+      letter-spacing: -0.015em;
+      margin-bottom: 18px;
+      font-variation-settings: 'opsz' 48;
+    }
     #s1 h1 {
       font-family: var(--serif);
       font-weight: 500;
@@ -178,6 +189,7 @@
       max-width: 380px;
       color: var(--ink-soft);
       font-style: italic;
+      font-variation-settings: 'opsz' 24;
     }
     #s1 .footer-kicker {
       display: flex;
@@ -672,8 +684,9 @@
         <div class="cover-content">
           <div>
             <div class="pre reveal" data-d="2"><span class="pin"></span>Hack Košice 2026 · UPJŠ Tear Challenge</div>
-            <h1 class="reveal" data-d="3">Disease<br/>from a single<br/><em>tear.</em></h1>
-            <p class="lede reveal" data-d="4">
+            <div class="wordmark reveal" data-d="3"><em>Lacrima</em></div>
+            <h1 class="reveal" data-d="4">Disease<br/>from a single<br/><em>tear.</em></h1>
+            <p class="lede reveal" data-d="5">
               Reading hidden disease signatures from
               the fractal crystals of dried tear droplets —
               through multi-agent LLM orchestration.
