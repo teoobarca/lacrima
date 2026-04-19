@@ -110,7 +110,7 @@ The L2-norm + geom-mean recipe was discovered by an autoresearch agent in Wave 5
 
 > **Because credibility > hype.**
 
-We produced five claims above 0.65:
+We produced six claims above 0.65 — red-team rejected all of them:
 
 | Claim | Rejected? | Why |
 |---|---|---|
@@ -119,8 +119,9 @@ We produced five claims above 0.65:
 | 0.6770 (cascade @ thr=0.50) | ✗ | Gating threshold tuned on eval set |
 | 0.6731 (double-gated cascade) | ✗ | Specialist threshold tuned on eval set |
 | 0.6698 (thresholds tuned on OOF) | ✗ | Thresholds + subset both tuned on full OOF |
+| 0.6645 (3-way multichannel fusion, E7) | ✗ | Bootstrap 95% CI [−0.04, +0.05] crosses 0; +0.0083 is within noise; trade-off regresses Glaukom and SucheOko |
 
-Red-team discipline: if the number embeds test-set reuse, we retract. Our honest **0.6562 (v2 TTA ensemble, L2-norm + geom-mean, no tuning)** is what judges and any downstream user can trust.
+Red-team discipline: if the number embeds test-set reuse OR is within bootstrap noise, we retract. Our honest **0.6562 (v2 TTA ensemble, L2-norm + geom-mean, no tuning)** is what judges and any downstream user can trust.
 
 ---
 
