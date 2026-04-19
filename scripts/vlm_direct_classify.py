@@ -22,6 +22,7 @@ re-runs can skip already-scored scans.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -218,7 +219,11 @@ def run(samples, model: str, time_budget_s: float, cache: dict[str, dict]) -> di
         if elapsed > time_budget_s:
             print(f"[budget] stopping at {i}/{len(samples)} after {elapsed:.0f}s")
             break
-        img_path = TILE_DIR / f"{s.cls}__{s.raw_path.stem}.png"
+        # Class-neutral, unique tile path — hash the full relative scan path so
+        # no label info leaks via the filename (which the VLM reads).
+        rel_key = str(s.raw_path.relative_to(REPO))
+        tile_id = hashlib.sha1(rel_key.encode("utf-8")).hexdigest()[:16]
+        img_path = TILE_DIR / f"scan_{tile_id}.png"
         try:
             render_scan_tile(s.raw_path, img_path)
         except Exception as e:

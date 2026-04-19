@@ -257,27 +257,29 @@ def main() -> int:
         lines.append("")
         lines.append(fmt_cm(eval_full["cm"]))
     lines.append("")
-    lines.append("## Comparison to Champion v4 (foundation + LR, F1 = 0.6887)")
+    lines.append("## Comparison to Champion v4 (honest LOPO: weighted-F1 = 0.6887, macro-F1 = 0.5541)")
+    lines.append("")
+    lines.append("Note: The 0.6887 headline figure is *weighted* F1 (per `models/ensemble_v4_multiscale/meta.json`), which up-weights the two large classes (SklerozaMultiplex, ZdraviLudia). Macro-F1 is the fairer cross-class metric for this highly imbalanced set. Both are reported below.")
     lines.append("")
     if ens:
-        lines.append(f"- v4 alone on its full 240 OOF: F1 = **{ens['f1_v4_full_240']:.4f}**")
+        lines.append(f"- v4 alone on its full 240 OOF: macro-F1 = **{ens['f1_v4_full_240_macro']:.4f}**,  weighted-F1 = **{ens['f1_v4_full_240_weighted']:.4f}**")
         lines.append(f"- Overlap (both models scored): n = {ens['n_overlap']}")
-        lines.append(f"  - v4 alone on overlap: F1 = **{ens['f1_v4_on_overlap']:.4f}**")
-        lines.append(f"  - VLM alone on overlap: F1 = **{ens['f1_vlm_on_overlap']:.4f}**")
+        lines.append(f"  - v4 alone on overlap: macro-F1 = **{ens['f1_v4_on_overlap_macro']:.4f}**, weighted-F1 = **{ens['f1_v4_on_overlap_weighted']:.4f}**")
+        lines.append(f"  - VLM alone on overlap: macro-F1 = **{ens['f1_vlm_on_overlap_macro']:.4f}**, weighted-F1 = **{ens['f1_vlm_on_overlap_weighted']:.4f}**")
         lines.append("")
         lines.append("### Blend on overlap (pure blend of two probability vectors)")
         lines.append("")
-        lines.append("| Weighting | macro-F1 |")
-        lines.append("|---|---:|")
+        lines.append("| Weighting | macro-F1 | weighted-F1 |")
+        lines.append("|---|---:|---:|")
         for k, v in ens["blends_on_overlap"].items():
-            lines.append(f"| {k} | {v:.4f} |")
+            lines.append(f"| {k} | {v['macro']:.4f} | {v['weighted']:.4f} |")
         lines.append("")
         lines.append("### Hybrid on full 240 (v4 alone where VLM missing, blended where VLM scored)")
         lines.append("")
-        lines.append("| Weighting | macro-F1 |")
-        lines.append("|---|---:|")
+        lines.append("| Weighting | macro-F1 | weighted-F1 |")
+        lines.append("|---|---:|---:|")
         for k, v in ens.get("blends_hybrid_full_240", {}).items():
-            lines.append(f"| {k} | {v:.4f} |")
+            lines.append(f"| {k} | {v['macro']:.4f} | {v['weighted']:.4f} |")
     else:
         lines.append("v4 OOF file not found — ensemble comparison skipped.")
     lines.append("")
@@ -326,11 +328,14 @@ def main() -> int:
 
     # short stdout summary
     if eval_full.get("n", 0) > 0:
-        print(f"\nFull scored: n={eval_full['n']}, F1_macro={eval_full['f1_macro']:.4f}, acc={eval_full['accuracy']:.4f}")
+        print(f"\nFull scored: n={eval_full['n']}, macro-F1={eval_full['f1_macro']:.4f}, weighted-F1={eval_full['f1_weighted']:.4f}, acc={eval_full['accuracy']:.4f}")
     if eval_subset.get("n", 0) > 0:
-        print(f"Subset 25:   n={eval_subset['n']}, F1_macro={eval_subset['f1_macro']:.4f}, acc={eval_subset['accuracy']:.4f}")
+        print(f"Subset 25:   n={eval_subset['n']}, macro-F1={eval_subset['f1_macro']:.4f}, weighted-F1={eval_subset['f1_weighted']:.4f}, acc={eval_subset['accuracy']:.4f}")
     if ens:
-        print(f"Ensemble: v4 full={ens['f1_v4_full_240']:.4f}, best hybrid={max(ens.get('blends_hybrid_full_240', {}).values(), default=0):.4f}")
+        print(f"Ensemble: v4 full macro={ens['f1_v4_full_240_macro']:.4f} weighted={ens['f1_v4_full_240_weighted']:.4f}")
+        best_hybrid = max((v['macro'] for v in ens.get('blends_hybrid_full_240', {}).values()), default=0)
+        best_hybrid_w = max((v['weighted'] for v in ens.get('blends_hybrid_full_240', {}).values()), default=0)
+        print(f"          best hybrid macro={best_hybrid:.4f} weighted={best_hybrid_w:.4f}")
     return 0
 
 

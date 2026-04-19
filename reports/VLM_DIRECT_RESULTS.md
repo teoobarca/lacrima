@@ -25,7 +25,7 @@ Total compute: 240 calls, mean latency 15.6 s, total cost **$2.58**.
 
 ## Subset (stratified, person-disjoint, 5 per class)
 
-n = 21  |  accuracy = **0.9524**  |  macro-F1 = **0.9596**  |  mean confidence = 0.822
+n = 21  |  accuracy = **0.9524**  |  macro-F1 = **0.9596**  |  weighted-F1 = **0.9519**  |  mean confidence = 0.822
 
 | Class | Precision | Recall | F1 | Support |
 |---|---:|---:|---:|---:|
@@ -47,7 +47,7 @@ Confusion matrix (subset):
 
 ## Full scored set
 
-n = 240 (of 240)  |  accuracy = **0.9083**  |  macro-F1 = **0.8998**  |  mean confidence = 0.822
+n = 240 (of 240)  |  accuracy = **0.9083**  |  macro-F1 = **0.8998**  |  weighted-F1 = **0.9085**  |  mean confidence = 0.822
 
 | Class | Precision | Recall | F1 | Support |
 |---|---:|---:|---:|---:|
@@ -67,30 +67,33 @@ Confusion matrix:
 | SklerozaMultiplex | 12 | 2 | 0 | 77 | 4 |
 | SucheOko | 3 | 0 | 0 | 0 | 11 |
 
-## Comparison to Champion v4 (foundation + LR, F1 = 0.6887)
+## Comparison to Champion v4 (honest LOPO: weighted-F1 = 0.6887, macro-F1 = 0.5541)
 
-- v4 alone on its full 240 OOF: F1 = **0.5541**
+Note: The 0.6887 headline figure is *weighted* F1 (per `models/ensemble_v4_multiscale/meta.json`), which up-weights the two large classes (SklerozaMultiplex, ZdraviLudia). Macro-F1 is the fairer cross-class metric for this highly imbalanced set. Both are reported below.
+
+- v4 alone on its full 240 OOF: macro-F1 = **0.5541**,  weighted-F1 = **0.6887**
 - Overlap (both models scored): n = 240
-  - v4 alone on overlap: F1 = **0.5541**
-  - VLM alone on overlap: F1 = **0.8998**
+  - v4 alone on overlap: macro-F1 = **0.5541**, weighted-F1 = **0.6887**
+  - VLM alone on overlap: macro-F1 = **0.8998**, weighted-F1 = **0.9085**
 
 ### Blend on overlap (pure blend of two probability vectors)
 
-| Weighting | macro-F1 |
-|---|---:|
-| v4*0.9 + vlm*0.1 | 0.5541 |
-| v4*0.8 + vlm*0.2 | 0.5606 |
-| v4*0.7 + vlm*0.3 | 0.5703 |
-| v4*0.6 + vlm*0.4 | 0.5844 |
-| v4*0.5 + vlm*0.5 | 0.7205 |
+| Weighting | macro-F1 | weighted-F1 |
+|---|---:|---:|
+| v4*0.9 + vlm*0.1 | 0.5541 | 0.6887 |
+| v4*0.8 + vlm*0.2 | 0.5606 | 0.6932 |
+| v4*0.7 + vlm*0.3 | 0.5703 | 0.6996 |
+| v4*0.6 + vlm*0.4 | 0.5844 | 0.7093 |
+| v4*0.5 + vlm*0.5 | 0.7205 | 0.7920 |
 
 ### Hybrid on full 240 (v4 alone where VLM missing, blended where VLM scored)
 
-| Weighting | macro-F1 |
-|---|---:|
-| v4 + vlm*0.2where_avail | 0.5606 |
-| v4 + vlm*0.3where_avail | 0.5703 |
-| v4 + vlm*0.5where_avail | 0.7205 |
+| Weighting | macro-F1 | weighted-F1 |
+|---|---:|---:|
+| v4 + vlm*0.2where_avail | 0.5606 | 0.6932 |
+| v4 + vlm*0.3where_avail | 0.5703 | 0.6996 |
+| v4 + vlm*0.5where_avail | 0.7205 | 0.7920 |
+| v4 + vlm*0.7where_avail | 0.8998 | 0.9085 |
 
 ## Qualitative reasoning — top-confidence correct predictions
 
