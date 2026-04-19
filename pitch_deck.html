@@ -191,11 +191,6 @@
       font-style: italic;
       font-variation-settings: 'opsz' 24;
     }
-    #s1 .cover-footer {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
     #s1 .footer-kicker {
       display: flex;
       gap: 36px;
@@ -210,37 +205,41 @@
       color: var(--ink);
       font-weight: 600;
     }
-    #s1 .partner-row {
+    /* top-right floating partnership banner */
+    #s1 .s1-partner-banner {
+      position: absolute;
+      top: 36px;
+      right: 70px;
       display: flex;
-      flex-direction: column;
-      gap: 18px;
-      padding-top: 24px;
-      border-top: 1px solid var(--rule);
+      align-items: center;
+      gap: 22px;
+      z-index: 5;
     }
-    #s1 .partner-label {
+    #s1 .s1-partner-banner .partner-label {
       font-family: var(--sans);
-      font-size: 11px;
-      letter-spacing: 0.24em;
+      font-size: 9px;
+      letter-spacing: 0.26em;
       text-transform: uppercase;
       color: var(--ink-faint);
       font-weight: 600;
+      white-space: nowrap;
     }
     #s1 .partner-logos {
       display: flex;
       align-items: center;
-      gap: 44px;
+      gap: 26px;
     }
     #s1 .partner-logos img {
       display: block;
       object-fit: contain;
       filter: grayscale(100%) contrast(1.05);
-      opacity: 0.85;
+      opacity: 0.78;
       transition: opacity 200ms ease;
     }
     #s1 .partner-logos img:hover { opacity: 1; }
-    #s1 .logo-hk   { height: 56px; }
-    #s1 .logo-upjs { height: 72px; border-radius: 4px; }
-    #s1 .logo-mlh  { height: 64px; border-radius: 4px; }
+    #s1 .logo-hk   { height: 38px; }
+    #s1 .logo-upjs { height: 50px; border-radius: 4px; }
+    #s1 .logo-mlh  { height: 44px; border-radius: 4px; }
 
     /* ════════════════════════════════════════════════════════════════
        CALM SLIDES (s2, s3, s4) — quiet, documentary, let peaks pop
@@ -745,31 +744,31 @@
          01 · COVER
          ══════════════════════════════════════════════════════════════ -->
     <section class="slide" id="s1">
+      <!-- top partnership banner (out of cover-content flow) -->
+      <div class="s1-partner-banner reveal" data-d="2">
+        <span class="partner-label">In partnership with</span>
+        <div class="partner-logos">
+          <img src="assets/logos/hackkosice.svg" alt="Hack Košice" class="logo-hk" />
+          <img src="assets/logos/upjs.jpg" alt="Pavol Jozef Šafárik University" class="logo-upjs" />
+          <img src="assets/logos/mlh.jpg" alt="Major League Hacking" class="logo-mlh" />
+        </div>
+      </div>
+
       <div class="cover">
         <div class="cover-image reveal" data-d="1"></div>
         <div class="cover-content">
           <div>
-            <div class="pre reveal" data-d="2"><span class="pin"></span>Hack Košice 2026 · UPJŠ Tear Challenge</div>
-            <div class="wordmark reveal" data-d="3"><em>Lacrima</em></div>
-            <h1 class="reveal" data-d="4">Disease<br/>from a single<br/><em>tear.</em></h1>
-            <p class="lede reveal" data-d="5">
+            <div class="pre reveal" data-d="3"><span class="pin"></span>Hack Košice 2026 · UPJŠ Tear Challenge</div>
+            <div class="wordmark reveal" data-d="4"><em>Lacrima</em></div>
+            <h1 class="reveal" data-d="5">Disease<br/>from a single<br/><em>tear.</em></h1>
+            <p class="lede reveal" data-d="6">
               Reading hidden disease signatures from
               the fractal crystals of dried tear droplets —
               through multi-agent LLM orchestration.
             </p>
           </div>
-          <div class="cover-footer">
-            <div class="footer-kicker reveal" data-d="5">
-              <span><strong>Atomic Force Microscopy</strong> · 240 scans · 5 classes</span>
-            </div>
-            <div class="partner-row reveal" data-d="6">
-              <div class="partner-label">In partnership with</div>
-              <div class="partner-logos">
-                <img src="assets/logos/hackkosice.svg" alt="Hack Košice" class="logo-hk" />
-                <img src="assets/logos/upjs.jpg" alt="Pavol Jozef Šafárik University" class="logo-upjs" />
-                <img src="assets/logos/mlh.jpg" alt="Major League Hacking" class="logo-mlh" />
-              </div>
-            </div>
+          <div class="footer-kicker reveal" data-d="6">
+            <span><strong>Atomic Force Microscopy</strong> · 240 scans · 5 classes</span>
           </div>
         </div>
       </div>
