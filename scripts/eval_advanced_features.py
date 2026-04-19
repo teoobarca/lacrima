@@ -125,7 +125,8 @@ def make_xgb_topk_ftest(k: int):
 def make_xgb_topk_importance(k: int):
     """Two-stage XGB: fit on all, keep top-k by gain, re-fit on those."""
     def fn(X_tr, y_tr, w_tr):
-        pre = XGBClassifier(**_xgb_params(len(CLASSES)))
+        pre_params = _xgb_params(len(CLASSES)) | {"n_estimators": 120}
+        pre = XGBClassifier(**pre_params)
         pre.fit(X_tr, y_tr, sample_weight=w_tr)
         imp = pre.feature_importances_
         k_eff = min(k, X_tr.shape[1])
@@ -152,7 +153,7 @@ def make_lr_topk(k: int):
                 C=1.0,
                 class_weight="balanced",
                 max_iter=2000,
-                multi_class="multinomial",
+                solver="lbfgs",
                 random_state=42,
             )),
         ])
@@ -243,6 +244,10 @@ def main() -> None:  # noqa: C901
     # Experiment 7: advanced only, top-50 F-test nested
     evaluate("B3_advanced_top50_ftest_XGB", adv_cols, make_xgb_topk_ftest(50))
 
+    # Experiment 8: smaller k (top-20) — less overfitting risk
+    evaluate("B4_combined_top20_ftest_XGB", feature_cols, make_xgb_topk_ftest(20))
+    evaluate("C2_combined_top20_ftest_LR", feature_cols, make_lr_topk(20))
+
     # Bonus: top-50 advanced + DINOv2-B concat
     if DINOV2_CACHE.exists():
         print("\n=== Bonus: top-50 advanced (F-test) + DINOv2-B concat ===")
@@ -302,6 +307,49 @@ def main() -> None:  # noqa: C901
             "weighted_f1": float(f1w),
             "macro_f1": float(f1m),
             "n_features": 768,
+        }
+
+        # DINOv2-B alone (LR, scaled) — matches prior setup that gave 0.615.
+        preds = np.full(len(y), -1, dtype=int)
+        for tr, va in leave_one_patient_out(groups):
+            pipe = Pipeline([
+                ("scaler", StandardScaler()),
+                ("lr", LogisticRegression(
+                    penalty="l2", C=1.0, class_weight="balanced",
+                    max_iter=2000, solver="lbfgs", random_state=42,
+                )),
+            ])
+            pipe.fit(emb_aligned[tr], y[tr])
+            preds[va] = pipe.predict(emb_aligned[va])
+        f1w_d = f1_score(y, preds, average="weighted")
+        f1m_d = f1_score(y, preds, average="macro")
+        print(f"  DINOv2-B alone (LR)  w-F1={f1w_d:.4f}  m-F1={f1m_d:.4f}")
+        all_results["D0b_DINOv2B_only_LR"] = {
+            "weighted_f1": float(f1w_d),
+            "macro_f1": float(f1m_d),
+            "n_features": 768,
+        }
+
+        # D2: full advanced (349) + DINOv2-B (768) concat -> LR
+        Xcat_full = np.concatenate([Xadv_all, emb_aligned.astype(np.float64)], axis=1)
+        preds = np.full(len(y), -1, dtype=int)
+        for tr, va in leave_one_patient_out(groups):
+            pipe = Pipeline([
+                ("scaler", StandardScaler()),
+                ("lr", LogisticRegression(
+                    penalty="l2", C=1.0, class_weight="balanced",
+                    max_iter=2000, solver="lbfgs", random_state=42,
+                )),
+            ])
+            pipe.fit(Xcat_full[tr], y[tr])
+            preds[va] = pipe.predict(Xcat_full[va])
+        f1w = f1_score(y, preds, average="weighted")
+        f1m = f1_score(y, preds, average="macro")
+        print(f"  advanced349+DINOv2B (LR) w-F1={f1w:.4f}  m-F1={f1m:.4f}")
+        all_results["D2_advanced_plus_DINOv2B_LR"] = {
+            "weighted_f1": float(f1w),
+            "macro_f1": float(f1m),
+            "n_features": Xcat_full.shape[1],
         }
     else:
         print(f"[warn] {DINOV2_CACHE} not found -> skipping bonus.")
