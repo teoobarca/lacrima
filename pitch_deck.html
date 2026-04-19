@@ -207,8 +207,31 @@
     }
 
     /* ════════════════════════════════════════════════════════════════
-       SLIDE 2 — METHODOLOGY (pull-quote driven)
-       Massive editorial quote left, small diagram and explainer right
+       CALM SLIDES (s2, s3, s4) — quiet, documentary, let peaks pop
+       ════════════════════════════════════════════════════════════════ */
+    .calm-h2 {
+      font-family: var(--sans);
+      font-weight: 600;
+      font-size: 32px;
+      line-height: 1.15;
+      letter-spacing: -0.012em;
+      color: var(--ink);
+      margin-bottom: 22px;
+    }
+    .body-text {
+      font-family: var(--serif);
+      font-size: 17px;
+      line-height: 1.55;
+      color: var(--ink-soft);
+      max-width: 460px;
+      margin-bottom: 14px;
+      font-variation-settings: 'opsz' 18;
+    }
+    .body-text strong { color: var(--ink); font-weight: 600; }
+    .body-text em { font-style: italic; color: var(--ink); }
+
+    /* ════════════════════════════════════════════════════════════════
+       SLIDE 2 — METHODOLOGY (calm)
        ════════════════════════════════════════════════════════════════ */
     #s2 { padding: 120px 100px 100px; display: flex; flex-direction: column; }
     #s2 .grid {
@@ -714,28 +737,24 @@
       <div class="section-tag reveal" data-d="1"><span class="dot"></span>Methodology</div>
 
       <div class="grid">
-        <div class="quote-block">
-          <span class="open-quote reveal" data-d="2">“</span>
-          <div class="quote reveal" data-d="2">
-            Karpathy showed one agent in&nbsp;a&nbsp;loop.<br/>
-            We built an <em>orchestra</em>.
-          </div>
-          <div class="attribution reveal" data-d="3">
-            <strong>autoresearch ↗ multi-agent orchestration</strong>
-          </div>
-        </div>
-
-        <div class="right-col">
-          <p class="blurb reveal" data-d="4">
+        <div class="text-block">
+          <div class="eyebrow reveal" data-d="2">After Karpathy's autoresearch</div>
+          <h2 class="calm-h2 reveal" data-d="2">Multi-agent orchestration.</h2>
+          <p class="body-text reveal" data-d="3">
             An orchestrator dispatches specialist sub-agents:
             <strong>researcher</strong>, <strong>implementer</strong>,
             <strong>red-team</strong>, <strong>synthesizer</strong>.
-            We brainstormed strategy with the orchestrator the way
-            a PI works with postdocs — all in a single
-            <strong>18-hour session</strong>.
+            We brainstorm strategy with the orchestrator the way
+            a PI works with postdocs.
           </p>
+          <p class="body-text reveal" data-d="3">
+            One human, a quiet lab of agents.
+            All in a single 18-hour session.
+          </p>
+        </div>
 
-          <svg class="topology-svg reveal" data-d="5" viewBox="0 0 480 220" preserveAspectRatio="xMidYMid meet">
+        <div class="right-col">
+          <svg class="topology-svg reveal" data-d="4" viewBox="0 0 480 220" preserveAspectRatio="xMidYMid meet">
             <defs>
               <marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                 <path d="M0,0 L10,5 L0,10 z" fill="#2D3FE3"/>
@@ -781,7 +800,7 @@
             <path class="draw-path" d="M300 72 L410 150" stroke="#2D3FE3" stroke-width="1.2" fill="none" marker-end="url(#ar1)" opacity="0.75"/>
           </svg>
 
-          <div class="stat-strip reveal" data-d="6">
+          <div class="stat-strip reveal" data-d="5">
             <div><div class="v" data-counter="218">0</div><div class="l">sub-agents</div></div>
             <div><div class="v">18.2<span style="font-size:0.55em; margin-left:4px; color:var(--ink-soft);">h</span></div><div class="l">wall-clock</div></div>
             <div><div class="v">1.49<span style="font-size:0.55em; margin-left:4px; color:var(--ink-soft);">B</span></div><div class="l">tokens · mostly cached</div></div>
@@ -800,24 +819,19 @@
 
       <div class="layout">
         <div class="left">
-          <h2 class="reveal" data-d="2">
-            <em>Person-LOPO.</em><br/>
-            The honest way<br/>
-            to evaluate.
-          </h2>
-          <p class="reveal" data-d="3">
-            <strong>L</strong>eave-<strong>O</strong>ne-<strong>P</strong>atient-<strong>O</strong>ut cross-validation.
-            35 patients, one held out at a time. The model predicts that patient's scans
-            without ever having seen them. <strong>240 scans → 240 honest predictions.</strong>
+          <div class="eyebrow reveal" data-d="2">Cross-validation</div>
+          <h2 class="calm-h2 reveal" data-d="2">Person-LOPO.</h2>
+          <p class="body-text reveal" data-d="3">
+            <strong>L</strong>eave-<strong>O</strong>ne-<strong>P</strong>atient-<strong>O</strong>ut.
+            35 patients, one held out at a time.
+            The model predicts each patient without ever having seen them.
+            240 scans → 240 honest predictions.
           </p>
-          <div class="twist reveal" data-d="4">
-            <div class="label">Red-team audit · 9 catches</div>
-            <div class="body">
-              Every score above baseline is independently audited
-              by a red-team agent. We caught 9 contaminations —
-              <strong>including our own false 0.88</strong>.
-            </div>
-          </div>
+          <p class="body-text reveal" data-d="3" style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--rule);">
+            <strong>Red-team audit.</strong>
+            Every score above baseline is independently checked.
+            We caught 9 contaminations — including our own false 0.88.
+          </p>
         </div>
 
         <div class="right reveal" data-d="5">
@@ -841,7 +855,7 @@
 
       <div class="header reveal" data-d="2">
         <div class="eyebrow">v4 · multi-scale ensemble</div>
-        <h2>Three frozen encoders.<br/>One <em>geometric</em> opinion.</h2>
+        <h2 class="calm-h2" style="font-size: 30px; max-width: 720px;">Three frozen encoders, one geometric vote.</h2>
       </div>
 
       <svg class="arch-svg reveal" data-d="3" viewBox="0 0 1200 400" preserveAspectRatio="xMidYMid meet">
