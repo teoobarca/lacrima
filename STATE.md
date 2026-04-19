@@ -6,18 +6,19 @@ Last updated: 2026-04-18 15:50 (Round 2 in progress)
 
 ---
 
-## Current best — FINAL (after Wave 5 autoresearch)
+## Current best — FINAL (after Wave 7 multi-scale, red-team approved)
 
 | Metric | Value | Model | Status |
 |---|---|---|---|
-| **★ Weighted F1 (person-LOPO, CHAMPION)** | **0.6562** | TTA ensemble + L2-norm + geometric-mean (v2) | ✓ SHIPPED `models/ensemble_v2_tta/` |
-| Weighted F1 (no-norm arith) | 0.6458 | TTA v1 | ✓ `models/ensemble_v1_tta/` (superseded) |
-| Weighted F1 (threshold-tuned ref) | 0.6528 | non-TTA + nested thresholds | ✓ verified, fragile |
-| Weighted F1 (no TTA, no tricks) | 0.6346 | raw argmax 2-comp | ✓ `models/ensemble_v1/` |
+| **★ Weighted F1 (person-LOPO, CHAMPION)** | **0.6887** | Multi-scale (90+45nm) DINOv2-B + BiomedCLIP-TTA (v2 recipe) | ⏳ v4 TTA packaging in progress |
+| Wave 5 v2 (superseded champ) | 0.6562 | TTA + L2-norm + geom-mean | ✓ `models/ensemble_v2_tta/` |
+| Wave 4 v1 (superseded) | 0.6458 | TTA v1 arith-mean | ✓ `models/ensemble_v1_tta/` |
+| Threshold-tuned ref | 0.6528 | non-TTA + nested thresholds | ✓ verified, fragile |
+| Non-TTA 2-comp | 0.6346 | raw argmax | ✓ `models/ensemble_v1/` |
 | Baseline | 0.615 | DINOv2-B single | ✓ |
-| Label-shuffle null | 0.276 ± 0.042 | — | ✓ signal real |
+| Label-shuffle null | 0.276 ± 0.042 | — | ✓ signal real (~12σ above) |
 
-**Chosen submission:** `models/ensemble_v2_tta/` — L2-norm + geom-mean TTA ensemble, **0.6562 honest F1**. Wave 5 autoresearch discovered this recipe; reproducible in 15 s from cached TTA embeddings. Per-class gain concentrates on minority classes (Diabetes 0.43→0.54, SucheOko 0.00→0.06).
+**Chosen submission (pending v4 TTA build):** multi-scale 90+45+BiomedCLIP-TTA via v2 recipe. Red-team bootstrap P(>0)=0.999 on fair comparison.
 
 ### Red-team findings (from `reports/RED_TEAM_ENSEMBLE_AUDIT.md`)
 - Original 0.6698 had stacked leakage: threshold sweep + subset selection both done on same 240-row OOF.
@@ -175,6 +176,18 @@ Meta-insight across all red-teams: at 240 scans we are at data ceiling. Bias/thr
 3. **Update this file after every round.** Not optional.
 4. **Parallelize independent work.** Serial only when blocked.
 5. **T-6h cutoff: stop exploring, start consolidating.** Pitch > optimal F1.
+
+## ⭐ Wave 7 multi-scale D — APPROVED by red-team (NEW CHAMPION CANDIDATE)
+
+- Config D: DINOv2-B 90 nm + DINOv2-B 45 nm + BiomedCLIP-TTA via v2 recipe (L2-norm + StandardScaler + LR + geom-mean)
+- Honest F1: **0.6887 weighted, 0.5541 macro** (+0.033 weighted, +0.016 macro over v2 champion 0.6562)
+- Red-team bootstrap (B=1000, person-level):
+  - vs v2-champion (TTA-ful): Δ=+0.0325, 95% CI [-0.005, +0.063], P(>0) = 0.949 (borderline)
+  - **vs v2-noTTA (fair apples-to-apples): Δ=+0.039, CI [+0.010, +0.069], P(>0) = 0.999** — strictly positive
+- Per-class broad-base lifts: Healthy +0.048, Diabetes +0.042, SM +0.040, Glaukom +0.015, SucheOko -0.065 (one scan)
+- Report: `reports/RED_TEAM_MULTISCALE.md`
+- **VERDICT: SHIP as v4 champion.**
+- v4 TTA agent running in parallel; will add D4 TTA to 90 nm + 45 nm branches (should widen lead further).
 
 ## Wave 6 multichannel E7 — REJECTED by red-team
 
