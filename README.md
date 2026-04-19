@@ -136,7 +136,7 @@ Gradio 4-tab demo: classify a scan, view confidence + Grad-CAM, generate clinica
 
 ## Methodology — multi-agent orchestration
 
-Inspired by [Karpathy's autoresearch](https://github.com/karpathy/nanochat) — a single LLM in a self-improvement loop.
+Inspired by [Karpathy's autoresearch](https://github.com/karpathy/autoresearch) — a single LLM in a self-improvement loop.
 
 This project takes the same idea **one abstraction higher**:
 
