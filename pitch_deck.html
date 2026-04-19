@@ -1339,9 +1339,18 @@
     }
     window.addEventListener('resize', fitDeck);
     document.addEventListener('fullscreenchange', fitDeck);
-    window.addEventListener('load', () => { fitDeck(); showSlide(0); });
+    // Read ?slide=N or #N from URL for headless screenshots
+    function initialSlide() {
+      const m = (window.location.hash || window.location.search).match(/(\d+)/);
+      if (m) {
+        const n = parseInt(m[1], 10) - 1;
+        return Math.max(0, Math.min(slides.length - 1, n));
+      }
+      return 0;
+    }
+    window.addEventListener('load', () => { fitDeck(); showSlide(initialSlide()); });
     fitDeck();
-    showSlide(0);
+    showSlide(initialSlide());
   </script>
 </body>
 </html>

@@ -23,4 +23,9 @@ models/**/train_predictions.csv
 
 # Hackathon-submission scratch (delete after copy-pasting into form)
 _submission_draft.md
-_gallery/
+SCRIPTS.md
+
+# Gallery: ignore generated assets but keep deck screenshots + DevPost thumbnail
+_gallery/*
+!_gallery/slide_*.png
+!_gallery/thumbnail_devpost.jpg
