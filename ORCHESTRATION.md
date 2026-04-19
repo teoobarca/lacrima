@@ -2,7 +2,22 @@
 
 **Applied to:** Hack Košice 2026 UPJŠ tear-film AFM disease classification
 **Author:** Claude Opus 4.7 as orchestrator
-**Observation window:** 2026-04-18, ~4 hours autonomous execution
+**Final session window:** 2026-04-18 11:27 UTC → 04-19 05:39 UTC (**18.2 hours wall-clock**)
+
+## By the numbers
+
+| | |
+|---|---|
+| Wall-clock duration | **18.2 hours** (single session) |
+| Sub-agents launched | **218** across 21 waves |
+| Cumulative sub-agent compute | 20.2 hours (parallelised — 5–8 concurrent during peak waves) |
+| Orchestrator messages | 2,366 |
+| Sub-agent messages | 6,563 |
+| Total tokens | **~1.49 billion** (959 M orchestrator + 530 M sub-agents, mostly cached) |
+| Honest experiments | 30+ |
+| Red-team contamination catches | 9 |
+| Code shipped | 53,223 lines Python |
+| Docs shipped | 14,811 lines Markdown |
 
 ---
 

@@ -2,10 +2,23 @@
 
 **Project:** Hack Košice 2026 — UPJŠ Tear Disease Classification
 **Methodology:** Karpathy autoresearch lifted one abstraction higher (orchestrator + specialists + red-team)
-**Total agents launched:** 218 across 21 waves
-**Total honest experiments:** 30+
-**Total red-team contamination catches:** 9
 **Final shipped model:** `models/ensemble_v4_multiscale/` — weighted F1 0.6887 (person-LOPO honest)
+
+## By the numbers
+
+| | |
+|---|---|
+| **Wall-clock duration** | 18.2 hours (single Claude Code session: 2026-04-18 11:27 UTC → 04-19 05:39 UTC) |
+| **Sub-agents launched** | 218 across 21 waves |
+| **Cumulative sub-agent compute** | 20.2 hours (parallelised into 18.2h wall-clock — 5–8 concurrent agents during peak waves) |
+| **Orchestrator messages** | 2,366 (Claude Opus 4.7) |
+| **Sub-agent messages** | 6,563 (mixed Haiku 4.5 / Sonnet 4.6 / Opus 4.7) |
+| **Total tokens** | ~1.49 billion (959 M orchestrator + 530 M sub-agents, predominantly via prompt caching) |
+| **Honest experiments completed** | 30+ |
+| **Red-team contamination catches** | 9 |
+| **Code shipped** | 53,223 lines of Python |
+| **Documentation shipped** | 14,811 lines of Markdown across 50+ reports |
+| **Pitch deck** | 1,277-line single-file HTML/CSS/JS |
 
 ---
 

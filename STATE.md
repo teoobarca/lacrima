@@ -2,7 +2,19 @@
 
 Single source of truth for current experiment state. Orchestrator (Claude) updates after every round.
 
-**Last updated: 2026-04-18 23:00 — After Wave 18 + patient-disjoint split CONFIRMED**
+**Last updated: 2026-04-19 — Wave 22 (final shipping)**
+
+## Aggregate stats
+
+| | |
+|---|---|
+| Wall-clock | 18.2 hours single session |
+| Sub-agents | 218 across 21 waves |
+| Tokens | ~1.49 B (mostly cached) |
+| Code | 53,223 lines Python |
+| Docs | 14,811 lines Markdown · 50+ reports |
+| Honest experiments | 30+ |
+| Red-team catches | 9 contaminations |
 
 ---
 
