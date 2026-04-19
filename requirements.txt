@@ -1,0 +1,25 @@
+numpy
+pillow
+matplotlib
+scikit-image
+scikit-learn
+opencv-python
+pandas
+# ML
+torch
+torchvision
+xgboost
+imbalanced-learn
+# AFM / SPM
+AFMReader
+# Texture / topology / graphs
+pywavelets
+giotto-tda
+sknw
+# VLM / foundation models
+open_clip_torch
+transformers
+# Utilities
+tqdm
+jupyterlab
+pytorch-grad-cam

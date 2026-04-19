@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+TRAIN_SET/
+TRAIN_SET.zip
+reports/
+models/
+.ipynb_checkpoints/
