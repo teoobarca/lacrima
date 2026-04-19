@@ -84,12 +84,20 @@ PY
 .venv/bin/python scripts/baseline_tda.py
 ```
 
-## 5. TTA embeddings for shipped champion (~10 min MPS)
+## 5. TTA embeddings + shipped v2 champion (~10 min MPS)
 
 ```bash
-.venv/bin/python scripts/tta_experiment.py            # caches TTA embeddings + evaluates
-.venv/bin/python scripts/train_ensemble_tta_model.py  # saves models/ensemble_v1_tta/
+# Build D4 TTA-pooled embeddings for both encoders (~10 min on MPS)
+.venv/bin/python scripts/tta_experiment.py
+
+# v1 TTA ensemble (arith-mean baseline)
+.venv/bin/python scripts/train_ensemble_tta_model.py   # → models/ensemble_v1_tta/
+
+# v2 TTA ensemble — SHIPPED CHAMPION (L2-norm + geom-mean, +0.011 over v1)
+.venv/bin/python scripts/train_ensemble_v2_tta.py      # → models/ensemble_v2_tta/
 ```
+
+v2 recipe discovered by Wave-5 autoresearch agent: `normalize → StandardScaler → LR → geometric-mean softmax combination`. See `reports/AUTORESEARCH_WAVE5_RESULTS.md`.
 
 ## 6. Verify
 
@@ -107,7 +115,7 @@ mkdir -p /tmp/smoke && cp TRAIN_SET/Diabetes/37_DM.010 /tmp/smoke/
 
 ```bash
 .venv/bin/python predict_cli.py \
-    --model models/ensemble_v1_tta \
+    --model models/ensemble_v2_tta \
     --input /path/to/TEST_SET \
     --output submission.csv
 ```
