@@ -13,6 +13,14 @@ Projekt na hackathon challenge od Prírodovedeckej fakulty UPJŠ: **klasifikáci
 - **Dataset:** stiahnutý z `https://temp.kotol.cloud/?c=7IDU` (3.2 GiB ZIP, expiruje ~21.04.2026).
 - **Hint nástroj:** [Gwyddion](http://gwyddion.net/) — open-source SPM analýza.
 
+## Aktuálny shipped model
+
+**Champion (Wave 5):** `models/ensemble_v2_tta/` — DINOv2-B + BiomedCLIP TTA (D4), L2-normalized embeddings, geometric-mean softmaxes. **Honest F1 = 0.6562 weighted, 0.5382 macro (person-LOPO).**
+
+**Candidate (Wave 6, pending red-team):** 3-way fusion E7 with DINOv2-B RGB multichannel (Height + Amplitude + Phase), **0.6645 F1**.
+
+Benchmark dashboard: `reports/BENCHMARK_DASHBOARD.md`. Design rationale: `reports/DESIGN_RATIONALE.md`. Architecture diagrams: `reports/ARCHITECTURE.md`.
+
 ## Aktuálny stav datasetu (po audite)
 
 - **240 raw AFM skenov** (Bruker Nanoscope SPM) + **240 BMP preview** (704×575 RGB s vpálenými axis labels).
