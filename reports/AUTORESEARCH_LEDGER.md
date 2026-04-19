@@ -39,6 +39,15 @@ Running log of all autoresearch-style hypotheses tested across waves. Sorted by 
 | Advanced features (443-dim: multifractal + lacunarity + succolarity + wavelet-packet + multi-scale HOG) | 0.4707 | below handcrafted baseline alone |
 | Error analysis Mode B deep-dive | N/A | confirms data ceiling; not a model problem |
 
+## Wave 7 (multi-scale tile experiment — HIGH PROMISE, awaiting red-team)
+
+- **Config D**: DINOv2-B 90 nm/px (non-TTA) + DINOv2-B 45 nm/px (non-TTA) + BiomedCLIP-TTA → v2 recipe → geom-mean = **0.6887** (macro 0.5541).
+- **+0.0325 over v2 champion** — 4× larger than the rejected E7 delta (+0.008).
+- Per-class lifts are BROAD (unlike E7): Healthy +0.10, SM +0.07, Diabetes +0.07, Glaukom +0.06, SucheOko 0.
+- 45 nm/px ALONE is a stronger single-scale signal than 90 nm/px (0.6544 vs 0.6162 with DINOv2-B).
+- Caveat: no D4 TTA on DINOv2 branches — parallel v4-TTA agent will add TTA and may widen the lead.
+- Red-team dispatched (bootstrap CI check as with E7). Ship as v4 champion only if 95% CI > 0.
+
 ## Wave 6 (complete — REJECTED by red-team)
 
 - **Multichannel × v2 recipe fusion E7:** DINOv2-B Height + DINOv2-B RGB(H+Amp+Phase) + BiomedCLIP-H-TTA = 0.6645 (point estimate).
