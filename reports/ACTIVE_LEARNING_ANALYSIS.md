@@ -7,13 +7,12 @@
 - Champion person-LOPO weighted F1 = **0.6458** (macro F1 = 0.5154) on the full 240-scan cohort.
 - The sample-efficiency curve is **still climbing** — we have not saturated the champion recipe's learning curve at 35 persons.
 - Most uncertain (OOF) scans cluster in **SucheOko** and **PGOV\_Glaukom**: exactly the classes with the fewest persons.
-- Recommended budget split for 20 new scans (assuming ~6 scans/new person at both eyes):
-    - **ZdraviLudia**: 0 new persons (≈ 0 scans) — expected ΔwF1 ≈ +0.000
-    - **Diabetes**: 1 new persons (≈ 6 scans) — expected ΔwF1 ≈ +0.005
-    - **PGOV_Glaukom**: 1 new persons (≈ 6 scans) — expected ΔwF1 ≈ +0.012
-    - **SklerozaMultiplex**: 1 new persons (≈ 6 scans) — expected ΔwF1 ≈ +0.020
-    - **SucheOko**: 0 new persons (≈ 0 scans) — expected ΔwF1 ≈ +0.000
-- Estimated **total uplift**: ΔwF1 ≈ +0.037.
+- Recommended budget split for **20 new scans** (assuming ~3 scans/new person at one session; calibrate to UPJŠ protocol):
+    - **Diabetes**: 1 new persons (≈ 3 scans) — expected ΔwF1 ≈ +0.005
+    - **PGOV_Glaukom**: 1 new persons (≈ 3 scans) — expected ΔwF1 ≈ +0.012
+    - **SklerozaMultiplex**: 1 new persons (≈ 3 scans) — expected ΔwF1 ≈ +0.020
+    - **SucheOko**: 3 new persons (≈ 9 scans) — expected ΔwF1 ≈ +0.075
+- Planned total: **6 new persons / 18 scans**. Estimated total uplift: ΔwF1 ≈ **+0.112**.
 - Log-linear extrapolation: to reach F1 = 0.75, cohort would need ≈ **43 persons** (currently 35). Large CI — see honest caveats at the bottom.
 
 ## 1. Sample-efficiency curve
@@ -127,33 +126,33 @@ Scans with the largest mean cosine distance from the rest of the cohort probe un
 
 **Interpretation.** Classes where intra-class distance ≈ extra-class distance are the classes where the embedding does not cluster tightly — more samples there disproportionately help.
 
-### 4c. Most-isolated persons (by class)
+### 4c. Most-isolated persons (top-10 overall)
 
 | person | class | mean cos-dist to other persons' mean emb |
 |:-------|:------|----------------------------------------:|
-| Sklo-No2 | — | 0.768 |
-| 23EYE_PGOV | — | 0.543 |
-| Sklo-kontrola | — | 0.506 |
-| 27EYE_PGOV_PEX | — | 0.498 |
-| 100-SM-EYE-18 | — | 0.490 |
-| 19_SM_MK | — | 0.472 |
-| 20-SM-EYE-18 | — | 0.456 |
-| 35EYE_suche_oko | — | 0.444 |
-| 50_5_SM-EYE-18 | — | 0.426 |
-| 19EYE_SM | — | 0.416 |
+| Sklo-No2 | SklerozaMultiplex | 0.768 |
+| 23EYE_PGOV | PGOV_Glaukom | 0.543 |
+| Sklo-kontrola | ZdraviLudia | 0.506 |
+| 27EYE_PGOV_PEX | PGOV_Glaukom | 0.498 |
+| 100-SM-EYE-18 | SklerozaMultiplex | 0.490 |
+| 19_SM_MK | SklerozaMultiplex | 0.472 |
+| 20-SM-EYE-18 | SklerozaMultiplex | 0.456 |
+| 35EYE_suche_oko | SucheOko | 0.444 |
+| 50_5_SM-EYE-18 | SklerozaMultiplex | 0.426 |
+| 19EYE_SM | SklerozaMultiplex | 0.416 |
 
 ## 5. Clinical recommendation — 20-scan active-learning budget
 
-Score per class = `(1 − current_F1) × (per-class marginal ΔF1 + ε) × (1 + 1/n_existing_persons)`; allocate 20 scans proportionally, assuming ~6 scans per new person (both eyes × 3 ROIs).
+Score per class = `(1 − current_F1) × (effective-marginal ΔF1 + ε) × (1 + 1/n_existing_persons)`. Where the LOPO marginal is negative or the class has fewer than 4 persons ('below-viable'), we replace the LOPO estimate with a prior `gap × (1/n_existing) × 0.05`. Allocation is a 3-stage pipeline: (A) **unblock the floor** — every below-viable class gets 2 new persons; (B) **seed each minority class** with ≥1 new person (if it has positive LOPO); (C) distribute the residual by score, with diminishing returns and a down-weighting of well-represented classes (ZdraviLudia). Assumes **~3 scans/new person** (one session).
 
-| Class | current F1 | n existing | recommended new persons | recommended new scans | expected ΔwF1 |
-|:------|-----------:|-----------:|------------------------:|----------------------:|--------------:|
-| ZdraviLudia | 0.877 | 15 | 0 | 0 | +0.000 |
-| Diabetes | 0.511 | 4 | 1 | 6 | +0.005 |
-| PGOV_Glaukom | 0.545 | 5 | 1 | 6 | +0.012 |
-| SklerozaMultiplex | 0.644 | 9 | 1 | 6 | +0.020 |
-| SucheOko | 0.000 | 2 | 0 | 0 | +0.000 |
-| **TOTAL** | — | — | **3** | **18** | **+0.037** |
+| Class | current F1 | n existing | new persons | new scans | eff. marginal/person | expected ΔwF1 | reasoning |
+|:------|-----------:|-----------:|-----------:|---------:|---------------------:|--------------:|:----------|
+| ZdraviLudia | 0.877 | 15 | 0 | 0 | +0.0119 | +0.000 | LOPO estimate; n_existing=15, lopo_marg=+0.0119 |
+| Diabetes | 0.511 | 4 | 1 | 3 | +0.0046 | +0.005 | LOPO estimate; n_existing=4, lopo_marg=+0.0046 |
+| PGOV_Glaukom | 0.545 | 5 | 1 | 3 | +0.0123 | +0.012 | LOPO estimate; n_existing=5, lopo_marg=+0.0123 |
+| SklerozaMultiplex | 0.644 | 9 | 1 | 3 | +0.0197 | +0.020 | LOPO estimate; n_existing=9, lopo_marg=+0.0197 |
+| SucheOko | 0.000 | 2 | 3 | 9 | +0.0250 | +0.075 | prior (below-viable or non-positive LOPO); n_existing=2, gap=1.00 |
+| **TOTAL** | — | — | **6** | **18** | — | **+0.112** | — |
 
 ### Minimum cohort to reach F1 = 0.75
 
@@ -164,12 +163,15 @@ Log-linear fit of the sample-efficiency curve: `F1 ≈ -0.458 + 0.320·ln(n_pers
 - **All Δ estimates are lower bounds.** Leave-one-person-out measures the *current* person's contribution; a new person may be more or less informative depending on how they probe the embedding manifold.
 - **SucheOko ceiling.** With only 2 SucheOko persons the class currently has F1 ≈ 0 from person-LOPO (the model never sees a SucheOko persona in training when the other is the val subject). Marginal per-person ΔwF1 is therefore structurally small — this is **not** a signal that SucheOko is unimportant, but that we are below the minimum persons needed to lift it off zero. The first 2-3 new SucheOko persons are expected to be the single highest-return addition to the cohort.
 - **Macro F1 is a better proxy than weighted F1** for prioritizing the long tail; see the macro column in Analysis 2.
-- **Scans-per-person assumption.** We model each new patient as ~6 scans (two eyes × three ROIs). UPJŠ should calibrate to their actual imaging protocol.
+- **Scans-per-person assumption.** We model each new patient as ~3 scans per session. UPJŠ should calibrate to their actual imaging protocol; at ~6 scans/person the recommendation collapses to 3 new persons.
 - **Extrapolation uncertainty.** The log-linear curve is fit on 4 non-trivial subsample fractions (5 reps each); sample variance on the small folds is high. Treat the `n_needed_for_target` as order-of-magnitude, not a commitment.
 
 ## Generated artefacts
 
-- `reports/pitch/11_sample_efficiency_curve.png`
-- `cache/_al_baseline_oof.npz` — champion OOF probabilities
-- `cache/_al_sample_eff.npz` — raw subsample curve results
+- `reports/pitch/11_sample_efficiency_curve.png` — this figure
 - `reports/ACTIVE_LEARNING_ANALYSIS.md` — this report
+- `reports/active_learning_summary.json` — structured numbers
+- `cache/_al_baseline_oof.npz` — champion person-LOPO OOF probabilities
+- `cache/_al_sample_eff.npz` — raw subsample curve results
+- `cache/_al_class_stats.json` — per-class leave-one-person-out marginals
+- `scripts/active_learning_analysis.py` — reproduce with `.venv/bin/python scripts/active_learning_analysis.py` (~2 min)

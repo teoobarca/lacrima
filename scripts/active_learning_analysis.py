@@ -386,7 +386,7 @@ def coverage_ranking(X1, persons, classes, paths, top_n=20):
 # ---------------------------------------------------------------------------
 
 def clinical_allocation(per_class_marginal, class_counts, per_class_f1,
-                        budget=20, scans_per_new_person=6,
+                        budget=20, scans_per_new_person=3,
                         min_viable_persons=4):
     """Allocate a 20-scan budget across the 5 classes.
 
@@ -419,10 +419,9 @@ def clinical_allocation(per_class_marginal, class_counts, per_class_f1,
         lopo_marg = per_class_marginal.get(c, {}).get("mean_delta_wF1", 0.0)
         below_viable = n_existing < min_viable_persons
         if below_viable or lopo_marg <= 0:
-            # Prior: use F1-gap × under-representation. This is the honest
-            # "we can't estimate it, but we know we need it" heuristic.
-            # Scaled so the number is in a comparable range with LOPO marginals.
-            prior = gap * (1.0 / n_existing) * 0.15
+            # Prior: use F1-gap × under-representation. Scaled so the number is
+            # comparable to LOPO marginals (0.01-0.05 range) rather than dominating.
+            prior = gap * (1.0 / n_existing) * 0.05
             eff_marg[c] = prior
             reasoning[c] = (f"prior (below-viable or non-positive LOPO); "
                             f"n_existing={n_existing}, gap={gap:.2f}")
@@ -434,32 +433,54 @@ def clinical_allocation(per_class_marginal, class_counts, per_class_f1,
         s = gap * (eff_marg[c] + 1e-4) * (1.0 + under)
         score[c] = s
 
-    total = sum(score.values()) + 1e-12
-    raw_scans = {c: budget * score[c] / total for c in CLASSES}
-    # Convert to integer persons via rounding to the person granularity.
-    persons_alloc = {c: int(round(raw_scans[c] / scans_per_new_person))
-                     for c in CLASSES}
+    total_persons_budget = budget // scans_per_new_person  # 20/3 ≈ 6
+    # Three-stage allocation:
+    #   Stage A: "unblock the floor" — every class with n_existing < min_viable
+    #            gets at least 2 new persons (capped by budget).
+    #   Stage B: "seed the minority" — ensure every class with positive LOPO
+    #            marginal AND n_existing < 10 gets at least 1 new person.
+    #   Stage C: distribute the residual budget by score, with diminishing
+    #            returns for classes already above 10 existing persons
+    #            (ZdraviLudia, already high-F1 → low priority).
+    persons_alloc = {c: 0 for c in CLASSES}
+    remaining = total_persons_budget
 
-    # Guarantee: SucheOko (2 persons, F1=0, below viable) and the smallest
-    # per-class allocation gets at least 1 person — otherwise the allocation
-    # duplicates what we already have and ignores the fundamental ceiling.
-    if class_counts.get("SucheOko", 0) < min_viable_persons:
-        persons_alloc["SucheOko"] = max(persons_alloc["SucheOko"], 2)
+    # Stage A
+    for c in CLASSES:
+        n_existing = class_counts.get(c, 0)
+        if n_existing < min_viable_persons and remaining > 0:
+            add_n = min(2, remaining)
+            persons_alloc[c] = add_n
+            remaining -= add_n
 
-    total_scans_alloc = sum(persons_alloc.values()) * scans_per_new_person
-    # If we went over budget, shave the largest allocation.
-    while total_scans_alloc > budget + scans_per_new_person:
-        c_max = max(persons_alloc, key=persons_alloc.get)
-        if persons_alloc[c_max] <= 0:
-            break
-        persons_alloc[c_max] -= 1
-        total_scans_alloc = sum(persons_alloc.values()) * scans_per_new_person
-    # If under budget, add to the class with highest score that has no
-    # full persons yet.
-    while total_scans_alloc < budget - scans_per_new_person + 1:
-        c_best = max(CLASSES, key=lambda c: (score[c], -persons_alloc[c]))
+    # Stage B
+    for c in CLASSES:
+        n_existing = class_counts.get(c, 0)
+        lopo_marg = per_class_marginal.get(c, {}).get("mean_delta_wF1", 0.0)
+        if (remaining > 0 and persons_alloc[c] == 0
+                and n_existing < 10 and lopo_marg > 0):
+            persons_alloc[c] += 1
+            remaining -= 1
+
+    # Stage C: by-score tiebreak, with down-weighting of well-covered classes
+    score_c = {}
+    for c in CLASSES:
+        n_existing = class_counts.get(c, 0)
+        already = persons_alloc[c]
+        # Diminishing returns: each added person halves the remaining gain.
+        dim = 0.5 ** already
+        # Over-cover penalty: well-represented classes get down-weighted.
+        cov_pen = 1.0 if n_existing < 10 else 0.2
+        score_c[c] = score[c] * dim * cov_pen
+    while remaining > 0:
+        c_best = max(CLASSES, key=lambda c: score_c[c])
         persons_alloc[c_best] += 1
-        total_scans_alloc = sum(persons_alloc.values()) * scans_per_new_person
+        remaining -= 1
+        # Update the diminishing-returns score for the picked class
+        n_existing = class_counts.get(c_best, 0)
+        dim = 0.5 ** persons_alloc[c_best]
+        cov_pen = 1.0 if n_existing < 10 else 0.2
+        score_c[c_best] = score[c_best] * dim * cov_pen
 
     scans_alloc = {c: persons_alloc[c] * scans_per_new_person for c in CLASSES}
     # Expected delta = persons * eff_marginal
@@ -557,8 +578,8 @@ def write_report(out_path, *, baseline_wf1, baseline_mf1, per_class_f1,
         "saturated the champion recipe's learning curve at 35 persons.")
     add("- Most uncertain (OOF) scans cluster in **SucheOko** and "
         "**PGOV\\_Glaukom**: exactly the classes with the fewest persons.")
-    add("- Recommended budget split for **20 new scans** (assuming ~6 "
-        "scans/new person at both eyes × 3 ROIs):")
+    add("- Recommended budget split for **20 new scans** (assuming ~3 "
+        "scans/new person at one session; calibrate to UPJŠ protocol):")
     for c in CLASSES:
         if alloc['persons_alloc'][c] == 0:
             continue
@@ -705,9 +726,16 @@ def write_report(out_path, *, baseline_wf1, baseline_mf1, per_class_f1,
 
     add("## 5. Clinical recommendation — 20-scan active-learning budget")
     add("")
-    add("Score per class = `(1 − current_F1) × (per-class marginal ΔF1 + ε) × "
-        "(1 + 1/n_existing_persons)`; allocate 20 scans proportionally, "
-        "assuming ~6 scans per new person (both eyes × 3 ROIs).")
+    add("Score per class = `(1 − current_F1) × (effective-marginal ΔF1 + ε) × "
+        "(1 + 1/n_existing_persons)`. Where the LOPO marginal is negative or "
+        "the class has fewer than 4 persons ('below-viable'), we replace the "
+        "LOPO estimate with a prior `gap × (1/n_existing) × 0.05`. Allocation "
+        "is a 3-stage pipeline: (A) **unblock the floor** — every below-viable "
+        "class gets 2 new persons; (B) **seed each minority class** with ≥1 "
+        "new person (if it has positive LOPO); (C) distribute the residual by "
+        "score, with diminishing returns and a down-weighting of "
+        "well-represented classes (ZdraviLudia). Assumes **~3 scans/new "
+        "person** (one session).")
     add("")
     add("| Class | current F1 | n existing | new persons | new scans | "
         "eff. marginal/person | expected ΔwF1 | reasoning |")
@@ -755,8 +783,9 @@ def write_report(out_path, *, baseline_wf1, baseline_mf1, per_class_f1,
     add("- **Macro F1 is a better proxy than weighted F1** for prioritizing "
         "the long tail; see the macro column in Analysis 2.")
     add("- **Scans-per-person assumption.** We model each new patient as "
-        "~6 scans (two eyes × three ROIs). UPJŠ should calibrate to their "
-        "actual imaging protocol.")
+        "~3 scans per session. UPJŠ should calibrate to their actual "
+        "imaging protocol; at ~6 scans/person the recommendation collapses "
+        "to 3 new persons.")
     add("- **Extrapolation uncertainty.** The log-linear curve is fit on 4 "
         "non-trivial subsample fractions (5 reps each); sample variance on "
         "the small folds is high. Treat the `n_needed_for_target` as "
@@ -765,10 +794,14 @@ def write_report(out_path, *, baseline_wf1, baseline_mf1, per_class_f1,
 
     add("## Generated artefacts")
     add("")
-    add("- `reports/pitch/11_sample_efficiency_curve.png`")
-    add("- `cache/_al_baseline_oof.npz` — champion OOF probabilities")
-    add("- `cache/_al_sample_eff.npz` — raw subsample curve results")
+    add("- `reports/pitch/11_sample_efficiency_curve.png` — this figure")
     add("- `reports/ACTIVE_LEARNING_ANALYSIS.md` — this report")
+    add("- `reports/active_learning_summary.json` — structured numbers")
+    add("- `cache/_al_baseline_oof.npz` — champion person-LOPO OOF probabilities")
+    add("- `cache/_al_sample_eff.npz` — raw subsample curve results")
+    add("- `cache/_al_class_stats.json` — per-class leave-one-person-out marginals")
+    add("- `scripts/active_learning_analysis.py` — reproduce with "
+        "`.venv/bin/python scripts/active_learning_analysis.py` (~2 min)")
     add("")
     out_path.write_text("\n".join(lines))
     print(f"[saved] {out_path}")
@@ -783,6 +816,7 @@ class_map_for_report = lambda p: ""
 # ---------------------------------------------------------------------------
 
 def main():
+    import os
     global class_map_for_report
     t_total = time.time()
     print("=" * 72)
@@ -795,10 +829,19 @@ def main():
     person_to_class = dict(zip(persons, classes))
     class_map_for_report = lambda p: person_to_class.get(p, "?")
 
+    SKIP_EXPENSIVE = os.environ.get("AL_USE_CACHE") == "1"
+    cache_base = CACHE / "_al_baseline_oof.npz"
+    cache_eff = CACHE / "_al_sample_eff.npz"
+    cache_cls = CACHE / "_al_class_stats.npz"
+
     # Baseline OOF + per-class F1
     print("\n[Baseline] computing full person-LOPO OOF ...")
     t0 = time.time()
-    probs = champion_oof(X1, X2, y, persons)
+    if SKIP_EXPENSIVE and cache_base.exists():
+        z = np.load(cache_base, allow_pickle=True)
+        probs = z["probs"]
+    else:
+        probs = champion_oof(X1, X2, y, persons)
     pred = probs.argmax(1)
     baseline_wf1 = f1_score(y, pred, average="weighted", zero_division=0)
     baseline_mf1 = f1_score(y, pred, average="macro", zero_division=0)
@@ -825,21 +868,34 @@ def main():
 
     # --- 1. Sample-efficiency curve ---
     print("\n[1/5] Sample-efficiency curve ...")
-    curve_results = sample_efficiency_curve(
-        X1, X2, y, persons, classes,
-        fractions=(0.25, 0.5, 0.75, 1.0),
-        n_reps=5,
-    )
-    np.savez(CACHE / "_al_sample_eff.npz",
-             results=np.array(curve_results, dtype=object))
+    if SKIP_EXPENSIVE and cache_eff.exists():
+        curve_results = list(np.load(cache_eff, allow_pickle=True)["results"])
+        print("  (loaded cached sample-efficiency results)")
+    else:
+        curve_results = sample_efficiency_curve(
+            X1, X2, y, persons, classes,
+            fractions=(0.25, 0.5, 0.75, 1.0),
+            n_reps=5,
+        )
+        np.savez(cache_eff, results=np.array(curve_results, dtype=object))
     plot_curve(curve_results, PITCH / "11_sample_efficiency_curve.png")
 
     # --- 2. Per-class marginal (LOPO over persons; already computed for full,
     #       re-run for each leave-out) ---
     print("\n[2/5] Per-class marginal (leave-one-person-out) ...")
-    _, class_stats = per_class_marginal(
-        X1, X2, y, persons, classes, baseline_wf1, baseline_mf1,
-    )
+    if SKIP_EXPENSIVE and cache_cls.exists():
+        class_stats = json.loads(
+            Path(str(cache_cls).replace('.npz', '.json')).read_text()
+        )
+        print("  (loaded cached per-class marginals)")
+    else:
+        _, class_stats = per_class_marginal(
+            X1, X2, y, persons, classes, baseline_wf1, baseline_mf1,
+        )
+        # Save for reuse (strip "per_person" dict for simpler JSON serialization)
+        Path(str(cache_cls).replace('.npz', '.json')).write_text(
+            json.dumps(class_stats, indent=2, default=float)
+        )
 
     # --- 3. Uncertainty ranking ---
     print("\n[3/5] Uncertainty ranking ...")
@@ -857,7 +913,7 @@ def main():
     print("\n[5/5] Clinical allocation ...")
     alloc = clinical_allocation(
         class_stats, class_counts_persons, per_class_f1,
-        budget=20, scans_per_new_person=6,
+        budget=20, scans_per_new_person=3,
     )
     extrap = extrapolate_cohort_to_target(curve_results, target_f1=0.75)
 

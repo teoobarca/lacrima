@@ -58,23 +58,23 @@
       "Diabetes": 1,
       "PGOV_Glaukom": 1,
       "SklerozaMultiplex": 1,
-      "SucheOko": 0
+      "SucheOko": 3
     },
     "scans_alloc": {
       "ZdraviLudia": 0,
-      "Diabetes": 6,
-      "PGOV_Glaukom": 6,
-      "SklerozaMultiplex": 6,
-      "SucheOko": 0
+      "Diabetes": 3,
+      "PGOV_Glaukom": 3,
+      "SklerozaMultiplex": 3,
+      "SucheOko": 9
     },
     "expected_delta_wF1": {
       "ZdraviLudia": 0.0,
       "Diabetes": 0.004577184461639294,
       "PGOV_Glaukom": 0.012322488481810367,
       "SklerozaMultiplex": 0.019685546282413282,
-      "SucheOko": 0.0
+      "SucheOko": 0.07500000000000001
     },
-    "total_expected_uplift": 0.03658521922586294
+    "total_expected_uplift": 0.11158521922586295
   },
   "extrap": {
     "a": -0.45763172881594716,

@@ -11,6 +11,7 @@
 | `07_topk_and_calibration.png` | Top-k accuracy (scan vs patient), F1 (scan vs patient), and pre/post-Platt reliability diagrams for the v4 champion. |
 | `08_gradcam_per_class.png` | Grad-CAM saliency overlays on DINOv2-B 90 nm (two best-scoring scans per class) — pattern commentary in `reports/CLASS_FINGERPRINTS.md`. |
 | `09_biomarker_fingerprint.png` | Per-class z-score fingerprint on 12 handcrafted AFM features (roughness + GLCM + fractal D) — numeric values in `09_biomarker_table.csv`. |
+| `10_physics_simulation.png` | Physics-informed pretext: real tear AFM (top row) vs Cahn-Hilliard spinodal simulations (bottom row) with class-specific parameters, plus joint UMAP of real (filled) and simulated (hollow diamonds) DINOv2-B embeddings. Nearest-centroid diagnostic annotated per class. See `reports/PHYSICS_SIMULATION_RESULTS.md`. |
 
 All figures rendered at 150 dpi with seaborn `darkgrid` theme.
 
