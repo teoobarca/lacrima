@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300;9..144,400;9..144,500;9..144,600;9..144,700&family=Hanken+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;0,6..72,600;0,6..72,700;1,6..72,300;1,6..72,400;1,6..72,500;1,6..72,600;1,6..72,700&family=Hanken+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
     rel="stylesheet"
   />
   <style>
@@ -26,7 +26,7 @@
       --accent-deep: #1E2BAA;
       --accent-soft: #EEF0FE;
       --amber:       #D97706;
-      --serif: 'Fraunces', 'Times New Roman', Georgia, serif;
+      --serif: 'Newsreader', 'Times New Roman', Georgia, serif;
       --sans:  'Hanken Grotesk', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
       --mono:  'JetBrains Mono', 'IBM Plex Mono', monospace;
     }
@@ -35,7 +35,7 @@
     html, body {
       height: 100%;
       overflow: hidden;
-      background: #1d1d1c;
+      background: var(--bg);
       font-family: var(--serif);
       color: var(--ink);
       -webkit-font-smoothing: antialiased;
@@ -51,7 +51,6 @@
       width: 1280px;
       height: 720px;
       background: var(--bg);
-      box-shadow: 0 24px 70px rgba(0,0,0,0.55);
       overflow: hidden;
       transform-origin: center center;
     }
@@ -164,13 +163,13 @@
       line-height: 0.96;
       letter-spacing: -0.035em;
       color: var(--ink);
-      font-variation-settings: 'opsz' 144, 'SOFT' 30, 'WONK' 0;
+      font-variation-settings: 'opsz' 72;
     }
     #s1 h1 em {
       font-style: italic;
       color: var(--accent);
       font-weight: 400;
-      font-variation-settings: 'opsz' 144, 'SOFT' 60, 'WONK' 1;
+      font-variation-settings: 'opsz' 72;
     }
     #s1 .lede {
       margin-top: 28px;
@@ -226,13 +225,13 @@
       line-height: 1.15;
       letter-spacing: -0.022em;
       color: var(--ink);
-      font-variation-settings: 'opsz' 96, 'SOFT' 50, 'WONK' 1;
+      font-variation-settings: 'opsz' 60;
     }
     #s2 .quote em {
       font-style: normal;
       color: var(--accent);
       font-weight: 500;
-      font-variation-settings: 'opsz' 96, 'SOFT' 0, 'WONK' 0;
+      font-variation-settings: 'opsz' 60;
     }
     #s2 .attribution {
       margin-top: 36px;
@@ -467,7 +466,7 @@
       letter-spacing: -0.055em;
       color: var(--ink);
       font-feature-settings: 'tnum';
-      font-variation-settings: 'opsz' 144, 'SOFT' 0, 'WONK' 0;
+      font-variation-settings: 'opsz' 72;
     }
     #s5 .hero-num .a { color: var(--accent); }
     #s5 .hero-sub {
@@ -560,13 +559,13 @@
       line-height: 1.15;
       letter-spacing: -0.018em;
       color: var(--ink);
-      font-variation-settings: 'opsz' 96, 'SOFT' 50, 'WONK' 1;
+      font-variation-settings: 'opsz' 60;
     }
     #s6 .manifesto em {
       font-style: normal;
       color: var(--accent);
       font-weight: 500;
-      font-variation-settings: 'opsz' 96, 'SOFT' 0, 'WONK' 0;
+      font-variation-settings: 'opsz' 60;
     }
     #s6 .signoff {
       margin-top: 36px;
@@ -655,17 +654,19 @@
       animation: dashflow 1.6s linear infinite;
     }
 
-    /* HUD */
+    /* HUD — only visible before entering fullscreen */
     #hud {
       position: fixed;
       bottom: 14px; right: 18px;
       font-family: var(--mono);
       font-size: 10px;
-      color: rgba(255,255,255,0.32);
+      color: var(--ink-faint);
       letter-spacing: 0.12em;
       pointer-events: none;
       z-index: 100;
+      transition: opacity 300ms ease;
     }
+    :fullscreen #hud { opacity: 0; }
   </style>
 </head>
 <body>
@@ -856,7 +857,7 @@
             <circle cx="8" cy="8" r="6"/>
             <path d="M8 14 L8 24 M2 24 L14 24"/>
           </g>
-          <text x="90" y="32" text-anchor="middle" font-family="Fraunces" font-size="15" font-weight="500" fill="#0A0A0A">AFM scan</text>
+          <text x="90" y="32" text-anchor="middle" font-family="Newsreader" font-size="15" font-weight="500" fill="#0A0A0A">AFM scan</text>
           <text x="90" y="52" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#525866">512×512 px</text>
           <text x="90" y="68" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#99A0AE">9-tile · D4 ready</text>
         </g>
@@ -878,7 +879,7 @@
           <text x="46" y="28" font-family="Hanken Grotesk" font-size="11" letter-spacing="0.1em" fill="#0A0A0A" font-weight="600">DINOv2-B</text>
           <text x="270" y="28" text-anchor="end" font-family="JetBrains Mono" font-size="10" fill="#2D3FE3" font-weight="500">90 nm/px</text>
           <line x1="14" y1="40" x2="271" y2="40" stroke="#E1E4EA"/>
-          <text x="143" y="60" text-anchor="middle" font-family="Fraunces" font-size="14" fill="#0A0A0A" font-style="italic">Coarse fractal structure</text>
+          <text x="143" y="60" text-anchor="middle" font-family="Newsreader" font-size="14" fill="#0A0A0A" font-style="italic">Coarse fractal structure</text>
           <text x="143" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#525866">embed → 768 d → linear head</text>
         </g>
 
@@ -892,7 +893,7 @@
           <text x="46" y="28" font-family="Hanken Grotesk" font-size="11" letter-spacing="0.1em" fill="#0A0A0A" font-weight="600">DINOv2-B</text>
           <text x="270" y="28" text-anchor="end" font-family="JetBrains Mono" font-size="10" fill="#2D3FE3" font-weight="500">45 nm/px</text>
           <line x1="14" y1="40" x2="271" y2="40" stroke="#E1E4EA"/>
-          <text x="143" y="60" text-anchor="middle" font-family="Fraunces" font-size="14" fill="#0A0A0A" font-style="italic">Fine crystal edges</text>
+          <text x="143" y="60" text-anchor="middle" font-family="Newsreader" font-size="14" fill="#0A0A0A" font-style="italic">Fine crystal edges</text>
           <text x="143" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#525866">embed → 768 d → linear head</text>
         </g>
 
@@ -906,7 +907,7 @@
           <text x="46" y="28" font-family="Hanken Grotesk" font-size="11" letter-spacing="0.1em" fill="#0A0A0A" font-weight="600">BiomedCLIP</text>
           <text x="270" y="28" text-anchor="end" font-family="JetBrains Mono" font-size="10" fill="#2D3FE3" font-weight="500">D4 TTA</text>
           <line x1="14" y1="40" x2="271" y2="40" stroke="#C7CFEF"/>
-          <text x="143" y="60" text-anchor="middle" font-family="Fraunces" font-size="14" fill="#0A0A0A" font-style="italic">Medical prior + 8 rotations</text>
+          <text x="143" y="60" text-anchor="middle" font-family="Newsreader" font-size="14" fill="#0A0A0A" font-style="italic">Medical prior + 8 rotations</text>
           <text x="143" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#525866">embed → 512 d → linear head</text>
         </g>
 
@@ -970,7 +971,7 @@
         <g transform="translate(865, 162)" filter="url(#cardShadow)">
           <rect x="0" y="0" width="170" height="90" rx="6" fill="url(#fusionGrad)"/>
           <text x="85" y="30" text-anchor="middle" font-family="Hanken Grotesk" font-size="10" letter-spacing="0.22em" fill="#FFFFFF" opacity="0.7" font-weight="500">FUSION</text>
-          <text x="85" y="58" text-anchor="middle" font-family="Fraunces" font-size="20" font-weight="500" fill="#FFFFFF" font-style="italic">∏ ¹ᐟ³</text>
+          <text x="85" y="58" text-anchor="middle" font-family="Newsreader" font-size="20" font-weight="500" fill="#FFFFFF" font-style="italic">∏ ¹ᐟ³</text>
           <text x="85" y="78" text-anchor="middle" font-family="Hanken Grotesk" font-size="10" fill="#FFFFFF" opacity="0.85" letter-spacing="0.04em">geometric mean</text>
         </g>
         <text x="950" y="276" text-anchor="middle" font-family="Hanken Grotesk" font-size="10" letter-spacing="0.16em" fill="#99A0AE" font-style="italic">penalises disagreement</text>
@@ -982,14 +983,14 @@
         <g transform="translate(1085, 162)" filter="url(#cardShadow)">
           <rect x="0" y="0" width="55" height="90" rx="6" fill="url(#outGrad)"/>
           <text x="27" y="30" text-anchor="middle" font-family="Hanken Grotesk" font-size="9" letter-spacing="0.18em" fill="#FFFFFF" opacity="0.6" font-weight="500">PRED</text>
-          <text x="27" y="60" text-anchor="middle" font-family="Fraunces" font-size="22" font-weight="500" fill="#FFFFFF">5</text>
+          <text x="27" y="60" text-anchor="middle" font-family="Newsreader" font-size="22" font-weight="500" fill="#FFFFFF">5</text>
           <text x="27" y="78" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#FFFFFF" opacity="0.7">classes</text>
         </g>
 
         <!-- F1 callout below output -->
         <g transform="translate(1112, 290)">
           <line x1="0" y1="0" x2="0" y2="14" stroke="#0A0A0A" stroke-width="0.8"/>
-          <text x="0" y="32" text-anchor="middle" font-family="Fraunces" font-size="22" font-weight="500" fill="#2D3FE3" font-feature-settings="'tnum'">0.6887</text>
+          <text x="0" y="32" text-anchor="middle" font-family="Newsreader" font-size="22" font-weight="500" fill="#2D3FE3" font-feature-settings="'tnum'">0.6887</text>
           <text x="0" y="48" text-anchor="middle" font-family="Hanken Grotesk" font-size="9" letter-spacing="0.16em" fill="#525866" font-weight="500">F1 · LOPO</text>
         </g>
       </svg>
@@ -1108,7 +1109,7 @@
     <div id="progress-dots"></div>
   </div>
 
-  <div id="hud">← back · → forward · F fullscreen · 1–6 jump</div>
+  <div id="hud">click anywhere to enter fullscreen · then right-click = next · left-click = back · F = toggle</div>
 
   <script>
     /* ────────────────────────────────────────────────────────────────
@@ -1234,13 +1235,25 @@
 
     /* ────────────────────────────────────────────────────────────────
        Click navigation: right-click forward, left-click back
+       (first click in non-fullscreen → enter fullscreen, no nav)
        ──────────────────────────────────────────────────────────────── */
+    let firstClickHandled = false;
     document.addEventListener('click', (e) => {
       if (e.target.closest('a')) return;
+      if (!document.fullscreenElement && !firstClickHandled) {
+        firstClickHandled = true;
+        document.documentElement.requestFullscreen().catch(() => {});
+        return;
+      }
       prev();
     });
     document.addEventListener('contextmenu', (e) => {
       e.preventDefault();
+      if (!document.fullscreenElement && !firstClickHandled) {
+        firstClickHandled = true;
+        document.documentElement.requestFullscreen().catch(() => {});
+        return;
+      }
       next();
     });
 
@@ -1266,10 +1279,11 @@
       const deck = document.getElementById('deck');
       const w = window.innerWidth;
       const h = window.innerHeight;
-      const scale = Math.min(w / 1280, h / 720) * 0.94;
+      const scale = Math.min(w / 1280, h / 720);
       deck.style.transform = `scale(${scale})`;
     }
     window.addEventListener('resize', fitDeck);
+    document.addEventListener('fullscreenchange', fitDeck);
     window.addEventListener('load', () => { fitDeck(); showSlide(0); });
     fitDeck();
     showSlide(0);
