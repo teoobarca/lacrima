@@ -2,8 +2,11 @@
 
 Examples
 --------
-Default (TTA ensemble champion):
+Default (v4 multi-scale champion, 0.6887 F1):
     .venv/bin/python predict_cli.py --input /path/to/TEST_SET --output submission.csv
+
+Prior v2 TTA champion (0.6562 F1, faster):
+    .venv/bin/python predict_cli.py --model models/ensemble_v2_tta --input /path/to/TEST_SET
 
 Non-TTA fallback (faster ~8x):
     .venv/bin/python predict_cli.py --model models/ensemble_v1 --input /path/to/TEST_SET
@@ -46,8 +49,8 @@ def _load_predictor(model_dir: Path):
 
 def main():
     ap = argparse.ArgumentParser(description="Predict tear AFM classes on a directory.")
-    ap.add_argument("--model", default="models/ensemble_v2_tta",
-                    help="Path to model bundle (default: v2 TTA champion, 0.6562 F1)")
+    ap.add_argument("--model", default="models/ensemble_v4_multiscale",
+                    help="Path to model bundle (default: v4 multi-scale champion, 0.6887 F1)")
     ap.add_argument("--input", required=True, help="Directory with raw SPM scans (recursive)")
     ap.add_argument("--output", default="submission.csv",
                     help="Output CSV path (default: submission.csv)")

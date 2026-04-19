@@ -1,0 +1,37 @@
+{
+  "kind": "ensemble_v4",
+  "components": [
+    "dinov2b_90nm",
+    "dinov2b_45nm",
+    "biomedclip_tta"
+  ],
+  "classes": [
+    "ZdraviLudia",
+    "Diabetes",
+    "PGOV_Glaukom",
+    "SklerozaMultiplex",
+    "SucheOko"
+  ],
+  "config": {
+    "ensemble_method": "geometric_mean",
+    "preprocessing": "l2_normalize_row -> standardscaler",
+    "tile_size": 512,
+    "max_tiles": 9,
+    "render_mode": "afmhot",
+    "scales_nm_per_px": {
+      "dinov2b_90nm": 90.0,
+      "dinov2b_45nm": 45.0,
+      "biomedclip_tta": 90.0
+    },
+    "tta_group": {
+      "dinov2b_90nm": "none",
+      "dinov2b_45nm": "none",
+      "biomedclip_tta": "D4"
+    },
+    "honest_lopo_weighted_f1": 0.6887,
+    "honest_lopo_macro_f1": 0.5541,
+    "trained_on_n_scans": 240,
+    "trained_on_n_persons": 44,
+    "provenance": "Wave 7 Config D \u2014 multi-scale champion, red-team approved"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "kind": "single",
+  "encoder_name": "dinov2_vitb14",
+  "classes": [
+    "ZdraviLudia",
+    "Diabetes",
+    "PGOV_Glaukom",
+    "SklerozaMultiplex",
+    "SucheOko"
+  ],
+  "config": {
+    "target_nm_per_px": 45.0,
+    "tile_size": 512,
+    "max_tiles": 9,
+    "render_mode": "afmhot",
+    "tta_group": "none",
+    "preprocessing": "l2_normalize_then_standardscaler"
+  }
+}

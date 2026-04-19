@@ -1,0 +1,19 @@
+{
+  "kind": "single",
+  "encoder_name": "biomedclip",
+  "classes": [
+    "ZdraviLudia",
+    "Diabetes",
+    "PGOV_Glaukom",
+    "SklerozaMultiplex",
+    "SucheOko"
+  ],
+  "config": {
+    "target_nm_per_px": 90.0,
+    "tile_size": 512,
+    "max_tiles": 9,
+    "render_mode": "afmhot",
+    "tta_group": "D4",
+    "preprocessing": "l2_normalize_then_standardscaler"
+  }
+}
