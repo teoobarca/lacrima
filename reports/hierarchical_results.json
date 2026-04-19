@@ -1,0 +1,146 @@
+{
+  "person_lopo": true,
+  "n_scans": 240,
+  "n_persons": 35,
+  "classes": [
+    "ZdraviLudia",
+    "Diabetes",
+    "PGOV_Glaukom",
+    "SklerozaMultiplex",
+    "SucheOko"
+  ],
+  "disease_classes": [
+    "Diabetes",
+    "PGOV_Glaukom",
+    "SklerozaMultiplex",
+    "SucheOko"
+  ],
+  "champion_flat_wf1": 0.6887,
+  "champion_flat_mf1": 0.5541,
+  "flat_v4_rederived": {
+    "weighted_f1": 0.6886816442702501,
+    "macro_f1": 0.554087346024636,
+    "per_class_f1": [
+      0.9166666666666666,
+      0.5833333333333334,
+      0.5789473684210527,
+      0.6914893617021277,
+      0.0
+    ]
+  },
+  "level1_binary": {
+    "per_member": {
+      "dinov2_90nm": {
+        "weighted_f1": 0.8975631433457018,
+        "macro_f1": 0.8783430320971634,
+        "binary_f1_diseased": 0.9244712990936556,
+        "binary_f1_healthy": 0.8322147651006712,
+        "accuracy": 0.8958333333333334,
+        "auroc": 0.9621848739495799
+      },
+      "dinov2_45nm": {
+        "weighted_f1": 0.9014978834255943,
+        "macro_f1": 0.8827743406056658,
+        "binary_f1_diseased": 0.927710843373494,
+        "binary_f1_healthy": 0.8378378378378378,
+        "accuracy": 0.9,
+        "auroc": 0.9592436974789916
+      },
+      "biomedclip_tta_90nm": {
+        "weighted_f1": 0.8643286143286143,
+        "macro_f1": 0.8382055524912668,
+        "binary_f1_diseased": 0.9009009009009009,
+        "binary_f1_healthy": 0.7755102040816326,
+        "accuracy": 0.8625,
+        "auroc": 0.9403361344537816
+      }
+    },
+    "ensemble": {
+      "weighted_f1": 0.9181818181818182,
+      "macro_f1": 0.9030303030303031,
+      "binary_f1_diseased": 0.9393939393939394,
+      "binary_f1_healthy": 0.8666666666666667,
+      "accuracy": 0.9166666666666666,
+      "auroc": 0.9736134453781513
+    },
+    "n_healthy": 70,
+    "n_diseased": 170
+  },
+  "level2_4way_on_diseased": {
+    "per_member": {
+      "dinov2_90nm": {
+        "weighted_f1": 0.5766968325791856,
+        "macro_f1": 0.4903846153846154,
+        "per_class_f1": [
+          0.8076923076923077,
+          0.5384615384615384,
+          0.6153846153846154,
+          0.0
+        ]
+      },
+      "dinov2_45nm": {
+        "weighted_f1": 0.6152861264285918,
+        "macro_f1": 0.5124558934355459,
+        "per_class_f1": [
+          0.8148148148148148,
+          0.5609756097560976,
+          0.6740331491712708,
+          0.0
+        ]
+      },
+      "biomedclip_tta_90nm": {
+        "weighted_f1": 0.5640545603559303,
+        "macro_f1": 0.47712671651027816,
+        "per_class_f1": [
+          0.6923076923076923,
+          0.547945205479452,
+          0.6111111111111112,
+          0.05714285714285714
+        ]
+      }
+    },
+    "ensemble": {
+      "weighted_f1": 0.6235685094362932,
+      "macro_f1": 0.5247245015046873,
+      "per_class_f1": [
+        0.8461538461538461,
+        0.5789473684210527,
+        0.6737967914438503,
+        0.0
+      ]
+    },
+    "n_diseased": 170,
+    "n_persons_diseased": 20,
+    "disease_local_to_5class": {
+      "0": "Diabetes",
+      "1": "PGOV_Glaukom",
+      "2": "SklerozaMultiplex",
+      "3": "SucheOko"
+    }
+  },
+  "hierarchical_hard": {
+    "weighted_f1": 0.6551135291797431,
+    "macro_f1": 0.5155157688943767,
+    "per_class_f1": [
+      0.8666666666666667,
+      0.45454545454545453,
+      0.5789473684210527,
+      0.6774193548387096,
+      0.0
+    ],
+    "delta_vs_flat": -0.0335864708202569
+  },
+  "hierarchical_soft": {
+    "weighted_f1": 0.6551135291797431,
+    "macro_f1": 0.5155157688943767,
+    "per_class_f1": [
+      0.8666666666666667,
+      0.45454545454545453,
+      0.5789473684210527,
+      0.6774193548387096,
+      0.0
+    ],
+    "delta_vs_flat": -0.0335864708202569
+  },
+  "elapsed_s": 10.9
+}

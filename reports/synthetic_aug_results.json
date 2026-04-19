@@ -1,0 +1,413 @@
+{
+  "method": "mixup_in_embedding_space",
+  "person_lopo": true,
+  "n_scans": 240,
+  "n_persons": 35,
+  "champion_v4": {
+    "weighted_f1": 0.6887,
+    "macro_f1": 0.5541
+  },
+  "configs": {
+    "baseline_no_aug": {
+      "minority_cls": [],
+      "n_synth_per_class": 0,
+      "tiles_per_synth_scan": 0,
+      "alpha": 0.2,
+      "ensemble": {
+        "weighted_f1": 0.6886816442702501,
+        "macro_f1": 0.554087346024636,
+        "per_class_f1": [
+          0.9166666666666666,
+          0.5833333333333334,
+          0.5789473684210527,
+          0.6914893617021277,
+          0.0
+        ],
+        "confusion_row_SucheOko": 0,
+        "support_SucheOko": 14
+      },
+      "per_component": {
+        "dinov2_90nm": {
+          "weighted_f1": 0.6162402773650563,
+          "macro_f1": 0.4941352279564118,
+          "per_class_f1": [
+            0.8169014084507042,
+            0.5106382978723404,
+            0.5194805194805194,
+            0.6236559139784946,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "dinov2_45nm": {
+          "weighted_f1": 0.6543959388869252,
+          "macro_f1": 0.5185960881347944,
+          "per_class_f1": [
+            0.8472222222222222,
+            0.5,
+            0.5609756097560976,
+            0.6847826086956522,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "biomedclip_tta_90nm": {
+          "weighted_f1": 0.6219786032707835,
+          "macro_f1": 0.4914648890950904,
+          "per_class_f1": [
+            0.8082191780821918,
+            0.3673469387755102,
+            0.5675675675675675,
+            0.655367231638418,
+            0.058823529411764705
+          ],
+          "confusion_row_SucheOko": 1,
+          "support_SucheOko": 14
+        }
+      },
+      "elapsed_s": 4.0
+    },
+    "mixup_SucheOko_n50": {
+      "minority_cls": [
+        4
+      ],
+      "n_synth_per_class": 50,
+      "tiles_per_synth_scan": 4,
+      "alpha": 0.2,
+      "ensemble": {
+        "weighted_f1": 0.6853895494643377,
+        "macro_f1": 0.5520912434342562,
+        "per_class_f1": [
+          0.9103448275862069,
+          0.5833333333333334,
+          0.5789473684210527,
+          0.6878306878306878,
+          0.0
+        ],
+        "confusion_row_SucheOko": 0,
+        "support_SucheOko": 14
+      },
+      "per_component": {
+        "dinov2_90nm": {
+          "weighted_f1": 0.6222124292162826,
+          "macro_f1": 0.49715273626018924,
+          "per_class_f1": [
+            0.8169014084507042,
+            0.5106382978723404,
+            0.5194805194805194,
+            0.6387434554973822,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "dinov2_45nm": {
+          "weighted_f1": 0.6460284813838294,
+          "macro_f1": 0.5087550595247688,
+          "per_class_f1": [
+            0.8299319727891157,
+            0.46808510638297873,
+            0.5609756097560976,
+            0.6847826086956522,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "biomedclip_tta_90nm": {
+          "weighted_f1": 0.6037223009656769,
+          "macro_f1": 0.47593999475650517,
+          "per_class_f1": [
+            0.7945205479452054,
+            0.36,
+            0.5263157894736842,
+            0.6363636363636364,
+            0.0625
+          ],
+          "confusion_row_SucheOko": 1,
+          "support_SucheOko": 14
+        }
+      },
+      "elapsed_s": 4.3
+    },
+    "mixup_SucheOko_n100": {
+      "minority_cls": [
+        4
+      ],
+      "n_synth_per_class": 100,
+      "tiles_per_synth_scan": 4,
+      "alpha": 0.2,
+      "ensemble": {
+        "weighted_f1": 0.6838913437472532,
+        "macro_f1": 0.5500721711010257,
+        "per_class_f1": [
+          0.9041095890410958,
+          0.5833333333333334,
+          0.5714285714285714,
+          0.6914893617021277,
+          0.0
+        ],
+        "confusion_row_SucheOko": 0,
+        "support_SucheOko": 14
+      },
+      "per_component": {
+        "dinov2_90nm": {
+          "weighted_f1": 0.6263902975957216,
+          "macro_f1": 0.5016213015884956,
+          "per_class_f1": [
+            0.8169014084507042,
+            0.5106382978723404,
+            0.5384615384615384,
+            0.6421052631578947,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "dinov2_45nm": {
+          "weighted_f1": 0.6380674085665794,
+          "macro_f1": 0.5017030977008028,
+          "per_class_f1": [
+            0.8299319727891157,
+            0.46808510638297873,
+            0.5365853658536586,
+            0.6739130434782609,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "biomedclip_tta_90nm": {
+          "weighted_f1": 0.6058566034254593,
+          "macro_f1": 0.4741063521148267,
+          "per_class_f1": [
+            0.7972972972972973,
+            0.3333333333333333,
+            0.5333333333333333,
+            0.6440677966101694,
+            0.0625
+          ],
+          "confusion_row_SucheOko": 1,
+          "support_SucheOko": 14
+        }
+      },
+      "elapsed_s": 5.3
+    },
+    "mixup_SucheOko_n200": {
+      "minority_cls": [
+        4
+      ],
+      "n_synth_per_class": 200,
+      "tiles_per_synth_scan": 4,
+      "alpha": 0.2,
+      "ensemble": {
+        "weighted_f1": 0.6824431186731414,
+        "macro_f1": 0.5493404363267377,
+        "per_class_f1": [
+          0.9041095890410958,
+          0.5833333333333334,
+          0.5714285714285714,
+          0.6878306878306878,
+          0.0
+        ],
+        "confusion_row_SucheOko": 0,
+        "support_SucheOko": 14
+      },
+      "per_component": {
+        "dinov2_90nm": {
+          "weighted_f1": 0.6261299929996876,
+          "macro_f1": 0.49883147389486265,
+          "per_class_f1": [
+            0.8111888111888111,
+            0.5106382978723404,
+            0.5194805194805194,
+            0.6528497409326425,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "dinov2_45nm": {
+          "weighted_f1": 0.6380452754773407,
+          "macro_f1": 0.501077645228784,
+          "per_class_f1": [
+            0.8299319727891157,
+            0.4583333333333333,
+            0.5432098765432098,
+            0.6739130434782609,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "biomedclip_tta_90nm": {
+          "weighted_f1": 0.6040056749907147,
+          "macro_f1": 0.47273615389657203,
+          "per_class_f1": [
+            0.7808219178082192,
+            0.32,
+            0.5526315789473685,
+            0.6477272727272727,
+            0.0625
+          ],
+          "confusion_row_SucheOko": 1,
+          "support_SucheOko": 14
+        }
+      },
+      "elapsed_s": 6.8
+    },
+    "mixup_SucheOko_n100_alpha5": {
+      "minority_cls": [
+        4
+      ],
+      "n_synth_per_class": 100,
+      "tiles_per_synth_scan": 4,
+      "alpha": 0.5,
+      "ensemble": {
+        "weighted_f1": 0.6842617299154656,
+        "macro_f1": 0.55058748403576,
+        "per_class_f1": [
+          0.9103448275862069,
+          0.5833333333333334,
+          0.5714285714285714,
+          0.6878306878306878,
+          0.0
+        ],
+        "confusion_row_SucheOko": 0,
+        "support_SucheOko": 14
+      },
+      "per_component": {
+        "dinov2_90nm": {
+          "weighted_f1": 0.6263902975957216,
+          "macro_f1": 0.5016213015884956,
+          "per_class_f1": [
+            0.8169014084507042,
+            0.5106382978723404,
+            0.5384615384615384,
+            0.6421052631578947,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "dinov2_45nm": {
+          "weighted_f1": 0.639725377690302,
+          "macro_f1": 0.5028399908142125,
+          "per_class_f1": [
+            0.8356164383561644,
+            0.46808510638297873,
+            0.5365853658536586,
+            0.6739130434782609,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "biomedclip_tta_90nm": {
+          "weighted_f1": 0.5987273714668571,
+          "macro_f1": 0.4671443265848662,
+          "per_class_f1": [
+            0.7808219178082192,
+            0.32,
+            0.5263157894736842,
+            0.6440677966101694,
+            0.06451612903225806
+          ],
+          "confusion_row_SucheOko": 1,
+          "support_SucheOko": 14
+        }
+      },
+      "elapsed_s": 5.2
+    },
+    "mixup_all_min_n100": {
+      "minority_cls": [
+        4,
+        1
+      ],
+      "n_synth_per_class": 100,
+      "tiles_per_synth_scan": 4,
+      "alpha": 0.2,
+      "ensemble": {
+        "weighted_f1": 0.6720677136102667,
+        "macro_f1": 0.5312502532928065,
+        "per_class_f1": [
+          0.8933333333333333,
+          0.5,
+          0.5714285714285714,
+          0.6914893617021277,
+          0.0
+        ],
+        "confusion_row_SucheOko": 0,
+        "support_SucheOko": 14
+      },
+      "per_component": {
+        "dinov2_90nm": {
+          "weighted_f1": 0.6189336688568194,
+          "macro_f1": 0.4890516124533694,
+          "per_class_f1": [
+            0.821917808219178,
+            0.46511627906976744,
+            0.5194805194805194,
+            0.6387434554973822,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "dinov2_45nm": {
+          "weighted_f1": 0.635849702417651,
+          "macro_f1": 0.493820612098942,
+          "per_class_f1": [
+            0.84,
+            0.4186046511627907,
+            0.5365853658536586,
+            0.6739130434782609,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "biomedclip_tta_90nm": {
+          "weighted_f1": 0.6049215793733936,
+          "macro_f1": 0.4731060691493485,
+          "per_class_f1": [
+            0.7972972972972973,
+            0.3333333333333333,
+            0.5263157894736842,
+            0.6440677966101694,
+            0.06451612903225806
+          ],
+          "confusion_row_SucheOko": 1,
+          "support_SucheOko": 14
+        }
+      },
+      "elapsed_s": 5.1
+    }
+  },
+  "best_config_name": "mixup_SucheOko_n50",
+  "redteam": {
+    "held_out_person": "29EYE_suche_oko",
+    "n_synthetic": 50,
+    "n_real_train_SucheOko_scans": 6,
+    "nn_cosine_distance_to_train_SucheOko": {
+      "mean": 0.0730462446808815,
+      "median": 0.07190331816673279,
+      "min": 0.028871655464172363,
+      "max": 0.11910438537597656
+    },
+    "nn_cosine_distance_to_HELDOUT_test_SucheOko": {
+      "mean": 0.3813220262527466,
+      "median": 0.37998151779174805,
+      "min": 0.3338744044303894,
+      "max": 0.4334055781364441
+    },
+    "memorisation_check": {
+      "mean_dist_to_train": 0.0730462446808815,
+      "mean_dist_to_heldout": 0.3813220262527466,
+      "interpretation": "synthetic should not be dramatically closer to train (<< 0.01) \u2014 that would indicate memorisation of real tiles"
+    }
+  },
+  "elapsed_s": 30.8
+}
