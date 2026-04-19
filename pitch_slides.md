@@ -65,10 +65,12 @@ Ready for Google Slides / PowerPoint. Bullet-point format, no prose. Figure refe
 
 ## Slide 7 — Headline results
 
-- **Weighted F1 = 0.6528** (person-LOPO, nested thresholds)
-- Shippable raw argmax: 0.6346
+- **Weighted F1 = 0.6458** (person-LOPO, shipped TTA ensemble, raw argmax, no tuning)
+- Threshold-tuned reference: 0.6528 (nested-CV, tuning-fragile)
+- Non-TTA ensemble: 0.6346
 - Single-model baseline: 0.615
-- Null baseline: 0.276 ± 0.042 → **7σ above chance**
+- Null baseline: 0.276 ± 0.042 → **~8σ above chance**
+- TTA systematic gain: +0.028 DINOv2-B, +0.029 BiomedCLIP, +0.011 ensemble
 - Per-class: Healthy 0.86 · SM 0.72 · Glaukom 0.59 · Diabetes 0.43 · Dry Eye 0.00
 - *Figure:* `04_confusion_matrix.png` + `05_per_class_metrics.png`
 
@@ -110,7 +112,7 @@ Ready for Google Slides / PowerPoint. Bullet-point format, no prose. Figure refe
 - Ship
   - `TearClassifier.load('models/ensemble_v1')` → `.predict_directory(...)`
   - Full red-team history in `reports/`
-- **Credibility > hype. 0.6528 honest.**
+- **Credibility > hype. 0.6458 honest, shipped. 0.6528 reference (tuned).**
 - **Thank you.**
 
 ---

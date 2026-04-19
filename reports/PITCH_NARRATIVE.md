@@ -82,12 +82,15 @@ Key design decisions:
 
 ## 5. The headline number (~40 s)
 
-> **0.6528 weighted F1, person-level LOPO. Baseline 0.615. Null baseline 0.276 ± 0.042.**
+> **0.6458 weighted F1, person-level LOPO. Shipped robust TTA ensemble, no OOF tuning.**
 
-- Shipped raw-argmax model: **0.6346** (no thresholds, no tuning, guaranteed honest).
-- With nested-CV per-class thresholds: **0.6528** (reference variant, reproducibly fair).
-- Single-model floor: 0.615 (DINOv2-B alone).
-- Random-labels null: 0.276 ± 0.042 — our model is **7 standard deviations above chance**.
+- **Champion shipped: 0.6458** — DINOv2-B + BiomedCLIP with D4-group test-time augmentation (72 tile views per scan, mean-pooled). Raw argmax, zero tuning — reproducible for any downstream user.
+- Threshold-tuned reference variant: **0.6528** (same ensemble, + nested per-class thresholds; kept for reference but more fragile).
+- Non-TTA ensemble floor: **0.6346**.
+- Single-model floor: **0.615** (DINOv2-B alone).
+- Random-labels null: **0.276 ± 0.042** — our model is ~**8 standard deviations above chance**.
+
+TTA adds +0.011 F1 (ensemble) to +0.029 F1 (individual encoders) consistently across 3 models — systematic signal, not noise.
 
 **Visual:** `reports/pitch/04_confusion_matrix.png` — LOPO confusion matrix, green diagonal clearly visible.
 **Visual:** `reports/pitch/05_per_class_metrics.png` — precision/recall/F1 per class:
@@ -102,7 +105,7 @@ Key design decisions:
 
 ---
 
-## 6. Why 0.6528 and not higher (~40 s)
+## 6. Why 0.6458 and not higher (~40 s)
 
 > **Because credibility > hype.**
 
@@ -116,7 +119,7 @@ We produced five claims above 0.65:
 | 0.6731 (double-gated cascade) | ✗ | Specialist threshold tuned on eval set |
 | 0.6698 (thresholds tuned on OOF) | ✗ | Thresholds + subset both tuned on full OOF |
 
-Red-team discipline: if the number embeds test-set reuse, we retract. Our honest 0.6528 is what judges and any downstream user can trust.
+Red-team discipline: if the number embeds test-set reuse, we retract. Our honest 0.6458 (TTA ensemble, no tuning) is what judges and any downstream user can trust.
 
 ---
 
