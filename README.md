@@ -147,6 +147,20 @@ This project takes the same idea **one abstraction higher**:
 
 Total: **218 sub-agents across 21 waves**, producing 30+ honest experiments and the documentation in [`reports/`](reports/).
 
+### By the numbers
+
+| | |
+|---|---|
+| Wall-clock duration | **18.2 hours** (single session, 2026-04-18 11:27 UTC → 04-19 05:39 UTC) |
+| Sub-agents launched | **218** |
+| Cumulative sub-agent compute (parallelised) | 20.2 hours of work |
+| Orchestrator messages | 2,366 |
+| Sub-agent messages | 6,563 |
+| Total tokens consumed | **~1.49 billion** (959 M orchestrator + 530 M sub-agents, mostly cached) |
+| Code shipped | 53,223 lines of Python (scripts + library + tests) |
+| Documentation shipped | 14,811 lines of Markdown across 50+ reports |
+| Pitch deck | 1,277-line single-file HTML/CSS/JS |
+
 Methodology write-up: [`ORCHESTRATION.md`](ORCHESTRATION.md). Full agent log:
 [`reports/AGENTS_DOCUMENTATION.md`](reports/AGENTS_DOCUMENTATION.md).
 
