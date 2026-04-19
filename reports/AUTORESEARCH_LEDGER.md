@@ -39,11 +39,12 @@ Running log of all autoresearch-style hypotheses tested across waves. Sorted by 
 | Advanced features (443-dim: multifractal + lacunarity + succolarity + wavelet-packet + multi-scale HOG) | 0.4707 | below handcrafted baseline alone |
 | Error analysis Mode B deep-dive | N/A | confirms data ceiling; not a model problem |
 
-## Wave 6 (complete, awaiting red-team)
+## Wave 6 (complete — REJECTED by red-team)
 
-- **Multichannel × v2 recipe fusion** — candidate champion E7: DINOv2-B Height + DINOv2-B RGB(H+Amp+Phase) + BiomedCLIP-H-TTA → v2 recipe → geom-mean = **0.6645** (+0.0083).
-- Diabetes +0.13, Glaukom −0.06, SucheOko 1→0 correct (near-zero sample).
-- Δ ≈ 2 scans on 240; bootstrap CI check running. Ship only if CI > 0.
+- **Multichannel × v2 recipe fusion E7:** DINOv2-B Height + DINOv2-B RGB(H+Amp+Phase) + BiomedCLIP-H-TTA = 0.6645 (point estimate).
+- **Red-team bootstrap audit**: 95% CI for ΔF1(E7−E1) = [−0.04, +0.05], P(gain>0) = 0.598 — within noise.
+- **Per-class breakdown exposed fragility**: 158% of +0.0083 gain comes from Diabetes (36 scans); PGOV_Glaukom −0.057, SucheOko 1→0 correct.
+- **Verdict: DO NOT SHIP. Keep v2 (0.6562) as champion.** Red-team discipline saved us from publishing noise. See `reports/RED_TEAM_E7_BOOTSTRAP.md`.
 
 ## Next-wave candidates (Wave 7 if time allows)
 

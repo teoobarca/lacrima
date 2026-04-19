@@ -176,6 +176,17 @@ Meta-insight across all red-teams: at 240 scans we are at data ceiling. Bias/thr
 4. **Parallelize independent work.** Serial only when blocked.
 5. **T-6h cutoff: stop exploring, start consolidating.** Pitch > optimal F1.
 
+## Wave 6 multichannel E7 — REJECTED by red-team
+
+- Claim: 0.6645 (+0.0083 over v2 champion)
+- Bootstrap 95% CI for ΔF1: [−0.04, +0.05] → crosses zero
+- P(gain > 0) = 0.598 (essentially coin flip)
+- 158% of point gain from Diabetes (36 scans); Glaukom −0.057, SucheOko 1→0
+- Report: `reports/RED_TEAM_E7_BOOTSTRAP.md`
+- **Champion stays at v2 (0.6562).** Red-team saved us from shipping noise.
+
+---
+
 ## Error analysis findings (post-TTA, from `reports/ERROR_ANALYSIS.md`)
 
 Of 85 misclassified scans out of 240:
