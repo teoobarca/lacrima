@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-04-18T19:43:35",
+  "timestamp": "2026-04-18T19:45:51",
   "device": "cpu",
   "n_scans": 240,
   "n_persons": 35,
@@ -202,9 +202,9 @@
     }
   },
   "decision": {
-    "best_config": "mean_pool_3tiled",
-    "best_wf1": 0.6694558961890299,
-    "delta_vs_v4": -0.01922574808122024,
+    "best_config": "v4style_attention_trackB",
+    "best_wf1": 0.6618141206453494,
+    "delta_vs_v4": -0.026867523624900747,
     "ship_as_v5": false,
     "criterion": "\u0394 \u2265 0.005 AND P(\u0394>0) > 0.95"
   },
@@ -219,5 +219,5 @@
     "val_frac_inner": 0.15,
     "optimizer": "AdamW"
   },
-  "elapsed_s": 108.7
+  "elapsed_s": 69.1
 }

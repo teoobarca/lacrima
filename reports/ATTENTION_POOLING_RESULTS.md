@@ -47,15 +47,20 @@
 
 ## Decision
 
-- Best attention config: **mean_pool_3tiled** (W-F1 = 0.6695)
-- Δ vs v4 = **-0.0192**
+- Best attention config: **v4style_attention_trackB** (W-F1 = 0.6618)
+- Δ vs v4 = **-0.0269**
 - Ship criterion: Δ ≥ 0.005 AND P(Δ>0) > 0.95 → **KEEP v4**
 
 
 ## Honest interpretation
 
-- Attention pooling did **not** beat v4 champion by a significant margin. Likely cause: with only 240 scans and per-scan bag sizes of 1–9 tiles, a small attention module cannot reliably discover which tiles carry class signal — it behaves close to uniform weighting (≈ mean pool).
-- Note the **ceiling**: the mean-pool baseline here uses the same 3 non-TTA tiled encoders and gets 0.6695. v4's extra 0.0xx comes from BiomedCLIP-**TTA**, not from the pooling choice.
-- When we re-inject BiomedCLIP-TTA (`v4style_attention_*`), the tracks land close to v4 — further evidence pooling is not the bottleneck.
+- Attention pooling **regresses** vs both the mean-pool baseline and the v4 champion. Every attention variant is below mean-pool within the same 3-encoder ensemble family:
+  - mean-pool 3-tiled = 0.6695
+  - attention track A (head)   = 0.4758
+  - attention track B (v2 LR)  = 0.6536
+- Per-encoder: track B (attention-pool → LR) is systematically **below** mean-pool+LR by 0.02–0.03. Track A (attention head directly) collapses to 0.47 — the tiny linear head underfits a 5-class problem from 204-person training with class_weight alone.
+- **Why attention loses here:** with bag sizes 1–4 tiles (90 nm) and up to 9 tiles (45 nm), 240 total scans, and ~50k new attention params, the model cannot reliably learn which tiles carry class signal. Mean pooling implicitly averages out noise; learned attention over-concentrates on a few tiles per scan and throws away the averaging benefit.
+- **Ceiling check:** v4 champion is 0.6887. The mean-pool 3-encoder ensemble here at 0.6695 is Δ = -0.0192 — the v4 champion's edge over the non-TTA mean-pool ensemble comes from the BiomedCLIP **TTA** branch, not from any pooling gain. When we re-inject BiomedCLIP-TTA into the attention pipeline (`v4style_attention_*`), we still land below v4.
+- **Verdict: REJECT attention pooling.** v4 mean-pool stays champion.
 
-- Elapsed: 108.7 s (1.8 min) on cpu.
+- Elapsed: 69.1 s (1.2 min) on cpu.

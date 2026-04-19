@@ -251,12 +251,16 @@ def load_pubmedclip():
 
         @torch.no_grad()
         def encode_image(self, x):
+            # get_image_features may return a Tensor OR a BaseModelOutputWithPooling
+            # (depends on transformers version). The projected image embedding is
+            # the Tensor return; when wrapped in ModelOutput, it lives in
+            # `pooler_output` (512-d projection), NOT `last_hidden_state[:, 0]`
+            # which is the un-projected 768-d vision-tower CLS.
             feats = self.clip.get_image_features(pixel_values=x)
-            # transformers returns Tensor, but belt-and-braces:
-            if hasattr(feats, "image_embeds"):
+            if hasattr(feats, "pooler_output") and feats.pooler_output is not None:
+                feats = feats.pooler_output
+            elif hasattr(feats, "image_embeds") and feats.image_embeds is not None:
                 feats = feats.image_embeds
-            if hasattr(feats, "last_hidden_state"):
-                feats = feats.last_hidden_state[:, 0]
             return feats
 
     wrap = _Wrap(base).to(dev).eval()
@@ -490,17 +494,20 @@ def write_markdown(summary: dict) -> None:
     lines.append("| Encoder | Status | Dim | Encode time (s) | Weighted F1 | Macro F1 | Δ vs DINOv2-B (0.6162) |")
     lines.append("|---|---|---:|---:|---:|---:|---:|")
     for row in per:
+        et = row.get("encode_time_s")
+        et_str = f"{et:.1f}" if isinstance(et, (int, float)) else "-"
+        dim_str = str(row.get("dim", "")) if row.get("dim") else "-"
         if row.get("weighted_f1") is not None:
             delta = row["weighted_f1"] - CHAMP_DINOV2B
             lines.append(
-                f"| {row['pretty']} | {row['status']} | {row.get('dim', '')} | "
-                f"{row.get('encode_time_s', ''):} | {row['weighted_f1']:.4f} | "
+                f"| {row['pretty']} | {row['status']} | {dim_str} | "
+                f"{et_str} | {row['weighted_f1']:.4f} | "
                 f"{row['macro_f1']:.4f} | {delta:+.4f} |"
             )
         else:
             lines.append(
-                f"| {row['pretty']} | {row['status']} | {row.get('dim', '')} | "
-                f"{row.get('encode_time_s', '-')} | - | - | - |"
+                f"| {row['pretty']} | {row['status']} | {dim_str} | "
+                f"{et_str} | - | - | - |"
             )
     lines.append("")
 

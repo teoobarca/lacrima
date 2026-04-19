@@ -10,18 +10,23 @@
     {
       "name": "pubmedclip_vitb32",
       "pretty": "PubMedCLIP ViT-B/32 (512-d)",
-      "status": "encode_fail_or_budget",
-      "err": null,
-      "encode_time_s": null,
-      "weighted_f1": null,
-      "macro_f1": null,
-      "per_class_f1": null,
-      "dim": null
+      "status": "cached",
+      "encode_time_s": 7.672519207000732,
+      "dim": 512,
+      "weighted_f1": 0.5167413151959991,
+      "macro_f1": 0.37122407230128174,
+      "per_class_f1": [
+        0.738255033557047,
+        0.12244897959183673,
+        0.42857142857142855,
+        0.5668449197860963,
+        0.0
+      ]
     },
     {
       "name": "openclip_vitl14_laion2b",
       "pretty": "OpenCLIP ViT-L/14 LAION-2B (768-d)",
-      "status": "encoded",
+      "status": "cached",
       "encode_time_s": 129.88582611083984,
       "dim": 768,
       "weighted_f1": 0.5699423222110421,
@@ -37,7 +42,7 @@
     {
       "name": "dinov2_vitl14",
       "pretty": "DINOv2-L (ViT-L/14, 1024-d)",
-      "status": "encoded",
+      "status": "cached",
       "encode_time_s": 135.3648910522461,
       "dim": 1024,
       "weighted_f1": 0.5418497039712611,
@@ -53,7 +58,7 @@
     {
       "name": "eva02_l14",
       "pretty": "EVA02-L-14 (768-d)",
-      "status": "encoded",
+      "status": "cached",
       "encode_time_s": 213.6895341873169,
       "dim": 768,
       "weighted_f1": 0.58318741449958,
@@ -69,13 +74,18 @@
     {
       "name": "siglip_so400m_384",
       "pretty": "SigLIP-SO400M-14-384 (1152-d)",
-      "status": "encode_fail_or_budget",
-      "err": null,
-      "encode_time_s": null,
-      "weighted_f1": null,
-      "macro_f1": null,
-      "per_class_f1": null,
-      "dim": null
+      "status": "cached",
+      "encode_time_s": 722.8998239040375,
+      "dim": 1152,
+      "weighted_f1": 0.5735293004955927,
+      "macro_f1": 0.44011511584545293,
+      "per_class_f1": [
+        0.8051948051948052,
+        0.3111111111111111,
+        0.5,
+        0.5842696629213483,
+        0.0
+      ]
     },
     {
       "name": "dinov2_vitg14",
@@ -125,6 +135,42 @@
       ]
     },
     {
+      "name": "v4 swap BiomedCLIP-TTA for SigLIP (3-way)",
+      "members": [
+        "dinov2b_90",
+        "dinov2b_45",
+        "siglip_so400m_384"
+      ],
+      "weighted_f1": 0.6480034444190242,
+      "macro_f1": 0.5219644627468923,
+      "per_class_f1": [
+        0.8888888888888888,
+        0.5531914893617021,
+        0.5333333333333333,
+        0.6344086021505376,
+        0.0
+      ]
+    },
+    {
+      "name": "v4 + DINOv2-L + SigLIP (5-way)",
+      "members": [
+        "dinov2b_90",
+        "dinov2b_45",
+        "biomedclip_tta",
+        "dinov2_vitl14",
+        "siglip_so400m_384"
+      ],
+      "weighted_f1": 0.6533343590344306,
+      "macro_f1": 0.5275324066806609,
+      "per_class_f1": [
+        0.8979591836734694,
+        0.5531914893617021,
+        0.5526315789473685,
+        0.6338797814207651,
+        0.0
+      ]
+    },
+    {
       "name": "v4 + EVA02-L (4-way)",
       "members": [
         "dinov2b_90",
@@ -161,5 +207,5 @@
       ]
     }
   ],
-  "elapsed_s": 1596.3
+  "elapsed_s": 21.8
 }

@@ -372,12 +372,17 @@ def write_markdown_report(summary: dict) -> None:
         "2. **cosine** — training-free, cosine distance (1 - <q,p>).\n"
         "3. **weighted_prototypes** — inverse-distance-to-centroid weighting "
         "(outlier-robust, Mahalanobis-ish).\n"
-        "4. **temp_0.5 / temp_2.0** — softmax temperature tweaks; affect the "
-        "geometric-mean ensemble (sharpness), not single-encoder argmax.\n"
-        "5. **adapter_sqeuclid** — per-fold trained MLP "
+        "4. **adapter_sqeuclid / adapter_cosine** — per-fold trained MLP "
         "(D → 256 → 128) with episodic ProtoNet loss "
         "(4-support, 2-query, 400 episodes, AdamW, learnable temperature). "
-        "Then prototype + NN in the learned space.\n"
+        "Then prototype + NN in the learned space.\n\n"
+        "**A note on fixed temperature:** under a geometric-mean ensemble with "
+        "a temperature shared across all encoders, changing T only rescales "
+        "the log-probabilities uniformly per encoder and does NOT alter the "
+        "ensemble argmax — a fixed-T sweep is therefore uninformative. The "
+        "temperature experiment in this report is the LEARNABLE per-fold T "
+        "inside the adapter (exp (4)), which does change what the adapter "
+        "optimizes and thus affects the ensemble.\n"
     )
 
     # Per-encoder table (baseline only, for brevity)
@@ -408,27 +413,54 @@ def write_markdown_report(summary: dict) -> None:
     best_suo_name = max(ens, key=lambda k: ens[k]["per_class_f1"][suo])
     best_suo = ens[best_suo_name]["per_class_f1"][suo]
 
+    # Also check per-encoder SucheOko rescue (sometimes a single encoder
+    # breaks the 0, but geom-mean smears it back out).
+    best_enc_suo = 0.0
+    best_enc_suo_id = ("", "")
+    for exp_name, enc_dict in per_enc.items():
+        for enc_name, m in enc_dict.items():
+            v = m["per_class_f1"][suo]
+            if v > best_enc_suo:
+                best_enc_suo = v
+                best_enc_suo_id = (exp_name, enc_name)
+
     L.append("## SucheOko minority-class analysis\n")
     L.append(
         "SucheOko has only 2 persons (14 scans). With person-level LOPO the "
         "training fold for each SucheOko person has only ONE remaining SucheOko "
         "person — a true 1-shot (on person axis) regime. Under the LR recipe "
         "this collapses to F1 = 0 on those folds.\n\n"
-        f"- **Best SucheOko F1 across experiments:** "
-        f"{best_suo:.4f} (experiment: `{best_suo_name}`).\n"
+        f"- **Best SucheOko F1 (ensemble):** "
+        f"{best_suo:.4f} — experiment `{best_suo_name}`.\n"
+        f"- **Best SucheOko F1 (single encoder, any experiment):** "
+        f"{best_enc_suo:.4f} — `{best_enc_suo_id[0]} / "
+        f"{best_enc_suo_id[1]}`.\n"
     )
     if best_suo > 0:
         L.append(
             f"- PARTIAL WIN: ProtoNet rescues SucheOko from 0 to "
-            f"{best_suo:.3f} — the prototypical structure *does* help the "
-            "extreme minority class, even when the overall F1 doesn't move "
-            "or regresses.\n"
+            f"{best_suo:.3f} in the ensemble — the prototypical structure "
+            "*does* help the extreme minority class even when the overall "
+            "weighted F1 doesn't move or regresses.\n"
+        )
+    elif best_enc_suo > 0:
+        L.append(
+            f"- PARTIAL SIGNAL: SucheOko F1 climbs to **{best_enc_suo:.3f}** "
+            f"on the `{best_enc_suo_id[1]}` encoder under the adapter "
+            f"(`{best_enc_suo_id[0]}`), but the geometric-mean ensemble "
+            "dilutes it back to 0 — the other two encoders never predict "
+            "SucheOko and the geom-mean of three softmaxes where only one "
+            "gives SucheOko ≠ 0 does not recover the positive. "
+            "Useful follow-up: switch to MAX or weighted-mean ensembling "
+            "for the minority-class channel, or condition on a ProtoNet "
+            "gate.\n"
         )
     else:
         L.append(
             "- ProtoNet did NOT rescue SucheOko — the prototype in embedding "
-            "space is still dominated by majority classes (or the lone remaining "
-            "SucheOko person's prototype is off the query manifold).\n"
+            "space is still dominated by majority classes (or the lone "
+            "remaining SucheOko person's prototype is off the query "
+            "manifold).\n"
         )
 
     L.append("\n## Verdict vs v4 LR champion\n")
