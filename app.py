@@ -9,7 +9,7 @@ Then visit http://127.0.0.1:7860.
 Three tabs:
   * Classify a scan   — upload .NNN (Bruker Nanoscope) or .bmp, see prediction + reasoning.
   * Disease fingerprints — educational gallery per class.
-  * About — method, honest F1 = 0.6458, limitations.
+  * About — method, honest F1 = 0.6562, limitations.
 """
 from __future__ import annotations
 
@@ -48,7 +48,7 @@ from teardrop.features import (  # noqa: E402
     roughness_features,
 )
 from teardrop.infer import preprocess_and_tile_spm  # noqa: E402
-from models.ensemble_v1_tta.predict import TTAPredictor  # noqa: E402
+from models.ensemble_v2_tta.predict import TTAPredictorV2 as TTAPredictor  # noqa: E402
 
 import gradio as gr  # noqa: E402
 
@@ -145,7 +145,7 @@ DEMO_SAMPLES = {
 # ---------------------------------------------------------------------------
 
 print("[app] Loading TTA ensemble bundle — this may take ~60s on cold start...")
-PREDICTOR = TTAPredictor.load(PROJECT_ROOT / "models/ensemble_v1_tta")
+PREDICTOR = TTAPredictor.load(PROJECT_ROOT / "models/ensemble_v2_tta")
 print("[app] Predictor ready.")
 
 print("[app] Loading DINOv2-B retrieval cache...")
@@ -517,7 +517,7 @@ Classify tear-film AFM scans into **5 clinical categories**: `ZdraviLudia`
 (healthy), `Diabetes`, `PGOV_Glaukom`, `SklerozaMultiplex`, `SucheOko` (dry eye).
 
 - **Model:** DINOv2-B + BiomedCLIP TTA-D4 ensemble (softmax-averaged, raw argmax)
-- **Honest F1 (person-LOPO):** **0.6458** on 240 scans / 35 persons
+- **Honest F1 (person-LOPO):** **0.6562** on 240 scans / 35 persons
 - **Data ceiling:** SucheOko has only 2 patients in train set → very low recall expected
 """
 
@@ -675,7 +675,7 @@ after our red-team audits (see below).
 
 | Metric | Value |
 |---|---:|
-| **Weighted F1 (shipped, raw argmax)** | **0.6458** |
+| **Weighted F1 (shipped, L2+geom-mean)** | **0.6562** |
 | Macro F1 | 0.49 |
 | Single-model baseline (DINOv2-B alone) | 0.615 |
 | Null baseline (label-shuffle × 5 seeds) | 0.276 ± 0.042 |
@@ -724,14 +724,14 @@ after our red-team audits (see below).
 
 - Initial claim 0.6698 (threshold-tuned) → rejected by nested CV.
 - Nested-threshold honest: 0.6528 (reference, not shipped).
-- Shipped: 0.6458 raw-argmax TTA ensemble — no tuning.
+- Shipped: 0.6562 v2 TTA ensemble (L2-norm + geom-mean) — no tuning.
 - 4-component concat ensemble claimed 0.6878 → honest 0.6326. Rejected.
 
 Full history: `reports/FINAL_REPORT.md`, `reports/RED_TEAM_ENSEMBLE_AUDIT.md`.
 
 ---
 
-*Demo built with Gradio {v}. Model bundle:* `models/ensemble_v1_tta/`.
+*Demo built with Gradio {v}. Model bundle:* `models/ensemble_v2_tta/` (0.6562 F1).
 """.format(v=gr.__version__)
             )
 
