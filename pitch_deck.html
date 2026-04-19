@@ -191,6 +191,11 @@
       font-style: italic;
       font-variation-settings: 'opsz' 24;
     }
+    #s1 .cover-footer {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
     #s1 .footer-kicker {
       display: flex;
       gap: 36px;
@@ -205,6 +210,37 @@
       color: var(--ink);
       font-weight: 600;
     }
+    #s1 .partner-row {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding-top: 24px;
+      border-top: 1px solid var(--rule);
+    }
+    #s1 .partner-label {
+      font-family: var(--sans);
+      font-size: 11px;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      font-weight: 600;
+    }
+    #s1 .partner-logos {
+      display: flex;
+      align-items: center;
+      gap: 44px;
+    }
+    #s1 .partner-logos img {
+      display: block;
+      object-fit: contain;
+      filter: grayscale(100%) contrast(1.05);
+      opacity: 0.85;
+      transition: opacity 200ms ease;
+    }
+    #s1 .partner-logos img:hover { opacity: 1; }
+    #s1 .logo-hk   { height: 56px; }
+    #s1 .logo-upjs { height: 72px; border-radius: 4px; }
+    #s1 .logo-mlh  { height: 64px; border-radius: 4px; }
 
     /* ════════════════════════════════════════════════════════════════
        CALM SLIDES (s2, s3, s4) — quiet, documentary, let peaks pop
@@ -722,8 +758,18 @@
               through multi-agent LLM orchestration.
             </p>
           </div>
-          <div class="footer-kicker reveal" data-d="5">
-            <span><strong>Atomic Force Microscopy</strong> · 240 scans · 5 classes</span>
+          <div class="cover-footer">
+            <div class="footer-kicker reveal" data-d="5">
+              <span><strong>Atomic Force Microscopy</strong> · 240 scans · 5 classes</span>
+            </div>
+            <div class="partner-row reveal" data-d="6">
+              <div class="partner-label">In partnership with</div>
+              <div class="partner-logos">
+                <img src="assets/logos/hackkosice.svg" alt="Hack Košice" class="logo-hk" />
+                <img src="assets/logos/upjs.jpg" alt="Pavol Jozef Šafárik University" class="logo-upjs" />
+                <img src="assets/logos/mlh.jpg" alt="Major League Hacking" class="logo-mlh" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
