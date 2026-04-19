@@ -1,6 +1,7 @@
 # Submission Handoff — UPJŠ Teardrop Challenge (Hack Košice 2026)
 
-**Model bundle:** `models/ensemble_v1/`
+**Primary model bundle:** `models/ensemble_v1_tta/` (TTA D4 ensemble, honest F1 = 0.6458)
+**Fallback bundle:** `models/ensemble_v1/` (no TTA, honest F1 = 0.6346, ~8x faster inference)
 **Task:** 5-class tear-film AFM disease classification
 **Shipped by:** Hack Košice 2026 team
 
@@ -9,16 +10,18 @@
 ## 1. Quick start
 
 ```python
-from teardrop.infer import TearClassifier
+# Primary: TTA ensemble (higher F1, slower ~8x due to D4 augmentation at inference)
+from models.ensemble_v1_tta.predict import TTAPredictor
+clf = TTAPredictor.load('models/ensemble_v1_tta')
 
-# Load the shippable ensemble bundle
-clf = TearClassifier.load('models/ensemble_v1')
+# Or fallback: non-TTA ensemble (faster)
+# from teardrop.infer import TearClassifier
+# clf = TearClassifier.load('models/ensemble_v1')
 
 # Predict a single scan (accepts Bruker Nanoscope .NNN or .spm):
 pred_class, probs = clf.predict_scan('path/to/scan.015')
 
 # Predict an entire directory (walks recursively for raw SPM files)
-# Returns a pandas DataFrame: columns = filename, pred_class, probabilities per class
 df = clf.predict_directory('/path/to/TEST_SET')
 df.to_csv('submission.csv', index=False)
 ```
