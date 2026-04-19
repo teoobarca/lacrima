@@ -1,0 +1,20 @@
+{
+  "classes": [
+    "ZdraviLudia",
+    "Diabetes",
+    "PGOV_Glaukom",
+    "SklerozaMultiplex",
+    "SucheOko"
+  ],
+  "config": {
+    "target_nm_per_px": 90.0,
+    "tile_size": 512,
+    "max_tiles": 9,
+    "render_mode": "afmhot",
+    "encoder": "dinov2_vitb14",
+    "classifier": "LogisticRegression_balanced",
+    "trained_on_n_scans": 240,
+    "honest_lopo_f1": 0.615
+  },
+  "encoder_name": "dinov2_vitb14"
+}

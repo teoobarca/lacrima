@@ -1,0 +1,38 @@
+{
+  "kind": "single",
+  "encoder_name": "biomedclip",
+  "classes": [
+    "ZdraviLudia",
+    "Diabetes",
+    "PGOV_Glaukom",
+    "SklerozaMultiplex",
+    "SucheOko"
+  ],
+  "config": {
+    "target_nm_per_px": 90.0,
+    "tile_size": 512,
+    "max_tiles": 9,
+    "tta": "D4",
+    "tta_group_order": 8,
+    "render_mode": "afmhot",
+    "classifier": "LogisticRegression_balanced",
+    "combine": "softmax_mean",
+    "components": [
+      {
+        "name": "dinov2b",
+        "encoder": "dinov2_vitb14",
+        "embed_dim": 768
+      },
+      {
+        "name": "biomedclip",
+        "encoder": "biomedclip",
+        "embed_dim": 512
+      }
+    ],
+    "trained_on_n_scans": 240,
+    "honest_lopo_f1_raw_argmax": 0.6458,
+    "honest_lopo_f1_non_tta_baseline": 0.6346,
+    "delta_vs_non_tta_raw_argmax": 0.0112,
+    "note": "TTA'd ensemble: per scan, each of 9 tiles is augmented with the 8 elements of D4 (identity, 3 rotations, 4 flipped rotations). All 72 PIL images are encoded and mean-pooled to a single scan embedding, which is then standardized and classified. The caller MUST expand tiles via the D4 orbit before calling predict_proba_from_tiles; see scripts/tta_experiment.py::d4_augmentations. Honest person-LOPO raw-argmax weighted F1 = 0.6458 (+0.0112 over non-TTA 0.6346 baseline)."
+  }
+}

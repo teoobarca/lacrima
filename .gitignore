@@ -4,6 +4,12 @@ __pycache__/
 .DS_Store
 TRAIN_SET/
 TRAIN_SET.zip
-reports/
-models/
+cache/
 .ipynb_checkpoints/
+
+# Track reports (markdown, small CSVs) and models (small .json / .npz classifiers)
+# Only ignore large generated artifacts inside them:
+reports/pitch/*.png
+reports/samples/*.png
+reports/raw_samples/*.png
+models/**/train_predictions.csv

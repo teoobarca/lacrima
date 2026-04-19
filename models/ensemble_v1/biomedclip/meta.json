@@ -1,0 +1,35 @@
+{
+  "kind": "single",
+  "encoder_name": "biomedclip",
+  "classes": [
+    "ZdraviLudia",
+    "Diabetes",
+    "PGOV_Glaukom",
+    "SklerozaMultiplex",
+    "SucheOko"
+  ],
+  "config": {
+    "target_nm_per_px": 90.0,
+    "tile_size": 512,
+    "max_tiles": 9,
+    "render_mode": "afmhot",
+    "classifier": "LogisticRegression_balanced",
+    "combine": "softmax_mean",
+    "components": [
+      {
+        "name": "dinov2b",
+        "encoder": "dinov2_vitb14",
+        "embed_dim": 768
+      },
+      {
+        "name": "biomedclip",
+        "encoder": "biomedclip",
+        "embed_dim": 512
+      }
+    ],
+    "trained_on_n_scans": 240,
+    "honest_lopo_f1_raw_argmax": 0.6346,
+    "honest_lopo_f1_with_nested_thresholds": 0.6528,
+    "note": "We ship raw softmax-avg argmax (no thresholds). 0.6528 is only reachable with per-class thresholds tuned via nested CV, which we did not package here."
+  }
+}
