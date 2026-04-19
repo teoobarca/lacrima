@@ -371,8 +371,14 @@
     #s3 .patient-dot.train { background: var(--ink-soft); opacity: 0.45; }
     #s3 .patient-dot.held-out {
       background: var(--accent);
-      transform: scale(1.4);
-      box-shadow: 0 0 0 4px var(--accent-soft);
+      transform: scale(1.45);
+      box-shadow: 0 0 0 5px var(--accent-soft), 0 0 12px rgba(45, 63, 227, 0.35);
+      animation: heldPulse 700ms ease-in-out;
+    }
+    @keyframes heldPulse {
+      0%   { transform: scale(0.9); }
+      45%  { transform: scale(1.55); }
+      100% { transform: scale(1.45); }
     }
     #s3 .legend {
       display: flex;
@@ -773,21 +779,21 @@
       <div class="layout">
         <div class="left">
           <h2 class="reveal" data-d="2">
-            Our F1 is <em>real</em><br/>
-            because we tried<br/>
-            to break it.
+            <em>Person-LOPO.</em><br/>
+            The honest way<br/>
+            to evaluate.
           </h2>
           <p class="reveal" data-d="3">
-            We split train and test by <em>patient</em>, never by scan.
-            No patient appears in both. Our F1 simulates exactly
-            what happens when a new person walks into the clinic.
+            <strong>L</strong>eave-<strong>O</strong>ne-<strong>P</strong>atient-<strong>O</strong>ut cross-validation.
+            35 patients, one held out at a time. The model predicts that patient's scans
+            without ever having seen them. <strong>240 scans → 240 honest predictions.</strong>
           </p>
           <div class="twist reveal" data-d="4">
-            <div class="label">Red-team discipline · 9 catches</div>
+            <div class="label">Red-team audit · 9 catches</div>
             <div class="body">
-              Every score above baseline gets independently audited
-              by a red-team agent. If it survives bootstrap CI + leak checks,
-              we ship it. If not, we document why and move on.
+              Every score above baseline is independently audited
+              by a red-team agent. We caught 9 contaminations —
+              <strong>including our own false 0.88</strong>.
             </div>
           </div>
         </div>
@@ -1067,7 +1073,7 @@
           <div class="signoff reveal" data-d="4">
             Karpathy ran one agent in a loop.
             <strong>We ran 218 in a single weekend.</strong>
-            Lacrima is the application — <em>the pattern is the contribution.</em>
+            <em>Lacrima today. The pattern stays.</em>
           </div>
         </div>
 
@@ -1161,19 +1167,37 @@
       if (!grid || grid.dataset.populated) return;
       grid.dataset.populated = '1';
       const total = 35;
-      const heldOutIdx = 11;
       for (let i = 0; i < total; i++) {
         const dot = document.createElement('div');
         dot.className = 'patient-dot';
         grid.appendChild(dot);
       }
-      const dotsP = grid.querySelectorAll('.patient-dot');
+      const dotsP = Array.from(grid.querySelectorAll('.patient-dot'));
+      // Phase 1: fill in as training
       dotsP.forEach((d, i) => {
-        setTimeout(() => {
-          if (i === heldOutIdx) d.classList.add('held-out');
-          else d.classList.add('train');
-        }, 300 + i * 26);
+        setTimeout(() => d.classList.add('train'), 250 + i * 22);
       });
+      // Phase 2: cycle held-out across patients
+      const cycleStart = 250 + total * 22 + 400;
+      let currentHeld = 0;
+      const cycle = () => {
+        dotsP.forEach(d => d.classList.remove('held-out'));
+        dotsP[currentHeld].classList.add('held-out');
+        currentHeld = (currentHeld + 1) % total;
+      };
+      setTimeout(() => {
+        cycle();
+        grid.dataset.cycleInterval = setInterval(cycle, 700);
+      }, cycleStart);
+    }
+
+    // stop cycling when leaving slide 3
+    function stopPatientGridCycle() {
+      const grid = document.getElementById('patient-grid');
+      if (grid && grid.dataset.cycleInterval) {
+        clearInterval(parseInt(grid.dataset.cycleInterval, 10));
+        delete grid.dataset.cycleInterval;
+      }
     }
 
     function pulseHero() {
