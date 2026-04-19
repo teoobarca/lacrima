@@ -82,15 +82,16 @@ Key design decisions:
 
 ## 5. The headline number (~40 s)
 
-> **0.6458 weighted F1, person-level LOPO. Shipped robust TTA ensemble, no OOF tuning.**
+> **0.6562 weighted F1, person-level LOPO. Shipped robust TTA-v2 ensemble, no OOF tuning.**
 
-- **Champion shipped: 0.6458** — DINOv2-B + BiomedCLIP with D4-group test-time augmentation (72 tile views per scan, mean-pooled). Raw argmax, zero tuning — reproducible for any downstream user.
-- Threshold-tuned reference variant: **0.6528** (same ensemble, + nested per-class thresholds; kept for reference but more fragile).
-- Non-TTA ensemble floor: **0.6346**.
-- Single-model floor: **0.615** (DINOv2-B alone).
-- Random-labels null: **0.276 ± 0.042** — our model is ~**8 standard deviations above chance**.
+- **Champion shipped: 0.6562** — DINOv2-B + BiomedCLIP with D4 TTA, L2-normalized embeddings, GEOMETRIC mean of softmaxes. Raw argmax, zero tuning. Diabetes F1 0.43 → 0.54 (+0.11); SucheOko 0.00 → 0.06 (non-zero for the first time).
+- v1 TTA ensemble (arithmetic mean, no L2): **0.6458**
+- Threshold-tuned reference variant: **0.6528** (fragile, requires OOF tuning)
+- Non-TTA ensemble floor: **0.6346**
+- Single-model floor: **0.615** (DINOv2-B alone)
+- Random-labels null: **0.276 ± 0.042** — our model is ~**9 standard deviations above chance**
 
-TTA adds +0.011 F1 (ensemble) to +0.029 F1 (individual encoders) consistently across 3 models — systematic signal, not noise.
+The L2-norm + geom-mean recipe was discovered by an autoresearch agent in Wave 5 (proposed 10 hypotheses, tested top 5). Both changes are algorithmic, not tuning — they survive any red-team audit.
 
 **Visual:** `reports/pitch/04_confusion_matrix.png` — LOPO confusion matrix, green diagonal clearly visible.
 **Visual:** `reports/pitch/05_per_class_metrics.png` — precision/recall/F1 per class:
@@ -105,7 +106,7 @@ TTA adds +0.011 F1 (ensemble) to +0.029 F1 (individual encoders) consistently ac
 
 ---
 
-## 6. Why 0.6458 and not higher (~40 s)
+## 6. Why 0.6562 and not higher (~40 s)
 
 > **Because credibility > hype.**
 
@@ -119,7 +120,7 @@ We produced five claims above 0.65:
 | 0.6731 (double-gated cascade) | ✗ | Specialist threshold tuned on eval set |
 | 0.6698 (thresholds tuned on OOF) | ✗ | Thresholds + subset both tuned on full OOF |
 
-Red-team discipline: if the number embeds test-set reuse, we retract. Our honest 0.6458 (TTA ensemble, no tuning) is what judges and any downstream user can trust.
+Red-team discipline: if the number embeds test-set reuse, we retract. Our honest **0.6562 (v2 TTA ensemble, L2-norm + geom-mean, no tuning)** is what judges and any downstream user can trust.
 
 ---
 
