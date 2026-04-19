@@ -1,7 +1,8 @@
 # Submission Handoff — UPJŠ Teardrop Challenge (Hack Košice 2026)
 
-**Primary model bundle:** `models/ensemble_v1_tta/` (TTA D4 ensemble, honest F1 = 0.6458)
-**Fallback bundle:** `models/ensemble_v1/` (no TTA, honest F1 = 0.6346, ~8x faster inference)
+**Primary model bundle:** `models/ensemble_v2_tta/` (L2-norm + geom-mean TTA ensemble, honest F1 = 0.6562)
+**Fallback bundle A:** `models/ensemble_v1_tta/` (TTA D4 ensemble, arith-mean, F1 = 0.6458)
+**Fallback bundle B:** `models/ensemble_v1/` (no TTA, F1 = 0.6346, ~8x faster inference)
 **Task:** 5-class tear-film AFM disease classification
 **Shipped by:** Hack Košice 2026 team
 
@@ -10,11 +11,15 @@
 ## 1. Quick start
 
 ```python
-# Primary: TTA ensemble (higher F1, slower ~8x due to D4 augmentation at inference)
-from models.ensemble_v1_tta.predict import TTAPredictor
-clf = TTAPredictor.load('models/ensemble_v1_tta')
+# Primary: v2 TTA ensemble (highest F1, slower ~8x due to D4 augmentation at inference)
+from models.ensemble_v2_tta.predict import TTAPredictorV2
+clf = TTAPredictorV2.load('models/ensemble_v2_tta')
 
-# Or fallback: non-TTA ensemble (faster)
+# Or fallback A: v1 TTA ensemble (similar cost, slightly lower F1)
+# from models.ensemble_v1_tta.predict import TTAPredictor
+# clf = TTAPredictor.load('models/ensemble_v1_tta')
+
+# Or fallback B: non-TTA ensemble (faster, slightly lower F1)
 # from teardrop.infer import TearClassifier
 # clf = TearClassifier.load('models/ensemble_v1')
 
