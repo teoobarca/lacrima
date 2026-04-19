@@ -46,8 +46,8 @@ def _load_predictor(model_dir: Path):
 
 def main():
     ap = argparse.ArgumentParser(description="Predict tear AFM classes on a directory.")
-    ap.add_argument("--model", default="models/ensemble_v1_tta",
-                    help="Path to model bundle (default: shipped TTA champion)")
+    ap.add_argument("--model", default="models/ensemble_v2_tta",
+                    help="Path to model bundle (default: v2 TTA champion, 0.6562 F1)")
     ap.add_argument("--input", required=True, help="Directory with raw SPM scans (recursive)")
     ap.add_argument("--output", default="submission.csv",
                     help="Output CSV path (default: submission.csv)")

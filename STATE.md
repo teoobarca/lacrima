@@ -6,18 +6,18 @@ Last updated: 2026-04-18 15:50 (Round 2 in progress)
 
 ---
 
-## Current best — FINAL (after TTA)
+## Current best — FINAL (after Wave 5 autoresearch)
 
 | Metric | Value | Model | Status |
 |---|---|---|---|
-| **Weighted F1 (person-LOPO, shippable)** | **0.6458** | DINOv2-B + BiomedCLIP TTA ensemble (raw argmax, D4 group) | ✓ SHIPPED `models/ensemble_v1_tta/` |
-| Weighted F1 (threshold-tuned reference) | 0.6528 | +nested thresholds | ✓ verified, but fragile & tuning-dependent |
-| Weighted F1 (no TTA, no thresholds) | 0.6346 | raw argmax 2-comp ensemble | ✓ `models/ensemble_v1/` |
+| **★ Weighted F1 (person-LOPO, CHAMPION)** | **0.6562** | TTA ensemble + L2-norm + geometric-mean (v2) | ✓ SHIPPED `models/ensemble_v2_tta/` |
+| Weighted F1 (no-norm arith) | 0.6458 | TTA v1 | ✓ `models/ensemble_v1_tta/` (superseded) |
+| Weighted F1 (threshold-tuned ref) | 0.6528 | non-TTA + nested thresholds | ✓ verified, fragile |
+| Weighted F1 (no TTA, no tricks) | 0.6346 | raw argmax 2-comp | ✓ `models/ensemble_v1/` |
 | Baseline | 0.615 | DINOv2-B single | ✓ |
 | Label-shuffle null | 0.276 ± 0.042 | — | ✓ signal real |
-| (leaky claim for ref) | ~~0.6698~~ | thresholds on same OOF | ✗ rejected by red-team |
 
-**Chosen submission:** `models/ensemble_v1_tta/` — TTA D4 ensemble, 0.6458 honest F1. Robust (no tuning), systematic TTA gain across 3 models (DINOv2-B +0.028, BiomedCLIP +0.029, ensemble +0.011).
+**Chosen submission:** `models/ensemble_v2_tta/` — L2-norm + geom-mean TTA ensemble, **0.6562 honest F1**. Wave 5 autoresearch discovered this recipe; reproducible in 15 s from cached TTA embeddings. Per-class gain concentrates on minority classes (Diabetes 0.43→0.54, SucheOko 0.00→0.06).
 
 ### Red-team findings (from `reports/RED_TEAM_ENSEMBLE_AUDIT.md`)
 - Original 0.6698 had stacked leakage: threshold sweep + subset selection both done on same 240-row OOF.

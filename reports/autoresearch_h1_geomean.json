@@ -1,0 +1,35 @@
+{
+  "champion_baseline": 0.6458,
+  "results": [
+    {
+      "combiner": "Arithmetic mean of softmaxes (CHAMP 0.6458)",
+      "wf1": 0.6458100263295542,
+      "mf1": 0.5154499233076907
+    },
+    {
+      "combiner": "Geometric mean of softmaxes",
+      "wf1": 0.6532644491588061,
+      "mf1": 0.5261052504547568
+    },
+    {
+      "combiner": "Arithmetic mean of logits -> softmax",
+      "wf1": 0.6532644491588061,
+      "mf1": 0.5261052504547568
+    },
+    {
+      "combiner": "Sum of logits (argmax)",
+      "wf1": 0.6532644491588061,
+      "mf1": 0.5261052504547568
+    },
+    {
+      "combiner": "Max-confidence switch per scan",
+      "wf1": 0.6309169448335469,
+      "mf1": 0.505080916758561
+    },
+    {
+      "combiner": "Entropy-weighted arithmetic",
+      "wf1": 0.6417634547550496,
+      "mf1": 0.512536734696178
+    }
+  ]
+}

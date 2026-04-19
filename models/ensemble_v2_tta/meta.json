@@ -1,0 +1,27 @@
+{
+  "kind": "ensemble",
+  "components": [
+    "dinov2b",
+    "biomedclip"
+  ],
+  "classes": [
+    "ZdraviLudia",
+    "Diabetes",
+    "PGOV_Glaukom",
+    "SklerozaMultiplex",
+    "SucheOko"
+  ],
+  "config": {
+    "ensemble_method": "geometric_mean",
+    "preprocessing": "l2_normalize_row \u2192 standardscaler",
+    "tta_group": "D4",
+    "tile_size": 512,
+    "max_tiles": 9,
+    "render_mode": "afmhot",
+    "target_nm_per_px": 90.0,
+    "honest_lopo_weighted_f1": 0.6562,
+    "honest_lopo_macro_f1": 0.5382,
+    "trained_on_n_scans": 240,
+    "provenance": "autoresearch Wave 5 H2 recipe"
+  }
+}

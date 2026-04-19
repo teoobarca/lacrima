@@ -1,0 +1,48 @@
+{
+  "total_files": 240,
+  "channel_occurrence": {
+    "Amplitude Error": 240,
+    "Height": 240,
+    "Phase": 227,
+    "Height Sensor": 240
+  },
+  "per_class_channel_occurrence": {
+    "ZdraviLudia": {
+      "Amplitude Error": 70,
+      "Height": 70,
+      "Phase": 70,
+      "Height Sensor": 70
+    },
+    "Diabetes": {
+      "Amplitude Error": 25,
+      "Height": 25,
+      "Phase": 12,
+      "Height Sensor": 25
+    },
+    "PGOV_Glaukom": {
+      "Amplitude Error": 36,
+      "Height": 36,
+      "Phase": 36,
+      "Height Sensor": 36
+    },
+    "SklerozaMultiplex": {
+      "Amplitude Error": 95,
+      "Height": 95,
+      "Phase": 95,
+      "Height Sensor": 95
+    },
+    "SucheOko": {
+      "Amplitude Error": 14,
+      "Height": 14,
+      "Phase": 14,
+      "Height Sensor": 14
+    }
+  },
+  "per_class_total": {
+    "Diabetes": 25,
+    "PGOV_Glaukom": 36,
+    "SklerozaMultiplex": 95,
+    "SucheOko": 14,
+    "ZdraviLudia": 70
+  }
+}

@@ -109,7 +109,9 @@ def load_advanced(samples, n_scans: int) -> np.ndarray | None:
     path_to_idx = {str(s.raw_path): i for i, s in enumerate(samples)}
     df["si"] = df["raw"].map(path_to_idx)
     df = df.dropna(subset=["si"]).sort_values("si")
-    feature_cols = [c for c in df.columns if c not in ("raw", "cls", "label", "patient", "si")]
+    # Drop ALL string/meta columns, keep only numeric features
+    meta_cols = {"raw", "cls", "label", "patient", "person", "si"}
+    feature_cols = [c for c in df.columns if c not in meta_cols and df[c].dtype != "object"]
     X = np.zeros((n_scans, len(feature_cols)), dtype=np.float32)
     for _, row in df.iterrows():
         X[int(row["si"])] = row[feature_cols].values.astype(np.float32)
@@ -223,7 +225,6 @@ def main():
                      "seconds": 0.0})
 
     # Same but with TTA features where available
-    dinov2b_tta = load_scan_level("dinov2_vitb14", n_scans)  # falls back to tiled
     tta_dinov2b_path = CACHE / "tta_emb_dinov2_vitb14_afmhot_t512_n9_d4.npz"
     tta_biomedclip_path = CACHE / "tta_emb_biomedclip_afmhot_t512_n9_d4.npz"
     if tta_dinov2b_path.exists() and tta_biomedclip_path.exists():
@@ -244,8 +245,33 @@ def main():
             preds[va] = (0.5 * p1 + 0.5 * p2).argmax(axis=1)
         f1w = f1_score(y, preds, average="weighted")
         f1m = f1_score(y, preds, average="macro")
-        rows.append({"config": "★ ENSEMBLE TTA (shipped champion)",
+        rows.append({"config": "ENSEMBLE TTA v1 (arith-mean, no L2)",
                      "f1_weighted": f1w, "f1_macro": f1m,
+                     "dim": Xd.shape[1] + Xb.shape[1], "seconds": 0.0})
+
+        # V2 recipe: L2-normalize → StandardScaler → LR → GEOMETRIC mean
+        from sklearn.preprocessing import normalize
+        Xd_n = normalize(Xd, norm="l2", axis=1)
+        Xb_n = normalize(Xb, norm="l2", axis=1)
+        preds = np.full(n_scans, -1, dtype=int)
+        eps = 1e-9
+        for tr, va in leave_one_patient_out(groups):
+            sc1 = StandardScaler(); Xt1 = sc1.fit_transform(Xd_n[tr]); Xv1 = sc1.transform(Xd_n[va])
+            clf1 = LogisticRegression(class_weight="balanced", max_iter=2000, C=1.0, n_jobs=4)
+            clf1.fit(Xt1, y[tr])
+            p1 = clf1.predict_proba(Xv1)
+            sc2 = StandardScaler(); Xt2 = sc2.fit_transform(Xb_n[tr]); Xv2 = sc2.transform(Xb_n[va])
+            clf2 = LogisticRegression(class_weight="balanced", max_iter=2000, C=1.0, n_jobs=4)
+            clf2.fit(Xt2, y[tr])
+            p2 = clf2.predict_proba(Xv2)
+            log_avg = 0.5 * (np.log(p1 + eps) + np.log(p2 + eps))
+            p = np.exp(log_avg - log_avg.max(axis=1, keepdims=True))
+            p = p / p.sum(axis=1, keepdims=True)
+            preds[va] = p.argmax(axis=1)
+        f1w_v2 = f1_score(y, preds, average="weighted")
+        f1m_v2 = f1_score(y, preds, average="macro")
+        rows.append({"config": "★ ENSEMBLE TTA v2 (L2 + geom-mean, SHIPPED)",
+                     "f1_weighted": f1w_v2, "f1_macro": f1m_v2,
                      "dim": Xd.shape[1] + Xb.shape[1], "seconds": 0.0})
 
     # Handcrafted
