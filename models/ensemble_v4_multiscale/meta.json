@@ -31,7 +31,7 @@
     "honest_lopo_weighted_f1": 0.6887,
     "honest_lopo_macro_f1": 0.5541,
     "trained_on_n_scans": 240,
-    "trained_on_n_persons": 44,
+    "trained_on_n_persons": 35,
     "provenance": "Wave 7 Config D \u2014 multi-scale champion, red-team approved"
   }
 }

@@ -56,6 +56,10 @@ def main():
                     help="Output CSV path (default: submission.csv)")
     ap.add_argument("--progress-every", type=int, default=10,
                     help="Print progress every N scans (default: 10)")
+    ap.add_argument("--input-format", default="spm", choices=["spm", "bmp"],
+                    help="Input format: 'spm' = raw Bruker .NNN (default, full "
+                         "accuracy); 'bmp' = 704x575 BMP previews (fallback, "
+                         "degraded accuracy — see teardrop/bmp_infer.py)")
     args = ap.parse_args()
 
     model_dir = Path(args.model).resolve()
@@ -67,7 +71,17 @@ def main():
     if not input_dir.exists():
         sys.exit(f"ERROR: input dir not found: {input_dir}")
 
-    clf, kind = _load_predictor(model_dir)
+    if args.input_format == "bmp":
+        # Only v4 multi-scale has BMP fallback implemented; other bundles
+        # should already have been migrated to SPM by the organizer.
+        if "ensemble_v4_multiscale" not in str(model_dir):
+            print(f"[warn] --input-format bmp is only validated against "
+                  f"models/ensemble_v4_multiscale; got {model_dir.name}")
+        from teardrop.bmp_infer import BmpPredictorV4
+        print(f"[load] BmpPredictorV4 from {model_dir} (BMP fallback path)")
+        clf = BmpPredictorV4.load(model_dir)
+    else:
+        clf, _ = _load_predictor(model_dir)
 
     t0 = time.time()
     df = clf.predict_directory(input_dir)

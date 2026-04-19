@@ -36,7 +36,7 @@ from sklearn.preprocessing import StandardScaler, normalize
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 warnings.filterwarnings("ignore")
 
-from teardrop.data import CLASSES  # noqa: E402
+from teardrop.data import CLASSES, person_id  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 CACHE = ROOT / "cache"
@@ -187,7 +187,7 @@ def main():
                 "honest_lopo_weighted_f1": 0.6887,
                 "honest_lopo_macro_f1": 0.5541,
                 "trained_on_n_scans": int(n_scans),
-                "trained_on_n_persons": int(len(set(map(str, scan_groups)))),
+                "trained_on_n_persons": int(len({person_id(Path(str(p))) for p in scan_paths})),
                 "provenance": "Wave 7 Config D — multi-scale champion, red-team approved",
             },
         }, f, indent=2)
