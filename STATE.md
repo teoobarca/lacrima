@@ -257,9 +257,9 @@ Meta-insight across all red-teams: at 240 scans we are at data ceiling. Bias/thr
 
 ---
 
-## Invariants I commit to as orchestrator
+## Invariants we commit to as orchestrator
 
-1. **Never do 30+ min gruntwork myself.** Delegate.
+1. **Never do 30+ min gruntwork ourselves.** Delegate.
 2. **Every win gets red-teamed** before adoption.
 3. **Update this file after every round.** Not optional.
 4. **Parallelize independent work.** Serial only when blocked.

@@ -20,3 +20,7 @@ models/**/train_predictions.csv
 
 # Per-agent transcript dumps from internal task system (not portable)
 .claude/
+
+# Hackathon-submission scratch (delete after copy-pasting into form)
+_submission_draft.md
+_gallery/
