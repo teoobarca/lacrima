@@ -1,0 +1,808 @@
+{
+  "weighted_f1": 0.6458100263295542,
+  "macro_f1": 0.5154499233076907,
+  "mode_counts": {
+    "OK": 155,
+    "C_near_miss": 58,
+    "B_high_conf": 15,
+    "D_catastrophic": 6,
+    "E_mid_conf": 5,
+    "A_low_conf": 1
+  },
+  "confusion_matrix": [
+    [
+      64,
+      5,
+      0,
+      0,
+      1
+    ],
+    [
+      8,
+      12,
+      0,
+      2,
+      3
+    ],
+    [
+      0,
+      0,
+      21,
+      15,
+      0
+    ],
+    [
+      1,
+      4,
+      20,
+      58,
+      12
+    ],
+    [
+      3,
+      1,
+      0,
+      10,
+      0
+    ]
+  ],
+  "classes": [
+    "ZdraviLudia",
+    "Diabetes",
+    "PGOV_Glaukom",
+    "SklerozaMultiplex",
+    "SucheOko"
+  ],
+  "per_class": [
+    {
+      "class_name": "ZdraviLudia",
+      "n_total": 70,
+      "n_correct": 64,
+      "n_errors": 6,
+      "recall": 0.9142857142857143,
+      "most_confused_with": "Diabetes",
+      "most_confused_count": 5,
+      "most_confused_share": 0.8333333333333334,
+      "error_breakdown": {
+        "Diabetes": 5,
+        "SucheOko": 1
+      }
+    },
+    {
+      "class_name": "Diabetes",
+      "n_total": 25,
+      "n_correct": 12,
+      "n_errors": 13,
+      "recall": 0.48,
+      "most_confused_with": "ZdraviLudia",
+      "most_confused_count": 8,
+      "most_confused_share": 0.6153846153846154,
+      "error_breakdown": {
+        "ZdraviLudia": 8,
+        "SucheOko": 3,
+        "SklerozaMultiplex": 2
+      }
+    },
+    {
+      "class_name": "PGOV_Glaukom",
+      "n_total": 36,
+      "n_correct": 21,
+      "n_errors": 15,
+      "recall": 0.5833333333333334,
+      "most_confused_with": "SklerozaMultiplex",
+      "most_confused_count": 15,
+      "most_confused_share": 1.0,
+      "error_breakdown": {
+        "SklerozaMultiplex": 15
+      }
+    },
+    {
+      "class_name": "SklerozaMultiplex",
+      "n_total": 95,
+      "n_correct": 58,
+      "n_errors": 37,
+      "recall": 0.6105263157894737,
+      "most_confused_with": "PGOV_Glaukom",
+      "most_confused_count": 20,
+      "most_confused_share": 0.5405405405405406,
+      "error_breakdown": {
+        "PGOV_Glaukom": 20,
+        "SucheOko": 12,
+        "Diabetes": 4,
+        "ZdraviLudia": 1
+      }
+    },
+    {
+      "class_name": "SucheOko",
+      "n_total": 14,
+      "n_correct": 0,
+      "n_errors": 14,
+      "recall": 0.0,
+      "most_confused_with": "SklerozaMultiplex",
+      "most_confused_count": 10,
+      "most_confused_share": 0.7142857142857143,
+      "error_breakdown": {
+        "SklerozaMultiplex": 10,
+        "ZdraviLudia": 3,
+        "Diabetes": 1
+      }
+    }
+  ],
+  "mode_b_details": [
+    {
+      "i": 136,
+      "scan": "22_PV_SM.000",
+      "person": "22EYE_SM",
+      "true": "SklerozaMultiplex",
+      "pred": "PGOV_Glaukom",
+      "maxprob": 0.9997723865702972,
+      "true_prob": 2.0682874958702753e-05,
+      "rank_true": 3,
+      "nn_classes": [
+        "PGOV_Glaukom",
+        "PGOV_Glaukom",
+        "PGOV_Glaukom",
+        "PGOV_Glaukom",
+        "PGOV_Glaukom"
+      ],
+      "nn_sims": [
+        0.7900112867355347,
+        0.7488170266151428,
+        0.7391351461410522,
+        0.7351325154304504,
+        0.7292292714118958
+      ],
+      "nn_persons": [
+        "27EYE_PGOV_PEX",
+        "21EYE_PGOV+SII",
+        "27EYE_PGOV_PEX",
+        "23EYE_PGOV",
+        "27EYE_PGOV_PEX"
+      ],
+      "nn_scans": [
+        "27PV_PGOV_PEX.000",
+        "21_LV_PGOV+SII.003",
+        "27PV_PGOV_PEX.004",
+        "23_LV_PGOV.004",
+        "27PV_PGOV_PEX.001"
+      ],
+      "nn_majority": "PGOV_Glaukom",
+      "nn_maj_count": 5,
+      "nn_matches_pred": 5,
+      "nn_matches_true": 0,
+      "hc_dist_to_true_mean": 13.104885925412056,
+      "hc_dist_to_pred_mean": 11.845662002781395,
+      "hc_closer_to_pred": true
+    },
+    {
+      "i": 5,
+      "scan": "DM_01.03.2024_LO.003",
+      "person": "DM_01.03.2024EYE",
+      "true": "Diabetes",
+      "pred": "ZdraviLudia",
+      "maxprob": 0.9964636801984537,
+      "true_prob": 0.0010562270629933695,
+      "rank_true": 3,
+      "nn_classes": [
+        "ZdraviLudia",
+        "ZdraviLudia",
+        "ZdraviLudia",
+        "ZdraviLudia",
+        "ZdraviLudia"
+      ],
+      "nn_sims": [
+        0.915138840675354,
+        0.9084392189979553,
+        0.908362627029419,
+        0.9071447253227234,
+        0.897244930267334
+      ],
+      "nn_persons": [
+        "48",
+        "5",
+        "48",
+        "6",
+        "2"
+      ],
+      "nn_scans": [
+        "48.002",
+        "5L.000",
+        "48.007",
+        "6P.001",
+        "2L.000"
+      ],
+      "nn_majority": "ZdraviLudia",
+      "nn_maj_count": 5,
+      "nn_matches_pred": 5,
+      "nn_matches_true": 0,
+      "hc_dist_to_true_mean": 4.566787351277778,
+      "hc_dist_to_pred_mean": 4.068146448286073,
+      "hc_closer_to_pred": true
+    },
+    {
+      "i": 32,
+      "scan": "21_LV_PGOV+SII.007",
+      "person": "21EYE_PGOV+SII",
+      "true": "PGOV_Glaukom",
+      "pred": "SklerozaMultiplex",
+      "maxprob": 0.9945476578866508,
+      "true_prob": 0.0021090073056688617,
+      "rank_true": 3,
+      "nn_classes": [
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex"
+      ],
+      "nn_sims": [
+        0.8596376180648804,
+        0.8079088926315308,
+        0.8052637577056885,
+        0.7893069982528687,
+        0.7819881439208984
+      ],
+      "nn_persons": [
+        "100-SM-EYE-18",
+        "100-SM-EYE-18",
+        "100-SM-EYE-18",
+        "20-SM-EYE-18",
+        "100-SM-EYE-18"
+      ],
+      "nn_scans": [
+        "100_7-SM-LV-18.003",
+        "100_7-SM-LV-18.002",
+        "100_8-SM-PV-18.005",
+        "20_3-SM-LV-18.000",
+        "100_8-SM-PV-18.000"
+      ],
+      "nn_majority": "SklerozaMultiplex",
+      "nn_maj_count": 5,
+      "nn_matches_pred": 5,
+      "nn_matches_true": 0,
+      "hc_dist_to_true_mean": 7.080268577916589,
+      "hc_dist_to_pred_mean": 9.598818918153466,
+      "hc_closer_to_pred": false
+    },
+    {
+      "i": 129,
+      "scan": "20_LM_SM-SS.005",
+      "person": "20EYE_SM-SS",
+      "true": "SklerozaMultiplex",
+      "pred": "SucheOko",
+      "maxprob": 0.9917823865327888,
+      "true_prob": 0.0014942247227396912,
+      "rank_true": 3,
+      "nn_classes": [
+        "SucheOko",
+        "ZdraviLudia",
+        "SklerozaMultiplex",
+        "Diabetes",
+        "ZdraviLudia"
+      ],
+      "nn_sims": [
+        0.8322290778160095,
+        0.8263949155807495,
+        0.7783700227737427,
+        0.7541465759277344,
+        0.7501665353775024
+      ],
+      "nn_persons": [
+        "29EYE_suche_oko",
+        "79",
+        "1-SM-EYE-18",
+        "Dusan1_DM_STER_mikro_281123",
+        "5"
+      ],
+      "nn_scans": [
+        "29_PM_suche_oko.007",
+        "79.003",
+        "1-SM-LM-18.006",
+        "Dusan1_DM_STER_mikro_281123.010",
+        "5L.000"
+      ],
+      "nn_majority": "ZdraviLudia",
+      "nn_maj_count": 2,
+      "nn_matches_pred": 1,
+      "nn_matches_true": 1,
+      "hc_dist_to_true_mean": 9.258381530148334,
+      "hc_dist_to_pred_mean": 6.785241388847031,
+      "hc_closer_to_pred": true
+    },
+    {
+      "i": 169,
+      "scan": "35_PM_suche_oko.026",
+      "person": "35EYE_suche_oko",
+      "true": "SucheOko",
+      "pred": "SklerozaMultiplex",
+      "maxprob": 0.9712146531725431,
+      "true_prob": 0.00022139453291638382,
+      "rank_true": 3,
+      "nn_classes": [
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "Diabetes",
+        "SklerozaMultiplex"
+      ],
+      "nn_sims": [
+        0.8406796455383301,
+        0.8179224729537964,
+        0.8000351190567017,
+        0.7716593146324158,
+        0.7684263586997986
+      ],
+      "nn_persons": [
+        "1-SM-EYE-18",
+        "1-SM-EYE-18",
+        "1-SM-EYE-18",
+        "37_DM",
+        "1-SM-EYE-18"
+      ],
+      "nn_scans": [
+        "1-SM-LM-18.002",
+        "1-SM-PM-18.002",
+        "1-SM-PM-18.006",
+        "37_DM.010",
+        "1-SM-LM-18.007"
+      ],
+      "nn_majority": "SklerozaMultiplex",
+      "nn_maj_count": 4,
+      "nn_matches_pred": 4,
+      "nn_matches_true": 0,
+      "hc_dist_to_true_mean": 7.49157601991886,
+      "hc_dist_to_pred_mean": 10.573407848185724,
+      "hc_closer_to_pred": false
+    },
+    {
+      "i": 160,
+      "scan": "29_PM_suche_oko.006",
+      "person": "29EYE_suche_oko",
+      "true": "SucheOko",
+      "pred": "SklerozaMultiplex",
+      "maxprob": 0.9633278939915759,
+      "true_prob": 0.007426629518554375,
+      "rank_true": 3,
+      "nn_classes": [
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex"
+      ],
+      "nn_sims": [
+        0.7691231966018677,
+        0.7615606784820557,
+        0.7394967675209045,
+        0.7285827398300171,
+        0.7207894921302795
+      ],
+      "nn_persons": [
+        "19EYE_SM",
+        "19EYE_SM",
+        "1-SM-EYE-18",
+        "19EYE_SM",
+        "19EYE_SM"
+      ],
+      "nn_scans": [
+        "19_PM_SM.002",
+        "19_PM_SM.068",
+        "1-SM-LM-18.007",
+        "19_PM_SM.004",
+        "19_PM_SM.003"
+      ],
+      "nn_majority": "SklerozaMultiplex",
+      "nn_maj_count": 5,
+      "nn_matches_pred": 5,
+      "nn_matches_true": 0,
+      "hc_dist_to_true_mean": 7.409510477989766,
+      "hc_dist_to_pred_mean": 6.808799464394204,
+      "hc_closer_to_pred": true
+    },
+    {
+      "i": 29,
+      "scan": "21_LV_PGOV+SII.004",
+      "person": "21EYE_PGOV+SII",
+      "true": "PGOV_Glaukom",
+      "pred": "SklerozaMultiplex",
+      "maxprob": 0.9416078672372088,
+      "true_prob": 0.006995944347865548,
+      "rank_true": 3,
+      "nn_classes": [
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex"
+      ],
+      "nn_sims": [
+        0.7404216527938843,
+        0.7193461656570435,
+        0.686938464641571,
+        0.6800468564033508,
+        0.6772185564041138
+      ],
+      "nn_persons": [
+        "19EYE_SM",
+        "100-SM-EYE-18",
+        "50_5_SM-EYE-18",
+        "19_SM_MK",
+        "100-SM-EYE-18"
+      ],
+      "nn_scans": [
+        "19_PM_SM.067",
+        "100_7-SM-LV-18.002",
+        "50_5_SM-LV-18.000",
+        "19_SM_MK.003",
+        "100_7-SM-LV-18.003"
+      ],
+      "nn_majority": "SklerozaMultiplex",
+      "nn_maj_count": 5,
+      "nn_matches_pred": 5,
+      "nn_matches_true": 0,
+      "hc_dist_to_true_mean": 10.802544621870478,
+      "hc_dist_to_pred_mean": 10.649720640511768,
+      "hc_closer_to_pred": true
+    },
+    {
+      "i": 156,
+      "scan": "29_PM_suche_oko.000",
+      "person": "29EYE_suche_oko",
+      "true": "SucheOko",
+      "pred": "SklerozaMultiplex",
+      "maxprob": 0.9401507173046337,
+      "true_prob": 0.021331590422488302,
+      "rank_true": 3,
+      "nn_classes": [
+        "ZdraviLudia",
+        "SklerozaMultiplex",
+        "ZdraviLudia",
+        "ZdraviLudia",
+        "SklerozaMultiplex"
+      ],
+      "nn_sims": [
+        0.8940515518188477,
+        0.883558988571167,
+        0.8790667057037354,
+        0.8784544467926025,
+        0.8767033815383911
+      ],
+      "nn_persons": [
+        "9",
+        "20EYE_SM-SS",
+        "79",
+        "2",
+        "20EYE_SM-SS"
+      ],
+      "nn_scans": [
+        "9L.000",
+        "20_LM_SM-SS.007",
+        "79.001",
+        "2P.003",
+        "20_LM_SM-SS.001"
+      ],
+      "nn_majority": "ZdraviLudia",
+      "nn_maj_count": 3,
+      "nn_matches_pred": 2,
+      "nn_matches_true": 0,
+      "hc_dist_to_true_mean": 8.615844923942614,
+      "hc_dist_to_pred_mean": 9.496352170193836,
+      "hc_closer_to_pred": false
+    },
+    {
+      "i": 142,
+      "scan": "22_PV_SM.007",
+      "person": "22EYE_SM",
+      "true": "SklerozaMultiplex",
+      "pred": "PGOV_Glaukom",
+      "maxprob": 0.9346189495563005,
+      "true_prob": 0.006925093101765321,
+      "rank_true": 3,
+      "nn_classes": [
+        "PGOV_Glaukom",
+        "SklerozaMultiplex",
+        "PGOV_Glaukom",
+        "PGOV_Glaukom",
+        "PGOV_Glaukom"
+      ],
+      "nn_sims": [
+        0.8748118877410889,
+        0.7807698845863342,
+        0.7703566551208496,
+        0.763313889503479,
+        0.7523692846298218
+      ],
+      "nn_persons": [
+        "21EYE_PGOV+SII",
+        "20-SM-EYE-18",
+        "21EYE_PGOV+SII",
+        "25EYE_PGOV",
+        "25EYE_PGOV"
+      ],
+      "nn_scans": [
+        "21_LV_PGOV+SII.005",
+        "20_3-SM-LV-18.003",
+        "21_LV_PGOV+SII.006",
+        "25_PV_PGOV.012",
+        "25_PV_PGOV.014"
+      ],
+      "nn_majority": "PGOV_Glaukom",
+      "nn_maj_count": 4,
+      "nn_matches_pred": 4,
+      "nn_matches_true": 1,
+      "hc_dist_to_true_mean": 5.051338216471281,
+      "hc_dist_to_pred_mean": 8.12827704994551,
+      "hc_closer_to_pred": false
+    },
+    {
+      "i": 168,
+      "scan": "35_PM_suche_oko.021",
+      "person": "35EYE_suche_oko",
+      "true": "SucheOko",
+      "pred": "SklerozaMultiplex",
+      "maxprob": 0.9181372214812489,
+      "true_prob": 0.023085669806209838,
+      "rank_true": 3,
+      "nn_classes": [
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex"
+      ],
+      "nn_sims": [
+        0.8109720945358276,
+        0.7927858233451843,
+        0.7852905988693237,
+        0.7815009355545044,
+        0.7494615912437439
+      ],
+      "nn_persons": [
+        "1-SM-EYE-18",
+        "1-SM-EYE-18",
+        "1-SM-EYE-18",
+        "19EYE_SM",
+        "1-SM-EYE-18"
+      ],
+      "nn_scans": [
+        "1-SM-PM-18.004",
+        "1-SM-PM-18.006",
+        "1-SM-PM-18.002",
+        "19_PM_SM.070",
+        "1-SM-LM-18.007"
+      ],
+      "nn_majority": "SklerozaMultiplex",
+      "nn_maj_count": 5,
+      "nn_matches_pred": 5,
+      "nn_matches_true": 0,
+      "hc_dist_to_true_mean": 6.4830872710822325,
+      "hc_dist_to_pred_mean": 7.855153600156493,
+      "hc_closer_to_pred": false
+    },
+    {
+      "i": 166,
+      "scan": "35_PM_suche_oko.010",
+      "person": "35EYE_suche_oko",
+      "true": "SucheOko",
+      "pred": "Diabetes",
+      "maxprob": 0.7763544881169961,
+      "true_prob": 0.0451613601151596,
+      "rank_true": 3,
+      "nn_classes": [
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex"
+      ],
+      "nn_sims": [
+        0.5967037677764893,
+        0.5925918817520142,
+        0.5810933709144592,
+        0.5792365074157715,
+        0.5675350427627563
+      ],
+      "nn_persons": [
+        "19EYE_SM",
+        "1-SM-EYE-18",
+        "1-SM-EYE-18",
+        "19EYE_SM",
+        "1-SM-EYE-18"
+      ],
+      "nn_scans": [
+        "19_PM_SM.007",
+        "1-SM-PM-18.006",
+        "1-SM-PM-18.004",
+        "19_PM_SM.070",
+        "1-SM-LM-18.002"
+      ],
+      "nn_majority": "SklerozaMultiplex",
+      "nn_maj_count": 5,
+      "nn_matches_pred": 0,
+      "nn_matches_true": 0,
+      "hc_dist_to_true_mean": 6.033403938369929,
+      "hc_dist_to_pred_mean": 9.066331807985716,
+      "hc_closer_to_pred": false
+    },
+    {
+      "i": 158,
+      "scan": "29_PM_suche_oko.004",
+      "person": "29EYE_suche_oko",
+      "true": "SucheOko",
+      "pred": "ZdraviLudia",
+      "maxprob": 0.7713392417213976,
+      "true_prob": 0.01579623182067777,
+      "rank_true": 3,
+      "nn_classes": [
+        "ZdraviLudia",
+        "SklerozaMultiplex",
+        "ZdraviLudia",
+        "Diabetes",
+        "ZdraviLudia"
+      ],
+      "nn_sims": [
+        0.9272246360778809,
+        0.904907763004303,
+        0.8908931612968445,
+        0.8726940155029297,
+        0.8629923462867737
+      ],
+      "nn_persons": [
+        "79",
+        "20EYE_SM-SS",
+        "1",
+        "Dusan1_DM_STER_mikro_281123",
+        "5"
+      ],
+      "nn_scans": [
+        "79.001",
+        "20_LM_SM-SS.007",
+        "1P.000",
+        "Dusan1_DM_STER_mikro_281123.012",
+        "5P.001"
+      ],
+      "nn_majority": "ZdraviLudia",
+      "nn_maj_count": 3,
+      "nn_matches_pred": 3,
+      "nn_matches_true": 0,
+      "hc_dist_to_true_mean": 4.620278944927647,
+      "hc_dist_to_pred_mean": 9.15293948815076,
+      "hc_closer_to_pred": false
+    },
+    {
+      "i": 125,
+      "scan": "20_LM_SM-SS.001",
+      "person": "20EYE_SM-SS",
+      "true": "SklerozaMultiplex",
+      "pred": "SucheOko",
+      "maxprob": 0.7507519072427735,
+      "true_prob": 0.016770624888958658,
+      "rank_true": 3,
+      "nn_classes": [
+        "SucheOko",
+        "SucheOko",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "SucheOko"
+      ],
+      "nn_sims": [
+        0.8767033815383911,
+        0.875140905380249,
+        0.8714866638183594,
+        0.8637843728065491,
+        0.8633946180343628
+      ],
+      "nn_persons": [
+        "29EYE_suche_oko",
+        "29EYE_suche_oko",
+        "1-SM-EYE-18",
+        "1-SM-EYE-18",
+        "29EYE_suche_oko"
+      ],
+      "nn_scans": [
+        "29_PM_suche_oko.000",
+        "29_PM_suche_oko.007",
+        "1-SM-LM-18.006",
+        "1-SM-LM-18.000",
+        "29_PM_suche_oko.008"
+      ],
+      "nn_majority": "SucheOko",
+      "nn_maj_count": 3,
+      "nn_matches_pred": 3,
+      "nn_matches_true": 2,
+      "hc_dist_to_true_mean": 9.516238871882138,
+      "hc_dist_to_pred_mean": 9.466561025338152,
+      "hc_closer_to_pred": true
+    },
+    {
+      "i": 162,
+      "scan": "29_PM_suche_oko.008",
+      "person": "29EYE_suche_oko",
+      "true": "SucheOko",
+      "pred": "ZdraviLudia",
+      "maxprob": 0.7120467004633357,
+      "true_prob": 0.001696498795951891,
+      "rank_true": 3,
+      "nn_classes": [
+        "ZdraviLudia",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "ZdraviLudia",
+        "ZdraviLudia"
+      ],
+      "nn_sims": [
+        0.9409960508346558,
+        0.9208492636680603,
+        0.9005995988845825,
+        0.882420539855957,
+        0.8803750276565552
+      ],
+      "nn_persons": [
+        "9",
+        "20EYE_SM-SS",
+        "1-SM-EYE-18",
+        "6",
+        "79"
+      ],
+      "nn_scans": [
+        "9L.000",
+        "20_LM_SM-SS.007",
+        "1-SM-LM-18.006",
+        "6P.001",
+        "79.001"
+      ],
+      "nn_majority": "ZdraviLudia",
+      "nn_maj_count": 3,
+      "nn_matches_pred": 3,
+      "nn_matches_true": 0,
+      "hc_dist_to_true_mean": 5.089037592956226,
+      "hc_dist_to_pred_mean": 8.965803857308067,
+      "hc_closer_to_pred": false
+    },
+    {
+      "i": 161,
+      "scan": "29_PM_suche_oko.007",
+      "person": "29EYE_suche_oko",
+      "true": "SucheOko",
+      "pred": "SklerozaMultiplex",
+      "maxprob": 0.7059444747521273,
+      "true_prob": 0.01987026073050003,
+      "rank_true": 3,
+      "nn_classes": [
+        "SklerozaMultiplex",
+        "SklerozaMultiplex",
+        "ZdraviLudia",
+        "SklerozaMultiplex",
+        "SklerozaMultiplex"
+      ],
+      "nn_sims": [
+        0.8897051811218262,
+        0.8825267553329468,
+        0.8811588883399963,
+        0.8802080750465393,
+        0.875140905380249
+      ],
+      "nn_persons": [
+        "20EYE_SM-SS",
+        "20EYE_SM-SS",
+        "9",
+        "1-SM-EYE-18",
+        "20EYE_SM-SS"
+      ],
+      "nn_scans": [
+        "20_LM_SM-SS.002",
+        "20_LM_SM-SS.007",
+        "9L.000",
+        "1-SM-LM-18.006",
+        "20_LM_SM-SS.001"
+      ],
+      "nn_majority": "SklerozaMultiplex",
+      "nn_maj_count": 4,
+      "nn_matches_pred": 4,
+      "nn_matches_true": 0,
+      "hc_dist_to_true_mean": 5.0609272899853455,
+      "hc_dist_to_pred_mean": 8.326379311817277,
+      "hc_closer_to_pred": false
+    }
+  ]
+}

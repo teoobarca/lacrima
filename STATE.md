@@ -176,6 +176,19 @@ Meta-insight across all red-teams: at 240 scans we are at data ceiling. Bias/thr
 4. **Parallelize independent work.** Serial only when blocked.
 5. **T-6h cutoff: stop exploring, start consolidating.** Pitch > optimal F1.
 
+## Error analysis findings (post-TTA, from `reports/ERROR_ANALYSIS.md`)
+
+Of 85 misclassified scans out of 240:
+- **Mode C (near-miss, truth = rank 2): 58 (68%)** — model is on decision boundary, not wildly wrong
+- **Mode B (high-conf wrong): 15** — 12/15 the embedding legitimately puts the scan in wrong cluster; cannot be fixed by changing head
+- **Mode D (catastrophic, truth rank ≥ 4): 6** — 4/6 are SucheOko
+- **Mode A (low-conf): 1**
+- **SucheOko contributes 57% of non-near-miss errors** — 2-patient ceiling dominates
+- **Diabetes → Healthy session-level failure** at one specific session (`DM_01.03.2024` LO/PO eyes)
+- **Realistic upper bound from further interventions: +0.005 to +0.01** — we are at the data ceiling, not model ceiling
+
+---
+
 ## Key meta-insights (orchestration win)
 
 After 3+ round × ~8 agents, the emergent pattern is crystal clear:
