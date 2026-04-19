@@ -2,8 +2,8 @@
 
 **Disease classification from tear-film AFM micrographs** — orchestrated multi-agent ML research pipeline.
 
-> **Champion shipped model:** v2 TTA ensemble (DINOv2-B + BiomedCLIP, D4 test-time augmentation, L2-normalized embeddings, geometric-mean softmax combination).
-> **Honest F1:** 0.6562 weighted (macro 0.538), person-level Leave-One-Patient-Out (35 persons, 240 scans, 5 classes).
+> **Champion shipped model:** v4 multi-scale TTA ensemble (DINOv2-B at 90 nm/px + 45 nm/px + BiomedCLIP, D4 test-time augmentation, L2-normalized embeddings, geometric-mean softmax combination).
+> **Honest F1:** 0.6887 weighted (macro 0.554), person-level Leave-One-Patient-Out (35 persons, 240 scans, 5 classes). Red-team bootstrap 95% CI strictly > 0 (P = 0.999).
 
 ## Quick start (inference)
 
@@ -45,10 +45,12 @@ python3.13 -m venv .venv
 
 | Model | Weighted F1 | Macro F1 |
 |---|---:|---:|
-| **★ v2 TTA ensemble (shipped, L2 + geom-mean)** | **0.6562** | **0.5382** |
+| **★ v4 multi-scale TTA (shipped, 90+45nm+BiomedCLIP)** | **0.6887** | **0.5541** |
+| v2 TTA (superseded champ, single-scale) | 0.6562 | 0.5382 |
 | v1 TTA ensemble | 0.6458 | 0.5154 |
 | Non-TTA ensemble | 0.6346 | 0.4934 |
-| DINOv2-B single | 0.6150 | 0.4910 |
+| DINOv2-B 45 nm/px single | 0.6433 | 0.5038 |
+| DINOv2-B 90 nm/px single | 0.6150 | 0.4910 |
 | Handcrafted (94 feat) + LR | 0.4882 | 0.3707 |
 | Label-shuffle null | 0.276 ± 0.042 | — |
 

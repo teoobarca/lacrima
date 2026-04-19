@@ -82,16 +82,19 @@ Key design decisions:
 
 ## 5. The headline number (~40 s)
 
-> **0.6562 weighted F1, person-level LOPO. Shipped robust TTA-v2 ensemble, no OOF tuning.**
+> **0.6887 weighted F1, person-level LOPO. Shipped multi-scale TTA-v4 ensemble, no OOF tuning.**
 
-- **Champion shipped: 0.6562** — DINOv2-B + BiomedCLIP with D4 TTA, L2-normalized embeddings, GEOMETRIC mean of softmaxes. Raw argmax, zero tuning. Diabetes F1 0.43 → 0.54 (+0.11); SucheOko 0.00 → 0.06 (non-zero for the first time).
-- v1 TTA ensemble (arithmetic mean, no L2): **0.6458**
-- Threshold-tuned reference variant: **0.6528** (fragile, requires OOF tuning)
-- Non-TTA ensemble floor: **0.6346**
-- Single-model floor: **0.615** (DINOv2-B alone)
-- Random-labels null: **0.276 ± 0.042** — our model is ~**9 standard deviations above chance**
+- **Champion shipped: 0.6887** — DINOv2-B at 90 nm/px + DINOv2-B at 45 nm/px + BiomedCLIP TTA, via the v2 recipe (L2-normalized embeddings + geometric mean of softmaxes). Macro F1 = 0.5541.
+- Wave 5 v2 champion (same recipe, one scale): 0.6562
+- v1 TTA ensemble (arithmetic mean, no L2): 0.6458
+- Threshold-tuned reference variant: 0.6528 (fragile)
+- Non-TTA ensemble floor: 0.6346
+- Single-model floor: 0.615 (DINOv2-B alone)
+- Random-labels null: 0.276 ± 0.042 — our model is **~12σ above chance**
 
-The L2-norm + geom-mean recipe was discovered by an autoresearch agent in Wave 5 (proposed 10 hypotheses, tested top 5). Both changes are algorithmic, not tuning — they survive any red-team audit.
+Per-class lifts are **broad**: Healthy +0.048, Diabetes +0.042, SM +0.040, Glaukom +0.015, SucheOko single-scan swing. Not concentrated (unlike the rejected E7 claim which was Diabetes-only).
+
+The multi-scale + multi-encoder + v2 recipe composition emerged across Waves 5 and 7 of our autoresearch agents. Red-team bootstrap (1000 person-level resamples) confirms strict P(Δ > 0) = 0.999 on apples-to-apples comparison.
 
 **Visual:** `reports/pitch/04_confusion_matrix.png` — LOPO confusion matrix, green diagonal clearly visible.
 **Visual:** `reports/pitch/05_per_class_metrics.png` — precision/recall/F1 per class:

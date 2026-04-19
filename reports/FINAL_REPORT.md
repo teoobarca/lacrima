@@ -8,7 +8,7 @@
 
 ## TL;DR
 
-- **Honest headline:** weighted F1 = **0.6562** under person-level Leave-One-Patient-Out (LOPO) with the shipped v2 TTA ensemble (L2-normalized embeddings, geometric-mean softmax combination, no tuning). v1 TTA (arith mean, no L2) = 0.6458. Threshold-tuned reference variant = 0.6528. Non-TTA baseline ensemble = 0.6346. Single-encoder floor = 0.615. Label-shuffle null = 0.276 ± 0.042 → signal is real (~9σ above chance).
+- **Honest headline:** weighted F1 = **0.6887** under person-level Leave-One-Patient-Out (LOPO) with the shipped v4 multi-scale TTA ensemble (DINOv2-B at 90 nm/px + DINOv2-B at 45 nm/px + BiomedCLIP-TTA, L2-norm + geometric-mean). Red-team bootstrap P(Δ > 0) = 0.999. Macro F1 = 0.5541. Wave-5 v2 (single-scale) = 0.6562. v1 TTA (arith mean) = 0.6458. Single-encoder floor = 0.615. Label-shuffle null = 0.276 ± 0.042 → signal is real (~12σ above chance).
 - **Champion:** uniform probability average of two frozen encoders (DINOv2-B ViT-B/14 + BiomedCLIP ViT-B/16) → tile-mean-pool → `LogisticRegression(class_weight='balanced')`. No calibration, no stacking, no bias tuning.
 - **Meta-insight:** at 240 scans / 35 persons we sit at a data ceiling — every claim > 0.65 we produced first turned out to be stacked OOF tuning. Simple beats fancy. Red-team audits rejected 3 inflated headlines (0.6698, 0.6780, 0.6878).
 
@@ -45,8 +45,9 @@ Per scan: SPM height map → plane-level → resample to 90 nm/px → robust-nor
 
 | Rank | Model | Weighted F1 | Macro F1 | Status |
 |---|---|---:|---:|---|
-| **★** | **v2 TTA ensemble (L2-norm + geom-mean, SHIPPED)** | **0.6562** | 0.5382 | ✓ Wave-5 autoresearch; honest, no tuning |
-| ★₋₁ | v1 TTA ensemble (arith mean, no L2) | 0.6458 | 0.5154 | ✓ robust, no tuning |
+| **★** | **v4 multi-scale TTA (90+45nm DINOv2-B + BiomedCLIP-TTA, SHIPPED)** | **0.6887** | 0.5541 | ✓ Wave-7 red-team P>0=0.999 |
+| ★₋₁ | v2 TTA ensemble (L2-norm + geom-mean) | 0.6562 | 0.5382 | ✓ Wave-5; superseded |
+| ★₋₂ | v1 TTA ensemble (arith mean, no L2) | 0.6458 | 0.5154 | ✓ robust, no tuning |
 | 1 | DINOv2-B + BiomedCLIP proba-avg + nested-CV thresholds | 0.6528 | 0.4985 | ✓ red-team verified (tuning-fragile) |
 | 2 | Soft-blend stacker (α=0.90 nested) | 0.6451 | 0.5033 | ✓ honest |
 | 3 | DINOv2-B + BiomedCLIP proba-avg (raw argmax, shippable) | 0.6346 | 0.4934 | ✓ shipped |

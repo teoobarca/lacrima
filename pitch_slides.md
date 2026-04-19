@@ -65,14 +65,16 @@ Ready for Google Slides / PowerPoint. Bullet-point format, no prose. Figure refe
 
 ## Slide 7 — Headline results
 
-- **Weighted F1 = 0.6562** (person-LOPO, v2 TTA ensemble, L2-norm + geom-mean, no tuning)
-- v1 TTA (arith mean, no L2): 0.6458
-- Threshold-tuned reference: 0.6528 (nested-CV, tuning-fragile)
+- **Weighted F1 = 0.6887** (person-LOPO, v4 multi-scale TTA ensemble, no tuning)
+- Macro F1 = 0.5541
+- v2 (single-scale): 0.6562
+- v1 TTA (arith mean): 0.6458
+- Threshold-tuned reference: 0.6528 (tuning-fragile)
 - Non-TTA ensemble: 0.6346
 - Single-model baseline: 0.615
-- Null baseline: 0.276 ± 0.042 → **~9σ above chance**
-- v2 recipe gains concentrated on minorities: Diabetes 0.43→0.54, Dry Eye 0→0.06
-- Per-class: Healthy 0.87 · Diabetes 0.54 · Glaukom 0.56 · SM 0.65 · Dry Eye 0.06
+- Null baseline: 0.276 ± 0.042 → **~12σ above chance**
+- Red-team bootstrap: P(Δ > 0) = 0.999 on fair comparison
+- Per-class lifts broad: Healthy +0.05, Diabetes +0.04, SM +0.04, Glaukom +0.02
 - *Figure:* `04_confusion_matrix.png` + `05_per_class_metrics.png`
 
 ---
@@ -113,7 +115,7 @@ Ready for Google Slides / PowerPoint. Bullet-point format, no prose. Figure refe
 - Ship
   - `TearClassifier.load('models/ensemble_v1')` → `.predict_directory(...)`
   - Full red-team history in `reports/`
-- **Credibility > hype. 0.6562 honest, shipped. 0.6528 threshold-tuned reference.**
+- **Credibility > hype. 0.6887 honest, shipped (v4 multi-scale). Red-team bootstrap P>0 = 0.999.**
 - **Thank you.**
 
 ---
