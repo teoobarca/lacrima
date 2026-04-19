@@ -1,0 +1,1451 @@
+{
+  "classes": [
+    "ZdraviLudia",
+    "Diabetes",
+    "PGOV_Glaukom",
+    "SklerozaMultiplex",
+    "SucheOko"
+  ],
+  "conf_thresholds": [
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9
+  ],
+  "target_accuracies": [
+    0.8,
+    0.9,
+    0.95
+  ],
+  "baseline_scan": {
+    "accuracy": 0.6833333333333333,
+    "weighted_f1": 0.6552394958948358
+  },
+  "baseline_patient": {
+    "accuracy": 0.7714285714285715,
+    "weighted_f1": 0.7412475789754892
+  },
+  "scan_sweep": [
+    {
+      "T": 0.3,
+      "n_total": 240,
+      "n_accepted": 240,
+      "coverage": 1.0,
+      "accuracy": 0.6833333333333333,
+      "weighted_f1": 0.6552394958948358,
+      "macro_f1": 0.502752213820175,
+      "n_rejected": 0,
+      "rejected_accuracy": NaN,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 70,
+          "coverage": 1.0,
+          "accuracy": 0.9428571428571428
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 25,
+          "coverage": 1.0,
+          "accuracy": 0.44
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 36,
+          "coverage": 1.0,
+          "accuracy": 0.3888888888888889
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 95,
+          "coverage": 1.0,
+          "accuracy": 0.7684210526315789
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 14,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.4,
+      "n_total": 240,
+      "n_accepted": 231,
+      "coverage": 0.9625,
+      "accuracy": 0.6926406926406926,
+      "weighted_f1": 0.6653941617106184,
+      "macro_f1": 0.5098189975800467,
+      "n_rejected": 9,
+      "rejected_accuracy": 0.4444444444444444,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 68,
+          "coverage": 0.9714285714285714,
+          "accuracy": 0.9558823529411765
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 19,
+          "coverage": 0.76,
+          "accuracy": 0.47368421052631576
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 36,
+          "coverage": 1.0,
+          "accuracy": 0.3888888888888889
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 94,
+          "coverage": 0.9894736842105263,
+          "accuracy": 0.7659574468085106
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 14,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.5,
+      "n_total": 240,
+      "n_accepted": 195,
+      "coverage": 0.8125,
+      "accuracy": 0.7076923076923077,
+      "weighted_f1": 0.6764545480765953,
+      "macro_f1": 0.476528070354842,
+      "n_rejected": 45,
+      "rejected_accuracy": 0.5777777777777777,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 62,
+          "coverage": 0.8857142857142857,
+          "accuracy": 0.9516129032258065
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 12,
+          "coverage": 0.48,
+          "accuracy": 0.25
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 30,
+          "coverage": 0.8333333333333334,
+          "accuracy": 0.4
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 79,
+          "coverage": 0.8315789473684211,
+          "accuracy": 0.810126582278481
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 12,
+          "coverage": 0.8571428571428571,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.6,
+      "n_total": 240,
+      "n_accepted": 160,
+      "coverage": 0.6666666666666666,
+      "accuracy": 0.73125,
+      "weighted_f1": 0.6978000690914599,
+      "macro_f1": 0.46648761297767927,
+      "n_rejected": 80,
+      "rejected_accuracy": 0.5875,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 54,
+          "coverage": 0.7714285714285715,
+          "accuracy": 0.9629629629629629
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 9,
+          "coverage": 0.36,
+          "accuracy": 0.2222222222222222
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 20,
+          "coverage": 0.5555555555555556,
+          "accuracy": 0.3
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 68,
+          "coverage": 0.7157894736842105,
+          "accuracy": 0.8382352941176471
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 9,
+          "coverage": 0.6428571428571429,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.7,
+      "n_total": 240,
+      "n_accepted": 118,
+      "coverage": 0.49166666666666664,
+      "accuracy": 0.7288135593220338,
+      "weighted_f1": 0.6799785212578922,
+      "macro_f1": 0.38537353091466536,
+      "n_rejected": 122,
+      "rejected_accuracy": 0.639344262295082,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 46,
+          "coverage": 0.6571428571428571,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 6,
+          "coverage": 0.24,
+          "accuracy": 0.0
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 14,
+          "coverage": 0.3888888888888889,
+          "accuracy": 0.21428571428571427
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 45,
+          "coverage": 0.47368421052631576,
+          "accuracy": 0.8222222222222222
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 7,
+          "coverage": 0.5,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.8,
+      "n_total": 240,
+      "n_accepted": 65,
+      "coverage": 0.2708333333333333,
+      "accuracy": 0.6615384615384615,
+      "weighted_f1": 0.6077201783723523,
+      "macro_f1": 0.3496376811594203,
+      "n_rejected": 175,
+      "rejected_accuracy": 0.6914285714285714,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 22,
+          "coverage": 0.3142857142857143,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 3,
+          "coverage": 0.12,
+          "accuracy": 0.0
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 9,
+          "coverage": 0.25,
+          "accuracy": 0.1111111111111111
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 26,
+          "coverage": 0.2736842105263158,
+          "accuracy": 0.7692307692307693
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 5,
+          "coverage": 0.35714285714285715,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.9,
+      "n_total": 240,
+      "n_accepted": 16,
+      "coverage": 0.06666666666666667,
+      "accuracy": 0.625,
+      "weighted_f1": 0.625,
+      "macro_f1": 0.35,
+      "n_rejected": 224,
+      "rejected_accuracy": 0.6875,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 1,
+          "coverage": 0.014285714285714285,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 0,
+          "coverage": 0.0,
+          "accuracy": NaN
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 2,
+          "coverage": 0.05555555555555555,
+          "accuracy": 0.0
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 12,
+          "coverage": 0.12631578947368421,
+          "accuracy": 0.75
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 1,
+          "coverage": 0.07142857142857142,
+          "accuracy": 0.0
+        }
+      }
+    }
+  ],
+  "patient_sweep": [
+    {
+      "T": 0.3,
+      "n_total": 35,
+      "n_accepted": 35,
+      "coverage": 1.0,
+      "accuracy": 0.7714285714285715,
+      "weighted_f1": 0.7412475789754892,
+      "macro_f1": 0.5660121552127162,
+      "n_rejected": 0,
+      "rejected_accuracy": NaN,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 15,
+          "coverage": 1.0,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 4,
+          "coverage": 1.0,
+          "accuracy": 0.5
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 5,
+          "coverage": 1.0,
+          "accuracy": 0.4
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 9,
+          "coverage": 1.0,
+          "accuracy": 0.8888888888888888
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 2,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.4,
+      "n_total": 35,
+      "n_accepted": 34,
+      "coverage": 0.9714285714285714,
+      "accuracy": 0.7647058823529411,
+      "weighted_f1": 0.7287352528669251,
+      "macro_f1": 0.5326788218793829,
+      "n_rejected": 1,
+      "rejected_accuracy": 1.0,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 15,
+          "coverage": 1.0,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 3,
+          "coverage": 0.75,
+          "accuracy": 0.3333333333333333
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 5,
+          "coverage": 1.0,
+          "accuracy": 0.4
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 9,
+          "coverage": 1.0,
+          "accuracy": 0.8888888888888888
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 2,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.5,
+      "n_total": 35,
+      "n_accepted": 29,
+      "coverage": 0.8285714285714286,
+      "accuracy": 0.8275862068965517,
+      "weighted_f1": 0.7881773399014779,
+      "macro_f1": 0.48571428571428565,
+      "n_rejected": 6,
+      "rejected_accuracy": 0.5,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 14,
+          "coverage": 0.9333333333333333,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 1,
+          "coverage": 0.25,
+          "accuracy": 0.0
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 3,
+          "coverage": 0.6,
+          "accuracy": 0.6666666666666666
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 9,
+          "coverage": 1.0,
+          "accuracy": 0.8888888888888888
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 2,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.6,
+      "n_total": 35,
+      "n_accepted": 23,
+      "coverage": 0.6571428571428571,
+      "accuracy": 0.782608695652174,
+      "weighted_f1": 0.7365728900255755,
+      "macro_f1": 0.44117647058823534,
+      "n_rejected": 12,
+      "rejected_accuracy": 0.75,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 11,
+          "coverage": 0.7333333333333333,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 1,
+          "coverage": 0.25,
+          "accuracy": 0.0
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 2,
+          "coverage": 0.4,
+          "accuracy": 0.5
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 7,
+          "coverage": 0.7777777777777778,
+          "accuracy": 0.8571428571428571
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 2,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.7,
+      "n_total": 35,
+      "n_accepted": 12,
+      "coverage": 0.34285714285714286,
+      "accuracy": 0.75,
+      "weighted_f1": 0.7261904761904762,
+      "macro_f1": 0.3142857142857143,
+      "n_rejected": 23,
+      "rejected_accuracy": 0.782608695652174,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 7,
+          "coverage": 0.4666666666666667,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 1,
+          "coverage": 0.25,
+          "accuracy": 0.0
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 1,
+          "coverage": 0.2,
+          "accuracy": 0.0
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 3,
+          "coverage": 0.3333333333333333,
+          "accuracy": 0.6666666666666666
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 0,
+          "coverage": 0.0,
+          "accuracy": NaN
+        }
+      }
+    },
+    {
+      "T": 0.8,
+      "n_total": 35,
+      "n_accepted": 2,
+      "coverage": 0.05714285714285714,
+      "accuracy": 1.0,
+      "weighted_f1": 1.0,
+      "macro_f1": 0.4,
+      "n_rejected": 33,
+      "rejected_accuracy": 0.7575757575757576,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 1,
+          "coverage": 0.06666666666666667,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 0,
+          "coverage": 0.0,
+          "accuracy": NaN
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 0,
+          "coverage": 0.0,
+          "accuracy": NaN
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 1,
+          "coverage": 0.1111111111111111,
+          "accuracy": 1.0
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 0,
+          "coverage": 0.0,
+          "accuracy": NaN
+        }
+      }
+    },
+    {
+      "T": 0.9,
+      "n_total": 35,
+      "n_accepted": 1,
+      "coverage": 0.02857142857142857,
+      "accuracy": 1.0,
+      "weighted_f1": 1.0,
+      "macro_f1": 0.2,
+      "n_rejected": 34,
+      "rejected_accuracy": 0.7647058823529411,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 0,
+          "coverage": 0.0,
+          "accuracy": NaN
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 0,
+          "coverage": 0.0,
+          "accuracy": NaN
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 0,
+          "coverage": 0.0,
+          "accuracy": NaN
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 1,
+          "coverage": 0.1111111111111111,
+          "accuracy": 1.0
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 0,
+          "coverage": 0.0,
+          "accuracy": NaN
+        }
+      }
+    }
+  ],
+  "scan_targets": [
+    {
+      "target_acc": 0.8,
+      "achievable": false,
+      "coverage": NaN,
+      "accuracy": NaN,
+      "threshold": NaN,
+      "n_accepted": 0
+    },
+    {
+      "target_acc": 0.9,
+      "achievable": false,
+      "coverage": NaN,
+      "accuracy": NaN,
+      "threshold": NaN,
+      "n_accepted": 0
+    },
+    {
+      "target_acc": 0.95,
+      "achievable": false,
+      "coverage": NaN,
+      "accuracy": NaN,
+      "threshold": NaN,
+      "n_accepted": 0
+    }
+  ],
+  "patient_targets": [
+    {
+      "target_acc": 0.8,
+      "achievable": true,
+      "coverage": 0.8571428571428571,
+      "accuracy": 0.8,
+      "threshold": 0.4912585361031089,
+      "n_accepted": 30
+    },
+    {
+      "target_acc": 0.9,
+      "achievable": true,
+      "coverage": 0.08571428571428572,
+      "accuracy": 1.0,
+      "threshold": 0.7911735135083628,
+      "n_accepted": 3
+    },
+    {
+      "target_acc": 0.95,
+      "achievable": true,
+      "coverage": 0.08571428571428572,
+      "accuracy": 1.0,
+      "threshold": 0.7911735135083628,
+      "n_accepted": 3
+    }
+  ],
+  "scan_sweep_raw": [
+    {
+      "T": 0.3,
+      "n_total": 240,
+      "n_accepted": 240,
+      "coverage": 1.0,
+      "accuracy": 0.6958333333333333,
+      "weighted_f1": 0.6886816442702501,
+      "macro_f1": 0.554087346024636,
+      "n_rejected": 0,
+      "rejected_accuracy": NaN,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 70,
+          "coverage": 1.0,
+          "accuracy": 0.9428571428571428
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 25,
+          "coverage": 1.0,
+          "accuracy": 0.56
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 36,
+          "coverage": 1.0,
+          "accuracy": 0.6111111111111112
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 95,
+          "coverage": 1.0,
+          "accuracy": 0.6842105263157895
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 14,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.4,
+      "n_total": 240,
+      "n_accepted": 240,
+      "coverage": 1.0,
+      "accuracy": 0.6958333333333333,
+      "weighted_f1": 0.6886816442702501,
+      "macro_f1": 0.554087346024636,
+      "n_rejected": 0,
+      "rejected_accuracy": NaN,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 70,
+          "coverage": 1.0,
+          "accuracy": 0.9428571428571428
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 25,
+          "coverage": 1.0,
+          "accuracy": 0.56
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 36,
+          "coverage": 1.0,
+          "accuracy": 0.6111111111111112
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 95,
+          "coverage": 1.0,
+          "accuracy": 0.6842105263157895
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 14,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.5,
+      "n_total": 240,
+      "n_accepted": 238,
+      "coverage": 0.9916666666666667,
+      "accuracy": 0.7016806722689075,
+      "weighted_f1": 0.6925823444089985,
+      "macro_f1": 0.5604418610748032,
+      "n_rejected": 2,
+      "rejected_accuracy": 0.0,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 69,
+          "coverage": 0.9857142857142858,
+          "accuracy": 0.9565217391304348
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 24,
+          "coverage": 0.96,
+          "accuracy": 0.5833333333333334
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 36,
+          "coverage": 1.0,
+          "accuracy": 0.6111111111111112
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 95,
+          "coverage": 1.0,
+          "accuracy": 0.6842105263157895
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 14,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.6,
+      "n_total": 240,
+      "n_accepted": 226,
+      "coverage": 0.9416666666666667,
+      "accuracy": 0.7079646017699115,
+      "weighted_f1": 0.6976821263094158,
+      "macro_f1": 0.5666032145101912,
+      "n_rejected": 14,
+      "rejected_accuracy": 0.5,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 68,
+          "coverage": 0.9714285714285714,
+          "accuracy": 0.9558823529411765
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 22,
+          "coverage": 0.88,
+          "accuracy": 0.6363636363636364
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 35,
+          "coverage": 0.9722222222222222,
+          "accuracy": 0.6
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 88,
+          "coverage": 0.9263157894736842,
+          "accuracy": 0.6818181818181818
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 13,
+          "coverage": 0.9285714285714286,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.7,
+      "n_total": 240,
+      "n_accepted": 206,
+      "coverage": 0.8583333333333333,
+      "accuracy": 0.7135922330097088,
+      "weighted_f1": 0.7048064867725535,
+      "macro_f1": 0.5489400020829829,
+      "n_rejected": 34,
+      "rejected_accuracy": 0.5882352941176471,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 66,
+          "coverage": 0.9428571428571428,
+          "accuracy": 0.9545454545454546
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 15,
+          "coverage": 0.6,
+          "accuracy": 0.5333333333333333
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 33,
+          "coverage": 0.9166666666666666,
+          "accuracy": 0.6060606060606061
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 81,
+          "coverage": 0.8526315789473684,
+          "accuracy": 0.691358024691358
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 11,
+          "coverage": 0.7857142857142857,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.8,
+      "n_total": 240,
+      "n_accepted": 190,
+      "coverage": 0.7916666666666666,
+      "accuracy": 0.7263157894736842,
+      "weighted_f1": 0.7164101348123862,
+      "macro_f1": 0.559998213039997,
+      "n_rejected": 50,
+      "rejected_accuracy": 0.58,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 62,
+          "coverage": 0.8857142857142857,
+          "accuracy": 0.9516129032258065
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 15,
+          "coverage": 0.6,
+          "accuracy": 0.5333333333333333
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 29,
+          "coverage": 0.8055555555555556,
+          "accuracy": 0.6206896551724138
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 74,
+          "coverage": 0.7789473684210526,
+          "accuracy": 0.7162162162162162
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 10,
+          "coverage": 0.7142857142857143,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.9,
+      "n_total": 240,
+      "n_accepted": 156,
+      "coverage": 0.65,
+      "accuracy": 0.75,
+      "weighted_f1": 0.7410849210921988,
+      "macro_f1": 0.5627209373195612,
+      "n_rejected": 84,
+      "rejected_accuracy": 0.5952380952380952,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 70,
+          "n_accepted": 53,
+          "coverage": 0.7571428571428571,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 25,
+          "n_accepted": 8,
+          "coverage": 0.32,
+          "accuracy": 0.375
+        },
+        "PGOV_Glaukom": {
+          "n": 36,
+          "n_accepted": 25,
+          "coverage": 0.6944444444444444,
+          "accuracy": 0.6
+        },
+        "SklerozaMultiplex": {
+          "n": 95,
+          "n_accepted": 63,
+          "coverage": 0.6631578947368421,
+          "accuracy": 0.7301587301587301
+        },
+        "SucheOko": {
+          "n": 14,
+          "n_accepted": 7,
+          "coverage": 0.5,
+          "accuracy": 0.0
+        }
+      }
+    }
+  ],
+  "patient_sweep_raw": [
+    {
+      "T": 0.3,
+      "n_total": 35,
+      "n_accepted": 35,
+      "coverage": 1.0,
+      "accuracy": 0.8285714285714286,
+      "weighted_f1": 0.8011411016019311,
+      "macro_f1": 0.63926267281106,
+      "n_rejected": 0,
+      "rejected_accuracy": NaN,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 15,
+          "coverage": 1.0,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 4,
+          "coverage": 1.0,
+          "accuracy": 0.5
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 5,
+          "coverage": 1.0,
+          "accuracy": 0.8
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 9,
+          "coverage": 1.0,
+          "accuracy": 0.8888888888888888
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 2,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.4,
+      "n_total": 35,
+      "n_accepted": 35,
+      "coverage": 1.0,
+      "accuracy": 0.8285714285714286,
+      "weighted_f1": 0.8011411016019311,
+      "macro_f1": 0.63926267281106,
+      "n_rejected": 0,
+      "rejected_accuracy": NaN,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 15,
+          "coverage": 1.0,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 4,
+          "coverage": 1.0,
+          "accuracy": 0.5
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 5,
+          "coverage": 1.0,
+          "accuracy": 0.8
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 9,
+          "coverage": 1.0,
+          "accuracy": 0.8888888888888888
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 2,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.5,
+      "n_total": 35,
+      "n_accepted": 35,
+      "coverage": 1.0,
+      "accuracy": 0.8285714285714286,
+      "weighted_f1": 0.8011411016019311,
+      "macro_f1": 0.63926267281106,
+      "n_rejected": 0,
+      "rejected_accuracy": NaN,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 15,
+          "coverage": 1.0,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 4,
+          "coverage": 1.0,
+          "accuracy": 0.5
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 5,
+          "coverage": 1.0,
+          "accuracy": 0.8
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 9,
+          "coverage": 1.0,
+          "accuracy": 0.8888888888888888
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 2,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.6,
+      "n_total": 35,
+      "n_accepted": 31,
+      "coverage": 0.8857142857142857,
+      "accuracy": 0.8387096774193549,
+      "weighted_f1": 0.8174573055028462,
+      "macro_f1": 0.6511764705882352,
+      "n_rejected": 4,
+      "rejected_accuracy": 0.75,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 15,
+          "coverage": 1.0,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 3,
+          "coverage": 0.75,
+          "accuracy": 0.6666666666666666
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 4,
+          "coverage": 0.8,
+          "accuracy": 0.75
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 7,
+          "coverage": 0.7777777777777778,
+          "accuracy": 0.8571428571428571
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 2,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.7,
+      "n_total": 35,
+      "n_accepted": 27,
+      "coverage": 0.7714285714285715,
+      "accuracy": 0.8148148148148148,
+      "weighted_f1": 0.7929724596391264,
+      "macro_f1": 0.6064102564102564,
+      "n_rejected": 8,
+      "rejected_accuracy": 0.875,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 14,
+          "coverage": 0.9333333333333333,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 2,
+          "coverage": 0.5,
+          "accuracy": 0.5
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 4,
+          "coverage": 0.8,
+          "accuracy": 0.75
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 5,
+          "coverage": 0.5555555555555556,
+          "accuracy": 0.8
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 2,
+          "coverage": 1.0,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.8,
+      "n_total": 35,
+      "n_accepted": 17,
+      "coverage": 0.4857142857142857,
+      "accuracy": 0.8235294117647058,
+      "weighted_f1": 0.7871148459383752,
+      "macro_f1": 0.44761904761904764,
+      "n_rejected": 18,
+      "rejected_accuracy": 0.8333333333333334,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 11,
+          "coverage": 0.7333333333333333,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 1,
+          "coverage": 0.25,
+          "accuracy": 0.0
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 1,
+          "coverage": 0.2,
+          "accuracy": 1.0
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 3,
+          "coverage": 0.3333333333333333,
+          "accuracy": 0.6666666666666666
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 1,
+          "coverage": 0.5,
+          "accuracy": 0.0
+        }
+      }
+    },
+    {
+      "T": 0.9,
+      "n_total": 35,
+      "n_accepted": 10,
+      "coverage": 0.2857142857142857,
+      "accuracy": 1.0,
+      "weighted_f1": 1.0,
+      "macro_f1": 0.6,
+      "n_rejected": 25,
+      "rejected_accuracy": 0.76,
+      "per_class": {
+        "ZdraviLudia": {
+          "n": 15,
+          "n_accepted": 8,
+          "coverage": 0.5333333333333333,
+          "accuracy": 1.0
+        },
+        "Diabetes": {
+          "n": 4,
+          "n_accepted": 0,
+          "coverage": 0.0,
+          "accuracy": NaN
+        },
+        "PGOV_Glaukom": {
+          "n": 5,
+          "n_accepted": 1,
+          "coverage": 0.2,
+          "accuracy": 1.0
+        },
+        "SklerozaMultiplex": {
+          "n": 9,
+          "n_accepted": 1,
+          "coverage": 0.1111111111111111,
+          "accuracy": 1.0
+        },
+        "SucheOko": {
+          "n": 2,
+          "n_accepted": 0,
+          "coverage": 0.0,
+          "accuracy": NaN
+        }
+      }
+    }
+  ],
+  "scan_targets_raw": [
+    {
+      "target_acc": 0.8,
+      "achievable": true,
+      "coverage": 0.16666666666666666,
+      "accuracy": 0.8,
+      "threshold": 0.9985494661442943,
+      "n_accepted": 40
+    },
+    {
+      "target_acc": 0.9,
+      "achievable": true,
+      "coverage": 0.004166666666666667,
+      "accuracy": 1.0,
+      "threshold": 0.9999938859820833,
+      "n_accepted": 1
+    },
+    {
+      "target_acc": 0.95,
+      "achievable": true,
+      "coverage": 0.004166666666666667,
+      "accuracy": 1.0,
+      "threshold": 0.9999938859820833,
+      "n_accepted": 1
+    }
+  ],
+  "patient_targets_raw": [
+    {
+      "target_acc": 0.8,
+      "achievable": true,
+      "coverage": 1.0,
+      "accuracy": 0.8285714285714286,
+      "threshold": 0.5384708678987729,
+      "n_accepted": 35
+    },
+    {
+      "target_acc": 0.9,
+      "achievable": true,
+      "coverage": 0.42857142857142855,
+      "accuracy": 0.9333333333333333,
+      "threshold": 0.8097521601076316,
+      "n_accepted": 15
+    },
+    {
+      "target_acc": 0.95,
+      "achievable": true,
+      "coverage": 0.3142857142857143,
+      "accuracy": 1.0,
+      "threshold": 0.8817482042068902,
+      "n_accepted": 11
+    }
+  ],
+  "per_class_calibration_scan": {
+    "ZdraviLudia": {
+      "n_predicted": 78,
+      "n_true": 70,
+      "mean_conf_on_pred": 0.6956419467098064,
+      "precision": 0.8461538461538461,
+      "mean_conf_on_true": 0.7122998554548202,
+      "recall": 0.9428571428571428,
+      "calibration_gap": -0.15051189944403975,
+      "tendency": "under-confident"
+    },
+    "Diabetes": {
+      "n_predicted": 20,
+      "n_true": 25,
+      "mean_conf_on_pred": 0.4898190940069096,
+      "precision": 0.55,
+      "mean_conf_on_true": 0.542045928316831,
+      "recall": 0.44,
+      "calibration_gap": -0.06018090599309045,
+      "tendency": "under-confident"
+    },
+    "PGOV_Glaukom": {
+      "n_predicted": 30,
+      "n_true": 36,
+      "mean_conf_on_pred": 0.6595348590680623,
+      "precision": 0.4666666666666667,
+      "mean_conf_on_true": 0.6623745640679003,
+      "recall": 0.3888888888888889,
+      "calibration_gap": 0.19286819240139563,
+      "tendency": "over-confident"
+    },
+    "SklerozaMultiplex": {
+      "n_predicted": 111,
+      "n_true": 95,
+      "mean_conf_on_pred": 0.7000366488208765,
+      "precision": 0.6576576576576577,
+      "mean_conf_on_true": 0.6850349099330925,
+      "recall": 0.7684210526315789,
+      "calibration_gap": 0.04237899116321875,
+      "tendency": "well-calibrated"
+    },
+    "SucheOko": {
+      "n_predicted": 1,
+      "n_true": 14,
+      "mean_conf_on_pred": 0.4394083773194469,
+      "precision": 0.0,
+      "mean_conf_on_true": 0.6892883608668072,
+      "recall": 0.0,
+      "calibration_gap": 0.4394083773194469,
+      "tendency": "over-confident"
+    }
+  },
+  "per_class_calibration_patient": {
+    "ZdraviLudia": {
+      "n_predicted": 16,
+      "n_true": 15,
+      "mean_conf_on_pred": 0.6470823514211682,
+      "precision": 0.9375,
+      "mean_conf_on_true": 0.6606718816274751,
+      "recall": 1.0,
+      "calibration_gap": -0.2904176485788318,
+      "tendency": "under-confident"
+    },
+    "Diabetes": {
+      "n_predicted": 2,
+      "n_true": 4,
+      "mean_conf_on_pred": 0.40036225826893956,
+      "precision": 1.0,
+      "mean_conf_on_true": 0.5069378053542457,
+      "recall": 0.5,
+      "calibration_gap": -0.5996377417310604,
+      "tendency": "under-confident"
+    },
+    "PGOV_Glaukom": {
+      "n_predicted": 3,
+      "n_true": 5,
+      "mean_conf_on_pred": 0.6311877699074979,
+      "precision": 0.6666666666666666,
+      "mean_conf_on_true": 0.5787409509537056,
+      "recall": 0.4,
+      "calibration_gap": -0.03547889675916871,
+      "tendency": "well-calibrated"
+    },
+    "SklerozaMultiplex": {
+      "n_predicted": 14,
+      "n_true": 9,
+      "mean_conf_on_pred": 0.6572893666333034,
+      "precision": 0.5714285714285714,
+      "mean_conf_on_true": 0.6742352704683314,
+      "recall": 0.8888888888888888,
+      "calibration_gap": 0.085860795204732,
+      "tendency": "over-confident"
+    },
+    "SucheOko": {
+      "n_predicted": 0,
+      "n_true": 2,
+      "mean_conf_on_pred": NaN,
+      "precision": NaN,
+      "mean_conf_on_true": 0.6750024735263452,
+      "recall": NaN,
+      "calibration_gap": NaN,
+      "tendency": "never-predicted"
+    }
+  }
+}

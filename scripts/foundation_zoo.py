@@ -85,7 +85,8 @@ CHAMP_V4 = 0.6887        # v4 multi-scale ensemble (DINOv2-B 90, DINOv2-B 45, Bi
 
 # Per-encoder wall-clock budget (seconds). If encoding exceeds this we still
 # finish the current batch but mark the run slow in the report.
-PER_ENCODER_SOFT_BUDGET_S = 8 * 60
+# (SigLIP-SO400M at 384² needs ~11 min on MPS, so we allow 15.)
+PER_ENCODER_SOFT_BUDGET_S = 15 * 60
 
 
 # ---------------------------------------------------------------------------

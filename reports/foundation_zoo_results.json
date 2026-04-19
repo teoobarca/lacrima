@@ -1,0 +1,165 @@
+{
+  "person_lopo": true,
+  "n_persons": 35,
+  "n_scans": 240,
+  "champions": {
+    "dinov2b_no_tta": 0.6162,
+    "v4_ensemble": 0.6887
+  },
+  "per_encoder": [
+    {
+      "name": "pubmedclip_vitb32",
+      "pretty": "PubMedCLIP ViT-B/32 (512-d)",
+      "status": "encode_fail_or_budget",
+      "err": null,
+      "encode_time_s": null,
+      "weighted_f1": null,
+      "macro_f1": null,
+      "per_class_f1": null,
+      "dim": null
+    },
+    {
+      "name": "openclip_vitl14_laion2b",
+      "pretty": "OpenCLIP ViT-L/14 LAION-2B (768-d)",
+      "status": "encoded",
+      "encode_time_s": 129.88582611083984,
+      "dim": 768,
+      "weighted_f1": 0.5699423222110421,
+      "macro_f1": 0.43454305489268297,
+      "per_class_f1": [
+        0.8027210884353742,
+        0.2978723404255319,
+        0.4864864864864865,
+        0.585635359116022,
+        0.0
+      ]
+    },
+    {
+      "name": "dinov2_vitl14",
+      "pretty": "DINOv2-L (ViT-L/14, 1024-d)",
+      "status": "encoded",
+      "encode_time_s": 135.3648910522461,
+      "dim": 1024,
+      "weighted_f1": 0.5418497039712611,
+      "macro_f1": 0.4128219941430376,
+      "per_class_f1": [
+        0.726027397260274,
+        0.19047619047619047,
+        0.5,
+        0.5851063829787234,
+        0.0625
+      ]
+    },
+    {
+      "name": "eva02_l14",
+      "pretty": "EVA02-L-14 (768-d)",
+      "status": "encoded",
+      "encode_time_s": 213.6895341873169,
+      "dim": 768,
+      "weighted_f1": 0.58318741449958,
+      "macro_f1": 0.4563232119672893,
+      "per_class_f1": [
+        0.7832167832167832,
+        0.43137254901960786,
+        0.4578313253012048,
+        0.6091954022988506,
+        0.0
+      ]
+    },
+    {
+      "name": "siglip_so400m_384",
+      "pretty": "SigLIP-SO400M-14-384 (1152-d)",
+      "status": "encode_fail_or_budget",
+      "err": null,
+      "encode_time_s": null,
+      "weighted_f1": null,
+      "macro_f1": null,
+      "per_class_f1": null,
+      "dim": null
+    },
+    {
+      "name": "dinov2_vitg14",
+      "pretty": "DINOv2-G (ViT-g/14, 1536-d)",
+      "status": "disabled",
+      "encode_time_s": null,
+      "weighted_f1": null,
+      "macro_f1": null,
+      "per_class_f1": null,
+      "dim": null
+    }
+  ],
+  "ensembles": [
+    {
+      "name": "v4_baseline",
+      "members": [
+        "dinov2b_90",
+        "dinov2b_45",
+        "biomedclip_tta"
+      ],
+      "weighted_f1": 0.6886816442702501,
+      "macro_f1": 0.554087346024636,
+      "per_class_f1": [
+        0.9166666666666666,
+        0.5833333333333334,
+        0.5789473684210527,
+        0.6914893617021277,
+        0.0
+      ]
+    },
+    {
+      "name": "v4 + DINOv2-L (4-way)",
+      "members": [
+        "dinov2b_90",
+        "dinov2b_45",
+        "biomedclip_tta",
+        "dinov2_vitl14"
+      ],
+      "weighted_f1": 0.655736270265682,
+      "macro_f1": 0.5260186983884463,
+      "per_class_f1": [
+        0.8843537414965986,
+        0.5333333333333333,
+        0.56,
+        0.6524064171122995,
+        0.0
+      ]
+    },
+    {
+      "name": "v4 + EVA02-L (4-way)",
+      "members": [
+        "dinov2b_90",
+        "dinov2b_45",
+        "biomedclip_tta",
+        "eva02_l14"
+      ],
+      "weighted_f1": 0.6520034627896422,
+      "macro_f1": 0.5195026537909884,
+      "per_class_f1": [
+        0.8827586206896552,
+        0.5416666666666666,
+        0.5135135135135135,
+        0.6595744680851063,
+        0.0
+      ]
+    },
+    {
+      "name": "v4 + OpenCLIP-L LAION-2B (4-way)",
+      "members": [
+        "dinov2b_90",
+        "dinov2b_45",
+        "biomedclip_tta",
+        "openclip_vitl14_laion2b"
+      ],
+      "weighted_f1": 0.6627303063517898,
+      "macro_f1": 0.5285599836772654,
+      "per_class_f1": [
+        0.8979591836734694,
+        0.5217391304347826,
+        0.56,
+        0.6631016042780749,
+        0.0
+      ]
+    }
+  ],
+  "elapsed_s": 1596.3
+}
