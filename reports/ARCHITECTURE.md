@@ -1,6 +1,28 @@
 # Architecture & Methodology
 
-## 1. Inference pipeline (shipped — `models/ensemble_v1_tta/`)
+## 1. Inference pipeline (shipped — `models/ensemble_v2_tta/`, F1 = 0.6562)
+
+```mermaid
+flowchart LR
+    A[Raw Bruker SPM] --> B[preprocess<br>level + resample + normalize]
+    B --> C[9 tiles × D4 → 72 views]
+    C --> D1[DINOv2-B encode<br>mean-pool tiles]
+    C --> D2[BiomedCLIP encode<br>mean-pool tiles]
+    D1 --> E1[L2-normalize row-wise]
+    D2 --> E2[L2-normalize row-wise]
+    E1 --> F1[StandardScaler<br>+ LR balanced]
+    E2 --> F2[StandardScaler<br>+ LR balanced]
+    F1 --> G[softmax log-space<br>arithmetic mean]
+    F2 --> G
+    G --> H[renormalize<br>→ argmax]
+```
+
+**v2 recipe changes (discovered by Wave-5 autoresearch agent):**
+- **L2-normalize** scan embeddings BEFORE StandardScaler (+0.003)
+- **Geometric mean** of softmaxes INSTEAD of arithmetic (+0.008)
+- Both honest (no tuning), stack cleanly → +0.010 ensemble, +0.023 macro
+
+## 1b. Inference pipeline v1 (earlier champion — `models/ensemble_v1_tta/`, F1 = 0.6458)
 
 ```mermaid
 flowchart LR
