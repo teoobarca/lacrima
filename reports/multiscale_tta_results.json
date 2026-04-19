@@ -1,0 +1,137 @@
+{
+  "hypothesis": "D4 TTA on both 45 nm/px and 90 nm/px DINOv2-B branches lifts the Config D multi-scale ensemble further.",
+  "person_lopo": true,
+  "n_persons": 35,
+  "n_scans": 240,
+  "champions": {
+    "v2": 0.6562,
+    "multiscale_D_target": 0.6887
+  },
+  "per_member": {
+    "dinov2_90nm_tta": {
+      "weighted_f1": 0.6463683624827679,
+      "macro_f1": 0.5285851906161836,
+      "per_class_f1": [
+        0.8707482993197279,
+        0.6382978723404256,
+        0.5,
+        0.6338797814207651,
+        0.0
+      ]
+    },
+    "dinov2_45nm_tta": {
+      "weighted_f1": 0.6255405025602345,
+      "macro_f1": 0.49635085688697006,
+      "per_class_f1": [
+        0.8531468531468531,
+        0.47058823529411764,
+        0.5316455696202531,
+        0.6263736263736264,
+        0.0
+      ]
+    },
+    "dinov2_90nm_nt": {
+      "weighted_f1": 0.6162402773650563,
+      "macro_f1": 0.4941352279564118,
+      "per_class_f1": [
+        0.8169014084507042,
+        0.5106382978723404,
+        0.5194805194805194,
+        0.6236559139784946,
+        0.0
+      ]
+    },
+    "dinov2_45nm_nt": {
+      "weighted_f1": 0.6543959388869252,
+      "macro_f1": 0.5185960881347944,
+      "per_class_f1": [
+        0.8472222222222222,
+        0.5,
+        0.5609756097560976,
+        0.6847826086956522,
+        0.0
+      ]
+    },
+    "biomedclip_tta": {
+      "weighted_f1": 0.6219786032707835,
+      "macro_f1": 0.4914648890950904,
+      "per_class_f1": [
+        0.8082191780821918,
+        0.3673469387755102,
+        0.5675675675675675,
+        0.655367231638418,
+        0.058823529411764705
+      ]
+    }
+  },
+  "configs": {
+    "D_reproduce_nonTTA_multiscale_plus_BC": {
+      "members": [
+        "dinov2_90nm_nt",
+        "dinov2_45nm_nt",
+        "biomedclip_tta"
+      ],
+      "weighted_f1": 0.6886816442702501,
+      "macro_f1": 0.554087346024636,
+      "per_class_f1": [
+        0.9166666666666666,
+        0.5833333333333334,
+        0.5789473684210527,
+        0.6914893617021277,
+        0.0
+      ]
+    },
+    "D_TTA_multiscale_plus_BC": {
+      "members": [
+        "dinov2_90nm_tta",
+        "dinov2_45nm_tta",
+        "biomedclip_tta"
+      ],
+      "weighted_f1": 0.666592586696831,
+      "macro_f1": 0.53714872866027,
+      "per_class_f1": [
+        0.8951048951048951,
+        0.5490196078431373,
+        0.5822784810126582,
+        0.6593406593406593,
+        0.0
+      ]
+    },
+    "E_TTA_multiscale_dinov2_only": {
+      "members": [
+        "dinov2_90nm_tta",
+        "dinov2_45nm_tta"
+      ],
+      "weighted_f1": 0.6472591134355841,
+      "macro_f1": 0.520462126109185,
+      "per_class_f1": [
+        0.8811188811188811,
+        0.56,
+        0.5194805194805194,
+        0.6417112299465241,
+        0.0
+      ]
+    },
+    "F_TTA_dinov2_45nm_alone": {
+      "members": [
+        "dinov2_45nm_tta"
+      ],
+      "weighted_f1": 0.6255405025602345,
+      "macro_f1": 0.49635085688697006,
+      "per_class_f1": [
+        0.8531468531468531,
+        0.47058823529411764,
+        0.5316455696202531,
+        0.6263736263736264,
+        0.0
+      ]
+    }
+  },
+  "deltas": {
+    "D_TTA_minus_D_reproduced": -0.02208905757341917,
+    "D_TTA_minus_v2": 0.010392586696830963,
+    "D_TTA_minus_multiscale_D_target": -0.02210741330316901
+  },
+  "verdict": "D-TTA REGRESSES from D: 45 nm/px TTA hurts but multi-scale still beats v2. Do NOT ship D-TTA; Config D (non-TTA 45 nm) remains the best multi-scale option.",
+  "elapsed_s": 934.7
+}
