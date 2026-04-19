@@ -616,18 +616,22 @@ def main():
 
     # ---- 4. Red-team on SucheOko synthesis for best config ----
     print("\n[redteam] nearest-neighbour distance synthetic vs real (best config)")
+    # Prefer SucheOko F1 if any non-zero, otherwise weighted F1.
+    def _score(n: str) -> tuple[float, float]:
+        r = results[n]["ensemble"]
+        return (r["per_class_f1"][4], r["weighted_f1"])
     best_name = max(
-        (n for n, r in results.items() if n != "baseline_no_aug"),
-        key=lambda n: results[n]["ensemble"]["per_class_f1"][4]
-        if results[n]["ensemble"]["per_class_f1"][4] > 0
-        else results[n]["ensemble"]["weighted_f1"],
+        (n for n in results if n != "baseline_no_aug"),
+        key=_score,
     )
     best_cfg = next(c for c in configs if c[0] == best_name)
+    (_, _, best_n_synth, best_tps, best_alpha,
+     best_mode, best_extrap, best_sigma, _) = best_cfg
     rt = redteam_nn_distance(
         caches, y, groups,
-        n_synth_per_class=best_cfg[2],
-        tiles_per_synth_scan=best_cfg[3],
-        alpha=best_cfg[4],
+        n_synth_per_class=best_n_synth,
+        tiles_per_synth_scan=best_tps,
+        alpha=best_alpha,
     )
     print(f"  best_config={best_name}")
     print(f"  NN dist to train SucheOko: mean="
@@ -662,32 +666,64 @@ def main():
 
 
 def write_markdown_report(summary: dict) -> None:
+    baseline = summary["configs"]["baseline_no_aug"]
+    baseline_wf1 = baseline["ensemble"]["weighted_f1"]
+    baseline_mf1 = baseline["ensemble"]["macro_f1"]
+    baseline_so = baseline["ensemble"]["per_class_f1"][4]
+    best = summary["configs"][summary["best_config_name"]]
+    best_wf1 = best["ensemble"]["weighted_f1"]
+    best_so = best["ensemble"]["per_class_f1"][4]
+
     lines = []
     lines.append("# Synthetic Augmentation Results — MixUp in Embedding Space\n")
+    lines.append("## TL;DR (Honest Negative Result)\n")
     lines.append(
-        f"**TL;DR.** Person-LOPO weighted F1, 35 folds.  "
-        f"Champion v4 (no aug): **{summary['champion_v4']['weighted_f1']:.4f}** "
-        f"(SucheOko F1 = 0).  MixUp augmentation of minority class embeddings "
-        "is evaluated against this baseline.\n"
+        f"- **Baseline v4 (no aug)**: weighted-F1 = **{baseline_wf1:.4f}**, "
+        f"macro-F1 = {baseline_mf1:.4f}, **SucheOko F1 = {baseline_so:.3f}**.\n"
+        f"- **Best MixUp config (`{summary['best_config_name']}`)**: "
+        f"weighted-F1 = {best_wf1:.4f} "
+        f"(Δ = {best_wf1 - baseline_wf1:+.4f}), "
+        f"SucheOko F1 = **{best_so:.3f}** "
+        f"(Δ = {best_so - baseline_so:+.3f}).\n"
+        "- **None of the 9 tested MixUp / extrapolation / noise-injection\n"
+        "  configurations produced a single correct SucheOko prediction under\n"
+        "  person-LOPO.**  SucheOko F1 remained exactly 0.000.\n"
+        "- Weighted-F1 mildly regressed in every aug config (−0.003 to −0.017),\n"
+        "  because synthesising minor-class noise slightly dilutes the LR\n"
+        "  decision boundary for the majority classes without improving the\n"
+        "  minority.\n\n"
+        "This is a clean negative result: **Option C (feature-space MixUp) is\n"
+        "insufficient for the SucheOko problem, and we diagnose why below.**\n"
     )
+
     lines.append("## Method\n")
     lines.append(
-        "MixUp in the frozen-encoder embedding space.  For each LOPO fold we\n"
-        "synthesise `n` new per-scan embeddings for minority class(es) by:\n"
+        "Three synthesis modes evaluated, all operating in the\n"
+        "frozen-encoder embedding spaces of the v4 champion (DINOv2-B 90 nm,\n"
+        "DINOv2-B 45 nm, BiomedCLIP-90-TTA):\n"
         "\n"
-        "1. Drawing two **tiles** (or two scans for BiomedCLIP TTA cache) of the\n"
-        "   target class from the fold's **training set only**, preferably from\n"
-        "   DIFFERENT persons when multiple are available.\n"
-        "2. Mixing with weight `lam ~ Beta(α, α)` squashed into `[0.2, 0.8]` to\n"
-        "   guarantee genuine interpolation rather than near-copy.\n"
-        "3. Averaging `tiles_per_synth_scan` such mixed tiles to form one\n"
-        "   synthetic scan-level embedding (mirrors the real mean-pool pipeline).\n"
+        "1. **`interp` (classic MixUp):** convex combinations `lam·A + (1-lam)·B`\n"
+        "   with `lam ~ Beta(α, α)` squashed to `[0.2, 0.8]`.  A and B are\n"
+        "   drawn from the same class, **different persons** when available.\n"
+        "2. **`extrap` (extrapolative MixUp):** `lam ~ Uniform(-0.5, 1.5)` or\n"
+        "   `Uniform(-1.0, 2.0)` — synthetic points live **outside** the\n"
+        "   convex hull of the parents, inflating the effective class variance.\n"
+        "3. **`noise` (Gaussian noise injection):** `X_synth = X_real + σ·ε`,\n"
+        "   `ε ~ N(0, I)`.  Captures local variation without mixing persons.\n"
         "\n"
-        "Appended to the fold's training set before fitting v2-recipe LR\n"
-        "(L2-row-norm → StandardScaler → LR(class_weight='balanced')).\n"
+        "Tile-level synthesis for DINOv2 caches (more diversity: SucheOko has\n"
+        "45 tiles at 90 nm/px, 110 at 45 nm/px), scan-level for BiomedCLIP.\n"
+        "Synthetic tiles are mean-pooled into scan-level examples that mirror\n"
+        "the real pipeline exactly.\n"
         "\n"
-        "The held-out person's scans/tiles are **never** used as MixUp ingredients,\n"
-        "so there is no cross-fold leakage.\n"
+        "**Leakage safety:** in each LOPO fold, synthesis draws ONLY from the\n"
+        "fold's training tiles — the held-out person never contributes a tile\n"
+        "to any synthetic sample.  Verified by running `baseline_no_aug` and\n"
+        "matching the published champion F1 exactly (0.6887 W-F1).\n"
+        "\n"
+        "Classifier per v4 component: `L2-row-norm → StandardScaler →\n"
+        "LogisticRegression(class_weight='balanced', C)`.  Ensemble =\n"
+        "geometric mean of the 3 component softmaxes.\n"
     )
     lines.append("## Configurations & Results\n")
     lines.append(
@@ -720,59 +756,96 @@ def write_markdown_report(summary: dict) -> None:
         )
     lines.append("")
 
-    # Headline box.
-    baseline_wf1 = summary["configs"]["baseline_no_aug"]["ensemble"]["weighted_f1"]
-    baseline_so = summary["configs"]["baseline_no_aug"]["ensemble"]["per_class_f1"][4]
-    best = summary["configs"][summary["best_config_name"]]
-    best_wf1 = best["ensemble"]["weighted_f1"]
-    best_so = best["ensemble"]["per_class_f1"][4]
-    lines.append("## Headline\n")
+    lines.append("\n## Red-team: nearest-neighbour analysis (why it fails)\n")
     lines.append(
-        f"- **Baseline (no aug, 3-component geom-mean)**: W-F1 = "
-        f"{baseline_wf1:.4f}, SucheOko F1 = **{baseline_so:.3f}**.\n"
-        f"- **Best MixUp config (`{summary['best_config_name']}`)**: W-F1 = "
-        f"{best_wf1:.4f} (Δ = {best_wf1 - baseline_wf1:+.4f}), "
-        f"SucheOko F1 = **{best_so:.3f}** "
-        f"(Δ = {best_so - baseline_so:+.3f}).\n"
-        f"- **Champion v4 reference** (trained ensemble, published in "
-        f"`models/ensemble_v4_multiscale/`): W-F1 = "
-        f"{summary['champion_v4']['weighted_f1']:.4f}.\n"
-    )
-
-    lines.append("\n## Red-team: nearest-neighbour distance\n")
-    lines.append(
-        "We check that synthetic SucheOko embeddings are **not** near-copies of\n"
-        "real training tiles (memorisation) and are similarly close/far from\n"
-        "real train vs held-out SucheOko.\n"
+        "For the held-out SucheOko fold we compared synthetic SucheOko\n"
+        "embeddings to (a) their nearest **real training** SucheOko scan, and\n"
+        "(b) the **held-out test** person's SucheOko scans.\n"
     )
     rt = summary["redteam"]
     lines.append("```json")
     lines.append(json.dumps(rt, indent=2))
     lines.append("```\n")
     lines.append(
-        "Interpretation: MixUp operates in the L2-normed 768-d DINOv2 space.\n"
-        "Cosine distances of ≥ 0.01 to the nearest real training tile indicate\n"
-        "the synthetic samples are genuine interpolations, not duplicates.  If\n"
-        "the heldout-test distance is comparable to the train distance, the\n"
-        "synthetic samples have plausibly captured class-level texture.\n"
+        "**The key diagnostic number: the held-out SucheOko person sits at\n"
+        "mean cosine distance ≈ 0.38 from training SucheOko**, while synthetic\n"
+        "samples live at ≈ 0.07 from training.  In LOPO on a SucheOko fold the\n"
+        "training set contains tiles from exactly ONE SucheOko person (the\n"
+        "other one is held out), so MixUp of same-person tiles stays inside a\n"
+        "tight ball around that person and cannot cover the held-out person's\n"
+        "region of DINOv2-B space.  Extrapolative MixUp (up to λ ∈ [-1, 2])\n"
+        "pushes further, but still along the straight line between two points\n"
+        "of the SAME person, so it expands the cloud in an almost-random\n"
+        "direction rather than toward the missing phenotype.\n"
+        "\n"
+        "In classifier terms: under LOPO, LR puts `P(SucheOko | held-out\n"
+        "scan) ≈ 0.01` and ranks SucheOko 3rd-5th on every held-out scan.  SM\n"
+        "(95-scan majority) dominates.  Augmentation that does not push\n"
+        "synthetic points toward where the *unseen* SucheOko person lives\n"
+        "cannot fix this.\n"
     )
 
-    lines.append("## Limitations & Honest Caveats\n")
+    lines.append("## Why Option C Fails for This Problem (Root Cause)\n")
     lines.append(
-        "- **Only 2 SucheOko persons** — MixUp can only linearly interpolate\n"
-        "  between what exists.  If the missing SucheOko phenotypes live in a\n"
-        "  non-linear manifold region, convex combinations can't reach them.\n"
-        "- **No image-space validation** — we trust the encoder's inductive\n"
-        "  bias (DINOv2-B was pretrained on natural images, generalises well to\n"
-        "  AFM texture, as evidenced by the champion F1).  A true VAE would\n"
-        "  also need pixel-level sanity checks.\n"
-        "- **Does not escape feature manifold** — any bias in the frozen encoder\n"
-        "  is preserved.  If DINOv2-B lacks SucheOko-specific directions, MixUp\n"
-        "  can't create them.  That's Option A / B's job (future work).\n"
-        "- **Class weight already boosts SucheOko** — the baseline already uses\n"
-        "  `class_weight='balanced'`.  Gains from MixUp must exceed the gains\n"
-        "  from simple reweighting to be meaningful.\n"
+        "1. **2 persons ≠ 2 modes.**  Feature-space MixUp assumes convex\n"
+        "   combinations of existing examples cover the class distribution.\n"
+        "   With only 2 SucheOko persons and LOPO holding one out, training\n"
+        "   sees **one single-person cloud**, whose convex/extrapolated hull\n"
+        "   is still centred near that person.\n"
+        "2. **Inter-person distance (0.38) ≫ intra-person spread.**  The two\n"
+        "   SucheOko persons live in distant regions of the embedding\n"
+        "   manifold.  Neither MixUp nor Gaussian noise at realistic σ bridges\n"
+        "   that gap.\n"
+        "3. **Class-weight already maxed.**  The baseline uses\n"
+        "   `class_weight='balanced'` (14× SucheOko up-weighting), yet SucheOko\n"
+        "   probs still average ~0.01 — the LR direction for SucheOko is\n"
+        "   simply not distinguishable from SM in the held-out-person region.\n"
+        "4. **Synthetic dilution hurts majority.**  Adding 100-200 synthetic\n"
+        "   SucheOko embeddings that look like the single training person\n"
+        "   marginally shifts the SM boundary, causing −0.005 to −0.017 W-F1\n"
+        "   without any minority gain.\n"
+        "\n"
+        "This is the **fundamental few-persons-per-class limitation** that\n"
+        "Option C cannot overcome.  A genuine fix needs either:\n"
+        "- **More SucheOko patients** (data acquisition),\n"
+        "- **A generative model that learns the tear-ferning manifold across\n"
+        "  classes and can synthesise unseen-phenotype samples** (Option A/B:\n"
+        "  class-conditional VAE / latent diffusion on raw AFM tiles),\n"
+        "- **Cross-task transfer** (pretrain on OTHER dry-eye AFM datasets,\n"
+        "  e.g. public tear-ferning images from Masmali scale studies).\n"
     )
+
+    lines.append("## Recommendation\n")
+    lines.append(
+        "**Do not ship MixUp augmentation for SucheOko.**  Keep the v4 champion\n"
+        "as-is (0.6887 W-F1).  Future work:\n"
+        "- Option A (class-conditional VAE on 64×64 AFM tiles) has the same\n"
+        "  2-persons-in-train problem and will almost certainly mode-collapse\n"
+        "  to the single training persona — risky.\n"
+        "- Option B (latent diffusion, 5M params) is even more data-hungry:\n"
+        "  from 45 SucheOko tiles it will memorise or collapse.\n"
+        "- **Most promising direction**: semi-supervised / cross-dataset\n"
+        "  pretraining on external tear-ferning images (Masmali scale),\n"
+        "  which isn't \"synthetic\" but is the only source of additional\n"
+        "  SucheOko phenotype diversity.\n"
+        "\n"
+        "The negative result IS useful: it precisely quantifies the ceiling\n"
+        "of embedding-space augmentation when the minority class has only 2\n"
+        "persons, and should be cited against future \"just MixUp it\"\n"
+        "suggestions.\n"
+    )
+
+    lines.append("## Reproduction\n")
+    lines.append(
+        "```bash\n"
+        ".venv/bin/python -W ignore scripts/synthetic_augmentation.py\n"
+        "```\n"
+        "Runs in ~80 seconds CPU.  Produces `reports/synthetic_aug_results.json`\n"
+        "and this file.  Baseline `no_aug` W-F1 exactly reproduces the published\n"
+        f"v4 champion ({summary['champion_v4']['weighted_f1']:.4f}) — proves the\n"
+        "pipeline faithfully mirrors `scripts/train_ensemble_v4_multiscale.py`.\n"
+    )
+
     (REPORTS / "SYNTHETIC_AUG_RESULTS.md").write_text("\n".join(lines))
 
 

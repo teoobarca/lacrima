@@ -667,10 +667,18 @@ def write_report(*, sweep, best_lambd, v4_ref, v5_results, y, wall):
     lines.append(f"- Delta vs lambda=0 (no-DANN MLP baseline, same adapter arch): **{delta:+.4f}**")
     lines.append(f"- Delta vs DINOv2-B+LR reference ({REF_DINOV2B_SINGLE:.4f}): **{delta_vs_ref:+.4f}**")
     if delta > 0.005 and delta_vs_ref > 0.005:
-        verdict_a = "GAIN. DANN adds signal beyond both the no-adv MLP and the LR reference."
-    elif abs(delta) <= 0.005 and delta_vs_ref > -0.005:
-        verdict_a = ("NEUTRAL. DANN is within sampling noise of lambda=0; the adversarial "
-                     "loss is not hurting, but not clearly helping either at this sample size.")
+        verdict_a = ("GAIN. DANN adds signal beyond both the no-adv MLP and the LR reference. "
+                     "Ship as a DINOv2-B replacement feature.")
+    elif delta > 0.02 and abs(delta_vs_ref) <= 0.01:
+        verdict_a = ("REGULARIZER. DANN materially improves over the matched no-adv adapter "
+                     "(lambda=0) but only matches (does not beat) the plain-LR baseline on the "
+                     "original 768-d features. Interpretation: the adversarial loss is acting "
+                     "primarily as a regularizer on an otherwise-overparameterized MLP, not as "
+                     "a genuine identity-scrubber. No ship.")
+    elif abs(delta) <= 0.005 and abs(delta_vs_ref) <= 0.005:
+        verdict_a = ("NEUTRAL. DANN is within sampling noise of both lambda=0 and the LR "
+                     "baseline; the adversarial loss is not hurting, but not clearly helping "
+                     "either at this sample size.")
     elif delta_vs_ref < -0.01:
         verdict_a = ("NEGATIVE. DANN underperforms the reference LR baseline. Consistent with "
                      "the hypothesis that at 240 samples / 35 patients, the adversary signal "

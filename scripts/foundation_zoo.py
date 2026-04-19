@@ -227,29 +227,39 @@ def load_openclip_vit_l():
 
 
 def load_pubmedclip():
-    """PubMedCLIP via HuggingFace transformers (CLIPModel)."""
+    """PubMedCLIP via HuggingFace transformers (CLIPModel).
+
+    We call `get_image_features(pixel_values=...)` which returns a projected
+    embedding tensor (batch, embed_dim). Wrap in an `encode_image` method so the
+    uniform encoding loop works.
+    """
     from transformers import CLIPModel, CLIPProcessor
     dev = _mps()
     model_id = "flaviagiammarino/pubmed-clip-vit-base-patch32"
-    model = CLIPModel.from_pretrained(model_id).to(dev).eval()
+    base = CLIPModel.from_pretrained(model_id).to(dev).eval()
     processor = CLIPProcessor.from_pretrained(model_id)
 
-    @torch.no_grad()
     def preprocess_single(img):
-        # returns Tensor (1, 3, H, W); we strip batch dim to match torch stacking
         out = processor(images=img, return_tensors="pt")
         return out["pixel_values"][0]
 
-    # Wrap into a callable with encode_image interface for uniform encoding
     class _Wrap(torch.nn.Module):
         def __init__(self, m):
             super().__init__()
-            self.m = m
+            self.clip = m  # registered as submodule
 
+        @torch.no_grad()
         def encode_image(self, x):
-            return self.m.get_image_features(pixel_values=x)
+            feats = self.clip.get_image_features(pixel_values=x)
+            # transformers returns Tensor, but belt-and-braces:
+            if hasattr(feats, "image_embeds"):
+                feats = feats.image_embeds
+            if hasattr(feats, "last_hidden_state"):
+                feats = feats.last_hidden_state[:, 0]
+            return feats
 
-    return _Wrap(model).to(dev).eval(), preprocess_single, 512, "encode_image", dev
+    wrap = _Wrap(base).to(dev).eval()
+    return wrap, preprocess_single, 512, "encode_image", dev
 
 
 ENCODERS: list[EncSpec] = [
@@ -289,6 +299,13 @@ def encode_tiles(
                 e = model.encode_image(tensors)
             else:
                 e = model(tensors)
+            # Some HF models return ModelOutput objects
+            if hasattr(e, "image_embeds") and e.image_embeds is not None:
+                e = e.image_embeds
+            elif hasattr(e, "pooler_output") and e.pooler_output is not None:
+                e = e.pooler_output
+            elif hasattr(e, "last_hidden_state"):
+                e = e.last_hidden_state[:, 0]
             e = e.float().cpu().numpy()
             embs.append(e)
             del tensors

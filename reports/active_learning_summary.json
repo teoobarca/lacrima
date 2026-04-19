@@ -1,0 +1,85 @@
+{
+  "baseline_wf1": 0.6458100263295542,
+  "baseline_mf1": 0.5154499233076907,
+  "per_class_f1": {
+    "ZdraviLudia": 0.8767123287671232,
+    "Diabetes": 0.5106382978723404,
+    "PGOV_Glaukom": 0.5454545454545454,
+    "SklerozaMultiplex": 0.6444444444444445,
+    "SucheOko": 0.0
+  },
+  "class_counts_persons": {
+    "ZdraviLudia": 15,
+    "Diabetes": 4,
+    "PGOV_Glaukom": 5,
+    "SklerozaMultiplex": 9,
+    "SucheOko": 2
+  },
+  "class_stats": {
+    "ZdraviLudia": {
+      "n_persons": 15,
+      "mean_delta_wF1": 0.011910677692599443,
+      "std_delta_wF1": 0.005773262886085173,
+      "mean_delta_mF1": 0.004974954157300353,
+      "std_delta_mF1": 0.0057357884515358126
+    },
+    "Diabetes": {
+      "n_persons": 4,
+      "mean_delta_wF1": 0.004577184461639294,
+      "std_delta_wF1": 0.020662130482352853,
+      "mean_delta_mF1": 0.01786463362719548,
+      "std_delta_mF1": 0.03699734437240172
+    },
+    "PGOV_Glaukom": {
+      "n_persons": 5,
+      "mean_delta_wF1": 0.012322488481810367,
+      "std_delta_wF1": 0.025297442447617956,
+      "mean_delta_mF1": 0.02351407188603525,
+      "std_delta_mF1": 0.02541103215163326
+    },
+    "SklerozaMultiplex": {
+      "n_persons": 9,
+      "mean_delta_wF1": 0.019685546282413282,
+      "std_delta_wF1": 0.02355654602645972,
+      "mean_delta_mF1": 0.008845156165042068,
+      "std_delta_mF1": 0.020113926312123477
+    },
+    "SucheOko": {
+      "n_persons": 2,
+      "mean_delta_wF1": -0.04700185319312067,
+      "std_delta_wF1": 0.00439149675550532,
+      "mean_delta_mF1": -0.02418110020095332,
+      "std_delta_mF1": 0.004254133439405505
+    }
+  },
+  "alloc": {
+    "persons_alloc": {
+      "ZdraviLudia": 0,
+      "Diabetes": 1,
+      "PGOV_Glaukom": 1,
+      "SklerozaMultiplex": 1,
+      "SucheOko": 0
+    },
+    "scans_alloc": {
+      "ZdraviLudia": 0,
+      "Diabetes": 6,
+      "PGOV_Glaukom": 6,
+      "SklerozaMultiplex": 6,
+      "SucheOko": 0
+    },
+    "expected_delta_wF1": {
+      "ZdraviLudia": 0.0,
+      "Diabetes": 0.004577184461639294,
+      "PGOV_Glaukom": 0.012322488481810367,
+      "SklerozaMultiplex": 0.019685546282413282,
+      "SucheOko": 0.0
+    },
+    "total_expected_uplift": 0.03658521922586294
+  },
+  "extrap": {
+    "a": -0.45763172881594716,
+    "b": 0.32035492706150565,
+    "n_needed_for_target": 43.36566661912888,
+    "target_f1": 0.75
+  }
+}

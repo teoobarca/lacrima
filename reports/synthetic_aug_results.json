@@ -13,6 +13,13 @@
       "n_synth_per_class": 0,
       "tiles_per_synth_scan": 0,
       "alpha": 0.2,
+      "mode": "interp",
+      "extrap_range": [
+        -0.3,
+        1.3
+      ],
+      "noise_sigma": 0.0,
+      "clf_C": 1.0,
       "ensemble": {
         "weighted_f1": 0.6886816442702501,
         "macro_f1": 0.554087346024636,
@@ -67,78 +74,22 @@
           "support_SucheOko": 14
         }
       },
-      "elapsed_s": 4.0
+      "elapsed_s": 6.8
     },
-    "mixup_SucheOko_n50": {
-      "minority_cls": [
-        4
-      ],
-      "n_synth_per_class": 50,
-      "tiles_per_synth_scan": 4,
-      "alpha": 0.2,
-      "ensemble": {
-        "weighted_f1": 0.6853895494643377,
-        "macro_f1": 0.5520912434342562,
-        "per_class_f1": [
-          0.9103448275862069,
-          0.5833333333333334,
-          0.5789473684210527,
-          0.6878306878306878,
-          0.0
-        ],
-        "confusion_row_SucheOko": 0,
-        "support_SucheOko": 14
-      },
-      "per_component": {
-        "dinov2_90nm": {
-          "weighted_f1": 0.6222124292162826,
-          "macro_f1": 0.49715273626018924,
-          "per_class_f1": [
-            0.8169014084507042,
-            0.5106382978723404,
-            0.5194805194805194,
-            0.6387434554973822,
-            0.0
-          ],
-          "confusion_row_SucheOko": 0,
-          "support_SucheOko": 14
-        },
-        "dinov2_45nm": {
-          "weighted_f1": 0.6460284813838294,
-          "macro_f1": 0.5087550595247688,
-          "per_class_f1": [
-            0.8299319727891157,
-            0.46808510638297873,
-            0.5609756097560976,
-            0.6847826086956522,
-            0.0
-          ],
-          "confusion_row_SucheOko": 0,
-          "support_SucheOko": 14
-        },
-        "biomedclip_tta_90nm": {
-          "weighted_f1": 0.6037223009656769,
-          "macro_f1": 0.47593999475650517,
-          "per_class_f1": [
-            0.7945205479452054,
-            0.36,
-            0.5263157894736842,
-            0.6363636363636364,
-            0.0625
-          ],
-          "confusion_row_SucheOko": 1,
-          "support_SucheOko": 14
-        }
-      },
-      "elapsed_s": 4.3
-    },
-    "mixup_SucheOko_n100": {
+    "mixup_interp_n100": {
       "minority_cls": [
         4
       ],
       "n_synth_per_class": 100,
       "tiles_per_synth_scan": 4,
       "alpha": 0.2,
+      "mode": "interp",
+      "extrap_range": [
+        -0.3,
+        1.3
+      ],
+      "noise_sigma": 0.0,
+      "clf_C": 1.0,
       "ensemble": {
         "weighted_f1": 0.6838913437472532,
         "macro_f1": 0.5500721711010257,
@@ -193,15 +144,22 @@
           "support_SucheOko": 14
         }
       },
-      "elapsed_s": 5.3
+      "elapsed_s": 8.2
     },
-    "mixup_SucheOko_n200": {
+    "mixup_interp_n200": {
       "minority_cls": [
         4
       ],
       "n_synth_per_class": 200,
       "tiles_per_synth_scan": 4,
       "alpha": 0.2,
+      "mode": "interp",
+      "extrap_range": [
+        -0.3,
+        1.3
+      ],
+      "noise_sigma": 0.0,
+      "clf_C": 1.0,
       "ensemble": {
         "weighted_f1": 0.6824431186731414,
         "macro_f1": 0.5493404363267377,
@@ -256,23 +214,30 @@
           "support_SucheOko": 14
         }
       },
-      "elapsed_s": 6.8
+      "elapsed_s": 13.8
     },
-    "mixup_SucheOko_n100_alpha5": {
+    "mixup_extrap_n100": {
       "minority_cls": [
         4
       ],
       "n_synth_per_class": 100,
       "tiles_per_synth_scan": 4,
-      "alpha": 0.5,
+      "alpha": 0.2,
+      "mode": "extrap",
+      "extrap_range": [
+        -0.5,
+        1.5
+      ],
+      "noise_sigma": 0.0,
+      "clf_C": 1.0,
       "ensemble": {
-        "weighted_f1": 0.6842617299154656,
-        "macro_f1": 0.55058748403576,
+        "weighted_f1": 0.6826267816306478,
+        "macro_f1": 0.5506953186340761,
         "per_class_f1": [
           0.9103448275862069,
           0.5833333333333334,
-          0.5714285714285714,
-          0.6878306878306878,
+          0.5789473684210527,
+          0.6808510638297872,
           0.0
         ],
         "confusion_row_SucheOko": 0,
@@ -280,13 +245,223 @@
       },
       "per_component": {
         "dinov2_90nm": {
-          "weighted_f1": 0.6263902975957216,
-          "macro_f1": 0.5016213015884956,
+          "weighted_f1": 0.6179734973820463,
+          "macro_f1": 0.4925912745979423,
+          "per_class_f1": [
+            0.8169014084507042,
+            0.5106382978723404,
+            0.5,
+            0.6354166666666666,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "dinov2_45nm": {
+          "weighted_f1": 0.6453015012445682,
+          "macro_f1": 0.5078474187055407,
+          "per_class_f1": [
+            0.8356164383561644,
+            0.46808510638297873,
+            0.5542168674698795,
+            0.6813186813186813,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "biomedclip_tta_90nm": {
+          "weighted_f1": 0.6281399966898434,
+          "macro_f1": 0.4952049491755567,
+          "per_class_f1": [
+            0.8082191780821918,
+            0.3673469387755102,
+            0.5675675675675675,
+            0.6703910614525139,
+            0.0625
+          ],
+          "confusion_row_SucheOko": 1,
+          "support_SucheOko": 14
+        }
+      },
+      "elapsed_s": 7.4
+    },
+    "mixup_extrap_n200_aggr": {
+      "minority_cls": [
+        4
+      ],
+      "n_synth_per_class": 200,
+      "tiles_per_synth_scan": 4,
+      "alpha": 0.2,
+      "mode": "extrap",
+      "extrap_range": [
+        -1.0,
+        2.0
+      ],
+      "noise_sigma": 0.0,
+      "clf_C": 1.0,
+      "ensemble": {
+        "weighted_f1": 0.6840679770643339,
+        "macro_f1": 0.5514235015900437,
+        "per_class_f1": [
+          0.9103448275862069,
+          0.5833333333333334,
+          0.5789473684210527,
+          0.6844919786096256,
+          0.0
+        ],
+        "confusion_row_SucheOko": 0,
+        "support_SucheOko": 14
+      },
+      "per_component": {
+        "dinov2_90nm": {
+          "weighted_f1": 0.6199581299315342,
+          "macro_f1": 0.49475090046198666,
+          "per_class_f1": [
+            0.8226950354609929,
+            0.5,
+            0.5194805194805194,
+            0.631578947368421,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "dinov2_45nm": {
+          "weighted_f1": 0.6421085589193829,
+          "macro_f1": 0.5093582026980491,
+          "per_class_f1": [
+            0.8472222222222222,
+            0.5,
+            0.5365853658536586,
+            0.6629834254143646,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "biomedclip_tta_90nm": {
+          "weighted_f1": 0.6217848827255607,
+          "macro_f1": 0.49252799178222906,
+          "per_class_f1": [
+            0.8,
+            0.36,
+            0.5866666666666667,
+            0.655367231638418,
+            0.06060606060606061
+          ],
+          "confusion_row_SucheOko": 1,
+          "support_SucheOko": 14
+        }
+      },
+      "elapsed_s": 8.9
+    },
+    "noise_sigma03_n100": {
+      "minority_cls": [
+        4
+      ],
+      "n_synth_per_class": 100,
+      "tiles_per_synth_scan": 4,
+      "alpha": 0.2,
+      "mode": "noise",
+      "extrap_range": [
+        -0.3,
+        1.3
+      ],
+      "noise_sigma": 0.03,
+      "clf_C": 1.0,
+      "ensemble": {
+        "weighted_f1": 0.6850191632961253,
+        "macro_f1": 0.5515759304995219,
+        "per_class_f1": [
+          0.9041095890410958,
+          0.5833333333333334,
+          0.5789473684210527,
+          0.6914893617021277,
+          0.0
+        ],
+        "confusion_row_SucheOko": 0,
+        "support_SucheOko": 14
+      },
+      "per_component": {
+        "dinov2_90nm": {
+          "weighted_f1": 0.6235420290258037,
+          "macro_f1": 0.4954048484811038,
+          "per_class_f1": [
+            0.8169014084507042,
+            0.5106382978723404,
+            0.5,
+            0.6494845360824743,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "dinov2_45nm": {
+          "weighted_f1": 0.6430498457754084,
+          "macro_f1": 0.5092229695376168,
+          "per_class_f1": [
+            0.8356164383561644,
+            0.5,
+            0.5365853658536586,
+            0.6739130434782609,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "biomedclip_tta_90nm": {
+          "weighted_f1": 0.6204789747767955,
+          "macro_f1": 0.4907217774045861,
+          "per_class_f1": [
+            0.8027210884353742,
+            0.3673469387755102,
+            0.5675675675675675,
+            0.655367231638418,
+            0.06060606060606061
+          ],
+          "confusion_row_SucheOko": 1,
+          "support_SucheOko": 14
+        }
+      },
+      "elapsed_s": 6.6
+    },
+    "noise_sigma05_n200": {
+      "minority_cls": [
+        4
+      ],
+      "n_synth_per_class": 200,
+      "tiles_per_synth_scan": 4,
+      "alpha": 0.2,
+      "mode": "noise",
+      "extrap_range": [
+        -0.3,
+        1.3
+      ],
+      "noise_sigma": 0.05,
+      "clf_C": 1.0,
+      "ensemble": {
+        "weighted_f1": 0.6826267816306478,
+        "macro_f1": 0.5506953186340761,
+        "per_class_f1": [
+          0.9103448275862069,
+          0.5833333333333334,
+          0.5789473684210527,
+          0.6808510638297872,
+          0.0
+        ],
+        "confusion_row_SucheOko": 0,
+        "support_SucheOko": 14
+      },
+      "per_component": {
+        "dinov2_90nm": {
+          "weighted_f1": 0.631989255929055,
+          "macro_f1": 0.5044502489569166,
           "per_class_f1": [
             0.8169014084507042,
             0.5106382978723404,
             0.5384615384615384,
-            0.6421052631578947,
+            0.65625,
             0.0
           ],
           "confusion_row_SucheOko": 0,
@@ -306,22 +481,92 @@
           "support_SucheOko": 14
         },
         "biomedclip_tta_90nm": {
-          "weighted_f1": 0.5987273714668571,
-          "macro_f1": 0.4671443265848662,
+          "weighted_f1": 0.6168256209712156,
+          "macro_f1": 0.4824292273356677,
           "per_class_f1": [
-            0.7808219178082192,
-            0.32,
-            0.5263157894736842,
-            0.6440677966101694,
-            0.06451612903225806
+            0.7945205479452054,
+            0.32653061224489793,
+            0.5675675675675675,
+            0.6629213483146067,
+            0.06060606060606061
           ],
           "confusion_row_SucheOko": 1,
           "support_SucheOko": 14
         }
       },
-      "elapsed_s": 5.2
+      "elapsed_s": 10.4
     },
-    "mixup_all_min_n100": {
+    "mixup_extrap_noise_n200": {
+      "minority_cls": [
+        4
+      ],
+      "n_synth_per_class": 200,
+      "tiles_per_synth_scan": 4,
+      "alpha": 0.2,
+      "mode": "extrap",
+      "extrap_range": [
+        -0.5,
+        1.5
+      ],
+      "noise_sigma": 0.02,
+      "clf_C": 1.0,
+      "ensemble": {
+        "weighted_f1": 0.6822493658220099,
+        "macro_f1": 0.5501764538810215,
+        "per_class_f1": [
+          0.9041095890410958,
+          0.5833333333333334,
+          0.5789473684210527,
+          0.6844919786096256,
+          0.0
+        ],
+        "confusion_row_SucheOko": 0,
+        "support_SucheOko": 14
+      },
+      "per_component": {
+        "dinov2_90nm": {
+          "weighted_f1": 0.6242578109297785,
+          "macro_f1": 0.4952648725844602,
+          "per_class_f1": [
+            0.8226950354609929,
+            0.5106382978723404,
+            0.4935064935064935,
+            0.6494845360824743,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "dinov2_45nm": {
+          "weighted_f1": 0.6420356625348335,
+          "macro_f1": 0.5044241861361769,
+          "per_class_f1": [
+            0.8435374149659864,
+            0.46808510638297873,
+            0.5365853658536586,
+            0.6739130434782609,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "biomedclip_tta_90nm": {
+          "weighted_f1": 0.6168256209712156,
+          "macro_f1": 0.4824292273356677,
+          "per_class_f1": [
+            0.7945205479452054,
+            0.32653061224489793,
+            0.5675675675675675,
+            0.6629213483146067,
+            0.06060606060606061
+          ],
+          "confusion_row_SucheOko": 1,
+          "support_SucheOko": 14
+        }
+      },
+      "elapsed_s": 9.6
+    },
+    "mixup_SO+Diab_n100": {
       "minority_cls": [
         4,
         1
@@ -329,6 +574,13 @@
       "n_synth_per_class": 100,
       "tiles_per_synth_scan": 4,
       "alpha": 0.2,
+      "mode": "interp",
+      "extrap_range": [
+        -0.3,
+        1.3
+      ],
+      "noise_sigma": 0.0,
+      "clf_C": 1.0,
       "ensemble": {
         "weighted_f1": 0.6720677136102667,
         "macro_f1": 0.5312502532928065,
@@ -383,31 +635,101 @@
           "support_SucheOko": 14
         }
       },
-      "elapsed_s": 5.1
+      "elapsed_s": 6.1
+    },
+    "mixup_extrap_n200_lowC": {
+      "minority_cls": [
+        4
+      ],
+      "n_synth_per_class": 200,
+      "tiles_per_synth_scan": 4,
+      "alpha": 0.2,
+      "mode": "extrap",
+      "extrap_range": [
+        -0.5,
+        1.5
+      ],
+      "noise_sigma": 0.0,
+      "clf_C": 0.3,
+      "ensemble": {
+        "weighted_f1": 0.6822493658220099,
+        "macro_f1": 0.5501764538810215,
+        "per_class_f1": [
+          0.9041095890410958,
+          0.5833333333333334,
+          0.5789473684210527,
+          0.6844919786096256,
+          0.0
+        ],
+        "confusion_row_SucheOko": 0,
+        "support_SucheOko": 14
+      },
+      "per_component": {
+        "dinov2_90nm": {
+          "weighted_f1": 0.6250188391930133,
+          "macro_f1": 0.4985707118273795,
+          "per_class_f1": [
+            0.8169014084507042,
+            0.5106382978723404,
+            0.5194805194805194,
+            0.6458333333333334,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "dinov2_45nm": {
+          "weighted_f1": 0.6416636299905603,
+          "macro_f1": 0.5027824050937494,
+          "per_class_f1": [
+            0.8275862068965517,
+            0.4583333333333333,
+            0.5432098765432098,
+            0.6847826086956522,
+            0.0
+          ],
+          "confusion_row_SucheOko": 0,
+          "support_SucheOko": 14
+        },
+        "biomedclip_tta_90nm": {
+          "weighted_f1": 0.6153252207315675,
+          "macro_f1": 0.48725352597179217,
+          "per_class_f1": [
+            0.8055555555555556,
+            0.35294117647058826,
+            0.5789473684210527,
+            0.64,
+            0.058823529411764705
+          ],
+          "confusion_row_SucheOko": 1,
+          "support_SucheOko": 14
+        }
+      },
+      "elapsed_s": 9.9
     }
   },
-  "best_config_name": "mixup_SucheOko_n50",
+  "best_config_name": "noise_sigma03_n100",
   "redteam": {
     "held_out_person": "29EYE_suche_oko",
-    "n_synthetic": 50,
+    "n_synthetic": 100,
     "n_real_train_SucheOko_scans": 6,
     "nn_cosine_distance_to_train_SucheOko": {
-      "mean": 0.0730462446808815,
-      "median": 0.07190331816673279,
+      "mean": 0.06935916095972061,
+      "median": 0.06946039199829102,
       "min": 0.028871655464172363,
       "max": 0.11910438537597656
     },
     "nn_cosine_distance_to_HELDOUT_test_SucheOko": {
-      "mean": 0.3813220262527466,
-      "median": 0.37998151779174805,
+      "mean": 0.38294827938079834,
+      "median": 0.38029271364212036,
       "min": 0.3338744044303894,
-      "max": 0.4334055781364441
+      "max": 0.4477241039276123
     },
     "memorisation_check": {
-      "mean_dist_to_train": 0.0730462446808815,
-      "mean_dist_to_heldout": 0.3813220262527466,
+      "mean_dist_to_train": 0.06935916095972061,
+      "mean_dist_to_heldout": 0.38294827938079834,
       "interpretation": "synthetic should not be dramatically closer to train (<< 0.01) \u2014 that would indicate memorisation of real tiles"
     }
   },
-  "elapsed_s": 30.8
+  "elapsed_s": 87.7
 }

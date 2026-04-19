@@ -49,6 +49,12 @@ from teardrop.features import (  # noqa: E402
 )
 from teardrop.infer import preprocess_and_tile_spm  # noqa: E402
 from models.ensemble_v2_tta.predict import TTAPredictorV2 as TTAPredictor  # noqa: E402
+from teardrop.clinical_report import (  # noqa: E402
+    DEFAULT_MODEL_DIR as CLINICAL_MODEL_DIR,
+    DEFAULT_RETRIEVAL_CACHE as CLINICAL_RETRIEVAL_CACHE,
+    RetrievalIndex as ClinicalRetrievalIndex,
+    generate_clinical_report,
+)
 
 import gradio as gr  # noqa: E402
 
@@ -164,6 +170,55 @@ for s in range(_N_SCANS):
 # L2 normalize for cosine similarity retrieval
 _SCAN_EMB_N = _SCAN_EMB / (np.linalg.norm(_SCAN_EMB, axis=1, keepdims=True) + 1e-9)
 print(f"[app] Retrieval index ready: {_N_SCANS} training scans, D={_TILE_X.shape[1]}.")
+
+# Clinical-report tab uses the v4 champion (F1 = 0.6887) — separate bundle from
+# the main classifier (v2 = 0.6562). Loaded lazily the first time the tab runs.
+_CLINICAL_V4_PREDICTOR = None
+_CLINICAL_RETRIEVAL = ClinicalRetrievalIndex.load(CLINICAL_RETRIEVAL_CACHE)
+
+
+def _clinical_v4_predictor():
+    """Lazy singleton — load the v4 ensemble once."""
+    global _CLINICAL_V4_PREDICTOR
+    if _CLINICAL_V4_PREDICTOR is None:
+        from models.ensemble_v4_multiscale.predict import TTAPredictorV4
+        print("[app] Loading v4 champion ensemble for clinical reports (first run only)...")
+        _CLINICAL_V4_PREDICTOR = TTAPredictorV4.load(CLINICAL_MODEL_DIR)
+        # Warm up both encoders so subsequent report generations are fast.
+        _ = _CLINICAL_V4_PREDICTOR.encoder_dinov2b
+        _ = _CLINICAL_V4_PREDICTOR.encoder_biomedclip
+        print("[app] v4 ensemble ready.")
+    return _CLINICAL_V4_PREDICTOR
+
+
+def clinical_report_for(file_obj):
+    """Gradio handler: run clinical_report on the uploaded (or demo) scan."""
+    if file_obj is None:
+        return (
+            "### No scan uploaded\nUpload a `.NNN` Bruker Nanoscope scan on the "
+            "Classify tab (or use a demo button below) and then click "
+            "**Generate report**."
+        )
+    raw_path = Path(file_obj if isinstance(file_obj, str) else file_obj.name)
+    if raw_path.suffix.lower() == ".bmp":
+        return (
+            "### BMP previews are not supported\n"
+            "The clinical report generator requires a raw Bruker SPM file "
+            "(`.NNN` extension). BMP previews leak label metadata via scale-bars "
+            "and watermarks and are rejected by the pipeline."
+        )
+    try:
+        predictor = _clinical_v4_predictor()
+        md = generate_clinical_report(
+            scan_path=raw_path,
+            _predictor=predictor,
+            _retrieval_index=_CLINICAL_RETRIEVAL,
+        )
+        return md
+    except Exception as e:  # noqa: BLE001
+        tb = traceback.format_exc()
+        print(f"[app] Clinical report error:\n{tb}", file=sys.stderr)
+        return f"### Error generating report\n\n```\n{str(e)[:600]}\n```"
 
 
 # ---------------------------------------------------------------------------
@@ -641,7 +696,43 @@ with gr.Blocks(title="Teardrop AFM classifier") as demo:
                 )
 
         # -----------------------------------------------------------------
-        # Tab 3 — about
+        # Tab 3 — Clinical Report (v4 champion, F1 = 0.6887)
+        # -----------------------------------------------------------------
+        with gr.Tab("Clinical Report"):
+            gr.Markdown(
+                """
+## Physician-readable diagnostic report
+
+Upload a scan on the **Classify** tab (or pick a demo sample there), then
+click **Generate report** below. The report combines the v4 champion
+ensemble's prediction with quantitative morphology (Ra / Rq in nm, fractal
+dimension, GLCM texture, heuristic Masmali grade), 3 nearest training
+cases, and an honest confidence note.
+
+*Model:* `ensemble_v4_multiscale` (weighted F1 = 0.6887 on person-LOPO,
+matches or exceeds human inter-rater reproducibility kappa ~ 0.57).
+
+*LLM-free, fully reproducible — pure template rendering from the
+ensemble outputs + handcrafted features. See
+`reports/CLINICAL_REPORT_DESIGN.md` for design rationale.*
+                """
+            )
+            with gr.Row():
+                gen_btn = gr.Button("Generate clinical report",
+                                    variant="primary", size="lg")
+            clinical_md = gr.Markdown(
+                "### No report yet\n"
+                "Pick a scan on the Classify tab, then return here and click "
+                "**Generate clinical report**.",
+            )
+            gen_btn.click(
+                fn=clinical_report_for,
+                inputs=[file_in],
+                outputs=[clinical_md],
+            )
+
+        # -----------------------------------------------------------------
+        # Tab 4 — about
         # -----------------------------------------------------------------
         with gr.Tab("About"):
             gr.Markdown(
