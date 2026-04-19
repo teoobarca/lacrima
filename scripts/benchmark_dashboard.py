@@ -174,6 +174,17 @@ def main():
             rows.append({"config": f"{enc_name} tiled (mean-pool)", "f1_weighted": f1w,
                          "f1_macro": f1m, "dim": X.shape[1], "seconds": time.time() - t0})
 
+    # 45 nm/px DINOv2-B (multi-scale experiment)
+    path_45 = CACHE / "tiled_emb_dinov2_vitb14_afmhot_t512_n9_45nm.npz"
+    if path_45.exists():
+        z = np.load(path_45, allow_pickle=True)
+        X = aggregate_tiles(z["X"], z["tile_to_scan"], n_scans)
+        t0 = time.time()
+        f1w, f1m = lopo_lr(X, y, groups)
+        rows.append({"config": "dinov2_vitb14 45nm tiled (mean-pool)",
+                     "f1_weighted": f1w, "f1_macro": f1m,
+                     "dim": X.shape[1], "seconds": time.time() - t0})
+
     # TTA versions
     for enc_name in ["dinov2_vitb14", "biomedclip"]:
         path = CACHE / f"tta_emb_{enc_name}_afmhot_t512_n9_d4.npz"
@@ -273,6 +284,42 @@ def main():
         rows.append({"config": "★ ENSEMBLE TTA v2 (L2 + geom-mean, SHIPPED)",
                      "f1_weighted": f1w_v2, "f1_macro": f1m_v2,
                      "dim": Xd.shape[1] + Xb.shape[1], "seconds": 0.0})
+
+    # Multi-scale ensemble (90 + 45 + BiomedCLIP-TTA) — Wave 7 candidate
+    path_45 = CACHE / "tiled_emb_dinov2_vitb14_afmhot_t512_n9_45nm.npz"
+    path_90 = CACHE / "tiled_emb_dinov2_vitb14_afmhot_t512_n9.npz"
+    path_bc = CACHE / "tta_emb_biomedclip_afmhot_t512_n9_d4.npz"
+    if path_45.exists() and path_90.exists() and path_bc.exists():
+        z45 = np.load(path_45, allow_pickle=True)
+        z90 = np.load(path_90, allow_pickle=True)
+        zbc = np.load(path_bc, allow_pickle=True)
+        X45 = aggregate_tiles(z45["X"], z45["tile_to_scan"], n_scans)
+        X90 = aggregate_tiles(z90["X"], z90["tile_to_scan"], n_scans)
+        Xbc = zbc["X_scan"] if "X_scan" in zbc.files else aggregate_tiles(zbc["X"], zbc["tile_to_scan"], n_scans)
+
+        from sklearn.preprocessing import normalize as _normalize
+        X45n = _normalize(X45, norm="l2", axis=1)
+        X90n = _normalize(X90, norm="l2", axis=1)
+        Xbcn = _normalize(Xbc, norm="l2", axis=1)
+        preds = np.full(n_scans, -1, dtype=int)
+        eps = 1e-9
+        for tr, va in leave_one_patient_out(groups):
+            def _fold_proba(Xn):
+                sc = StandardScaler(); Xt = sc.fit_transform(Xn[tr]); Xv = sc.transform(Xn[va])
+                clf = LogisticRegression(class_weight="balanced", max_iter=2000, C=1.0, n_jobs=4)
+                clf.fit(Xt, y[tr])
+                return clf.predict_proba(Xv)
+            p45 = _fold_proba(X45n); p90 = _fold_proba(X90n); pbc = _fold_proba(Xbcn)
+            log_avg = (np.log(p45 + eps) + np.log(p90 + eps) + np.log(pbc + eps)) / 3
+            p = np.exp(log_avg - log_avg.max(axis=1, keepdims=True))
+            p = p / p.sum(axis=1, keepdims=True)
+            preds[va] = p.argmax(axis=1)
+        f1w_ms = f1_score(y, preds, average="weighted")
+        f1m_ms = f1_score(y, preds, average="macro")
+        rows.append({"config": "✨ MULTI-SCALE 90+45+BiomedCLIP-TTA (W7 candidate)",
+                     "f1_weighted": f1w_ms, "f1_macro": f1m_ms,
+                     "dim": X45.shape[1] + X90.shape[1] + Xbc.shape[1],
+                     "seconds": 0.0})
 
     # Handcrafted
     X_hc, _ = load_handcrafted(samples, n_scans)
