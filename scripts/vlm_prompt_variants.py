@@ -39,13 +39,36 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from teardrop.data import CLASSES, enumerate_samples, preprocess_spm  # noqa: E402
+from teardrop.safe_paths import SAFE_ROOT, assert_prompt_safe  # noqa: E402
 
 CACHE_DIR = REPO / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
-TILE_DIR = CACHE_DIR / "vlm_tiles"
+# Safe, class-neutral tile dir. The legacy ``cache/vlm_tiles/`` directory
+# with ``{cls}__{stem}.png`` leaked labels to the VLM — we no longer write
+# there. Honest anonymized tiles already live in ``cache/vlm_tiles_honest/``.
+TILE_DIR = SAFE_ROOT / "prompt_variants"
 TILE_DIR.mkdir(parents=True, exist_ok=True)
+HONEST_TILE_DIR = CACHE_DIR / "vlm_tiles_honest"
+HONEST_MANIFEST = CACHE_DIR / "vlm_honest_manifest.json"
 
 MODEL = "claude-haiku-4-5"
+
+
+def build_honest_lookup() -> dict[str, Path]:
+    """Return {rel_raw_path -> honest_tile_path} mapping using the vlm_tiles_honest
+    anonymized tiles (filename leaks no class info)."""
+    if not HONEST_MANIFEST.exists() or not HONEST_TILE_DIR.exists():
+        return {}
+    m = json.loads(HONEST_MANIFEST.read_text())
+    lookup: dict[str, Path] = {}
+    import os as _os
+    for anon_id, info in m.items():
+        raw = info.get("raw_path")
+        if not raw:
+            continue
+        rel = _os.path.relpath(raw, str(REPO))
+        lookup[rel] = HONEST_TILE_DIR / f"{anon_id}.png"
+    return lookup
 
 SYSTEM_APPEND = (
     "You are a vision-language classifier. Respond with one JSON object only "
@@ -258,6 +281,7 @@ def _extract_json(text: str) -> dict:
 
 def call_claude_cli(prompt: str, model: str = MODEL, timeout_s: int = 180) -> dict:
     """Invoke `claude -p` as a subprocess; return parsed response + meta."""
+    assert_prompt_safe(prompt)
     cmd = [
         "claude",
         "-p",
@@ -328,20 +352,42 @@ def run_variant(
     anchors: dict[str, list] | None,
     cache_path: Path,
     time_budget_s: float,
+    honest: bool = False,
 ) -> dict[str, dict]:
+    """If honest=True, use anonymized tile paths (scan_NNNN.png) for the query image,
+    anchor tiles are renamed/copied with neutral names. This eliminates filename
+    metadata leakage."""
     cache: dict[str, dict] = {}
     if cache_path.exists():
         cache = json.loads(cache_path.read_text())
 
-    # Pre-render anchor tiles (for variant 2)
+    honest_lookup = build_honest_lookup() if honest else {}
+    # For few-shot anchors with honest naming, use renamed copies in a scratch dir.
+    anchor_scratch_dir: Path | None = None
+    if honest:
+        anchor_scratch_dir = SAFE_ROOT / "prompt_variants_anchors"
+        anchor_scratch_dir.mkdir(parents=True, exist_ok=True)
+
+    # Pre-render anchor tiles (for variant 2). Always write to the safe tile
+    # dir with sha1-obfuscated names so anchor paths never leak class info.
+    import hashlib as _hl_anchor_pv
     anchor_paths_by_cls: dict[str, list[Path]] = {}
     if variant == 2 and anchors is not None:
-        for cls, anchor_samples in anchors.items():
+        for cls_idx, (cls, anchor_samples) in enumerate(anchors.items()):
             anchor_paths_by_cls[cls] = []
-            for s in anchor_samples:
-                p = TILE_DIR / f"{s.cls}__{s.raw_path.stem}.png"
+            for i_anc, s in enumerate(anchor_samples):
+                rel_anchor = str(s.raw_path.relative_to(REPO))
+                _aid = _hl_anchor_pv.sha1(rel_anchor.encode("utf-8")).hexdigest()[:16]
+                p = TILE_DIR / f"scan_{_aid}.png"
                 render_scan_tile(s.raw_path, p)
-                anchor_paths_by_cls[cls].append(p)
+                if honest and anchor_scratch_dir is not None:
+                    import shutil
+                    dst = anchor_scratch_dir / f"anchor_{cls_idx:02d}_{i_anc:02d}.png"
+                    if not dst.exists():
+                        shutil.copy(p, dst)
+                    anchor_paths_by_cls[cls].append(dst)
+                else:
+                    anchor_paths_by_cls[cls].append(p)
 
     t_start = time.time()
     for i, s in enumerate(samples):
@@ -353,12 +399,21 @@ def run_variant(
         if elapsed > time_budget_s:
             print(f"  [budget] stopping variant {variant} at {i}/{len(samples)} after {elapsed:.0f}s")
             break
-        img_path = TILE_DIR / f"{s.cls}__{s.raw_path.stem}.png"
-        try:
-            render_scan_tile(s.raw_path, img_path)
-        except Exception as e:
-            cache[key] = {"error": f"render failed: {e}", "true_class": s.cls, "person": s.person}
-            continue
+        if honest and key in honest_lookup:
+            img_path = honest_lookup[key]
+            if not img_path.exists():
+                cache[key] = {"error": f"honest tile missing: {img_path}", "true_class": s.cls, "person": s.person}
+                continue
+        else:
+            # Obfuscate the query tile filename too (sha1 of relpath).
+            import hashlib as _hl_q
+            _q_id = _hl_q.sha1(key.encode("utf-8")).hexdigest()[:16]
+            img_path = TILE_DIR / f"scan_{_q_id}.png"
+            try:
+                render_scan_tile(s.raw_path, img_path)
+            except Exception as e:
+                cache[key] = {"error": f"render failed: {e}", "true_class": s.cls, "person": s.person}
+                continue
 
         if variant == 1:
             prompt = prompt_v1_minimal(img_path)
@@ -500,7 +555,12 @@ def main() -> int:
     ap.add_argument("--eval-only", action="store_true")
     ap.add_argument("--time-budget-s", type=int, default=1500,
                     help="per-variant wall clock cap (default 25 min)")
+    ap.add_argument("--honest", action="store_true",
+                    help="use anonymized tile filenames (scan_NNNN.png) to "
+                         "eliminate filename metadata leakage. Writes to "
+                         "cache/vlm_variant_{N}_honest_predictions.json")
     args = ap.parse_args()
+    tag = "_honest" if args.honest else ""
 
     all_samples = enumerate_samples(REPO / "TRAIN_SET")
     print(f"Loaded {len(all_samples)} total samples")
@@ -523,13 +583,14 @@ def main() -> int:
     all_evals: dict[int, dict] = {}
     qual_by_variant: dict[int, dict] = {}
     for v in args.variants:
-        cache_path = CACHE_DIR / f"vlm_variant_{v}_predictions.json"
+        cache_path = CACHE_DIR / f"vlm_variant_{v}{tag}_predictions.json"
         print(f"\n{'=' * 60}")
-        print(f"Variant {v} -> {cache_path.name}")
+        print(f"Variant {v}{' (HONEST tiles)' if args.honest else ''} -> {cache_path.name}")
         print(f"{'=' * 60}")
         if not args.eval_only:
             cache = run_variant(v, query_samples, anchors=anchors,
-                                cache_path=cache_path, time_budget_s=args.time_budget_s)
+                                cache_path=cache_path, time_budget_s=args.time_budget_s,
+                                honest=args.honest)
         else:
             cache = json.loads(cache_path.read_text()) if cache_path.exists() else {}
         ev = evaluate(cache, query_keys)
@@ -565,7 +626,7 @@ def main() -> int:
               f"{ev['accuracy']:>8.4f} {ev['f1_macro']:>10.4f} "
               f"{ev['mean_confidence']:>10.3f} {ev['total_cost_usd']:>10.4f}")
 
-    summary_path = CACHE_DIR / "vlm_variants_summary.json"
+    summary_path = CACHE_DIR / f"vlm_variants{tag}_summary.json"
     summary_path.write_text(json.dumps({
         "args": vars(args),
         "query_keys": query_keys,

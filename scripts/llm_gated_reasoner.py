@@ -43,6 +43,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from teardrop.data import person_id  # noqa: E402
 from teardrop.llm_reason import DOMAIN_CONTEXT, KEY_FEATURES  # noqa: E402
+from teardrop.safe_paths import assert_prompt_safe  # noqa: E402
 
 CLASSES = ["ZdraviLudia", "Diabetes", "PGOV_Glaukom", "SklerozaMultiplex", "SucheOko"]
 
@@ -204,6 +205,7 @@ Pick which class of the two ({top1_cls} or {top2_cls}) the query matches best, b
 
 def call_claude_cli(prompt: str, model: str | None, timeout_s: int = 60) -> dict:
     """Invoke `claude -p <prompt> [--model <model>]` and return parsed result."""
+    assert_prompt_safe(prompt)
     cmd = ["claude", "-p", prompt]
     if model:
         cmd.extend(["--model", model])

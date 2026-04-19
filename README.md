@@ -1,21 +1,38 @@
-# Teardrop Challenge — Hack Košice 2026 / UPJŠ
+# Lacrima — Disease detection from a single tear
 
-**Disease classification from tear-film AFM micrographs** — orchestrated multi-agent ML research pipeline.
+> **Hack Košice 2026 · UPJŠ Tear Challenge** — chronic disease classification from atomic-force microscopy scans of dried tear droplets.
 
-> **Champion shipped model:** v4 multi-scale TTA ensemble (DINOv2-B at 90 nm/px + 45 nm/px + BiomedCLIP, D4 test-time augmentation, L2-normalized embeddings, geometric-mean softmax combination).
-> **Honest F1:** 0.6887 weighted (macro 0.554), person-level Leave-One-Patient-Out (35 persons, 240 scans, 5 classes). Red-team bootstrap 95% CI strictly > 0 (P = 0.999).
+Built through **multi-agent LLM orchestration**: Karpathy's autoresearch lifted one abstraction higher — an orchestrator dispatching specialist sub-agents (researcher · implementer · red-team · synthesizer), with a human-in-the-loop directing strategy.
 
-## Quick start (inference)
+---
+
+## Headline
+
+| Metric | Value |
+|---|---|
+| **Weighted F1** (official metric, person-LOPO honest) | **0.6887** |
+| Macro F1 | 0.5541 |
+| Per-patient F1 (majority vote across patient's scans) | 0.8011 |
+| Top-2 accuracy | 88 % |
+| Bootstrap 95 % CI | [0.5952 — 0.7931] |
+| Signal vs random null | **15.7 σ above baseline** |
+| Dataset | 240 scans · 35 patients · 5 classes |
+| Process | 218 sub-agents · 21 waves · 30+ honest experiments · 9 contaminations red-teamed |
+
+---
+
+## Quickstart (inference)
 
 ```bash
 python3.13 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 
 .venv/bin/python predict_cli.py \
-    --model models/ensemble_v2_tta \
-    --input /path/to/TEST_SET \
+    --input  /path/to/TEST_SET \
     --output submission.csv
 ```
+
+Default model is `models/ensemble_v4_multiscale/` (the shipped champion).
 
 ## Interactive demo
 
@@ -23,63 +40,100 @@ python3.13 -m venv .venv
 .venv/bin/python app.py        # opens on http://localhost:7860
 ```
 
+## Pitch deck
+
+```bash
+open pitch_deck.html           # right-click = next, left-click = back, F = fullscreen
+```
+
+---
+
+## Architecture (v4 multi-scale ensemble)
+
+Three frozen foundation encoders, geometric mean of softmaxes:
+
+```
+AFM scan (.spm)
+  ├──▶ DINOv2-B @ 90 nm/px  ──▶ L2 → StandardScaler → LR head ──┐
+  ├──▶ DINOv2-B @ 45 nm/px  ──▶ L2 → StandardScaler → LR head ──┤── geomean ──▶ argmax
+  └──▶ BiomedCLIP @ 90 nm/px (D4 TTA) → L2 → … → LR head      ──┘
+```
+
+- **DINOv2** — Meta · 142M images · self-supervised. Universal visual encoder.
+- **BiomedCLIP** — Microsoft · 15M PubMed images. Medical prior orthogonal to DINOv2.
+- **Multi-scale**: 90 nm captures whole fractal · 45 nm captures fine crystal edges.
+- **Geometric mean** penalises encoder disagreement → robust ensemble.
+- **Frozen backbones** — 240 scans is too few to fine-tune (LoRA tested → −4 pp F1).
+
+Full diagram: [`reports/ARCHITECTURE.md`](reports/ARCHITECTURE.md).
+
+---
+
 ## Documentation
 
+### Start here
 | File | Purpose |
 |---|---|
-| [`SUBMISSION.md`](SUBMISSION.md) | Organizer-facing handoff — how to predict on new data |
-| [`REPRODUCE.md`](REPRODUCE.md) | Full reproduction guide (fresh machine → shipped model) |
-| [`STATE.md`](STATE.md) | Orchestration ledger — live state of experiments |
-| [`CLAUDE.md`](CLAUDE.md) | Project context + conventions (for AI agents) |
-| [`pitch_slides.md`](pitch_slides.md) | 10-slide pitch outline |
-| [`reports/FINAL_REPORT.md`](reports/FINAL_REPORT.md) | Comprehensive technical report |
-| [`reports/PITCH_NARRATIVE.md`](reports/PITCH_NARRATIVE.md) | 5-minute pitch script |
-| [`reports/ABSTRACT.md`](reports/ABSTRACT.md) | Research-paper-style single-page summary |
-| [`reports/ARCHITECTURE.md`](reports/ARCHITECTURE.md) | System diagrams (Mermaid) |
-| [`reports/DATA_AUDIT.md`](reports/DATA_AUDIT.md) | Raw data audit (pre-training) |
+| [`pitch_deck.html`](pitch_deck.html) | 6-slide deck (open in browser, F = fullscreen) |
+| [`reports/AGENTS_DOCUMENTATION.md`](reports/AGENTS_DOCUMENTATION.md) | Wave-by-wave agent log (218 agents, 21 waves) |
+| [`reports/V4_FINAL_AUDIT.md`](reports/V4_FINAL_AUDIT.md) | Pre-submission integrity audit (6 rounds, all pass) |
+| [`reports/THEORETICAL_CEILING.md`](reports/THEORETICAL_CEILING.md) | Where the F1 ceiling lives, literature-informed |
+| [`reports/LEAKAGE_PREVENTION.md`](reports/LEAKAGE_PREVENTION.md) | Runtime-enforced leakage guards (`teardrop/safe_paths.py`) |
+
+### Deep dives
+| File | Purpose |
+|---|---|
+| [`STATE.md`](STATE.md) | Live orchestration ledger |
+| [`ORCHESTRATION.md`](ORCHESTRATION.md) | Multi-agent methodology write-up |
+| [`reports/ARCHITECTURE.md`](reports/ARCHITECTURE.md) | System diagrams + bundle layout |
+| [`reports/DATA_AUDIT.md`](reports/DATA_AUDIT.md) | Raw data audit |
 | [`reports/ERROR_ANALYSIS.md`](reports/ERROR_ANALYSIS.md) | Failure-mode deep-dive |
-| [`reports/BENCHMARK_DASHBOARD.md`](reports/BENCHMARK_DASHBOARD.md) | Canonical leaderboard (auto-generated) |
-| [`reports/pitch/`](reports/pitch/) | Pitch visualizations (6 PNGs) |
+| [`reports/BENCHMARK_DASHBOARD.md`](reports/BENCHMARK_DASHBOARD.md) | Canonical leaderboard |
+| [`reports/RED_TEAM_*.md`](reports/) | Independent audits of championship claims |
+| [`reports/VLM_CONTAMINATION_FINDING.md`](reports/VLM_CONTAMINATION_FINDING.md) | Filename-leak post-mortem |
+| [`SUBMISSION.md`](SUBMISSION.md) | Organizer-facing handoff |
+| [`REPRODUCE.md`](REPRODUCE.md) | Fresh-machine reproduction guide |
 
-## Headline results
+---
 
-| Model | Weighted F1 | Macro F1 |
-|---|---:|---:|
-| **★ v4 multi-scale TTA (shipped, 90+45nm+BiomedCLIP)** | **0.6887** | **0.5541** |
-| v2 TTA (superseded champ, single-scale) | 0.6562 | 0.5382 |
-| v1 TTA ensemble | 0.6458 | 0.5154 |
-| Non-TTA ensemble | 0.6346 | 0.4934 |
-| DINOv2-B 45 nm/px single | 0.6433 | 0.5038 |
-| DINOv2-B 90 nm/px single | 0.6150 | 0.4910 |
-| Handcrafted (94 feat) + LR | 0.4882 | 0.3707 |
-| Label-shuffle null | 0.276 ± 0.042 | — |
+## Honest negative results
 
-Dataset: **240 scans × 35 persons × 5 classes**, imbalance 7:1 (SM vs SucheOko).
+We tried 30+ directions; most lost. Documented in [`reports/AGENTS_DOCUMENTATION.md`](reports/AGENTS_DOCUMENTATION.md). Highlights of what didn't work:
 
-## Methodology in one paragraph
+| Direction | Result | Why |
+|---|---|---|
+| LoRA fine-tuning of DINOv2-B | −4.1 pp wF1 | 240 scans too few for any backbone training |
+| MAE in-domain pretraining (ViT-Tiny) | −11.7 pp | 17k patches is 100× smaller than published MAE corpora |
+| Foundation-model zoo (5 encoders) | All under DINOv2-B baseline | Sweet spot is 3-encoder geomean |
+| Hierarchical 2-stage classifier | −3.4 pp | Healthy class is a relief valve, not a wall |
+| TDA persistent-homology fusion | −6.4 pp | Errors correlate with DINOv2, not orthogonal |
+| VLM (Haiku / Sonnet / Opus, all variants) | up to −56 pp | AFM is out-of-distribution for web-trained VLMs |
 
-Raw Bruker SPM → preprocess (plane-level + resample to 90 nm/px + robust-normalize) → tile into 9 × 512² patches → D4-group test-time augmentation (72 tile views per scan) → encode with two frozen foundation models (DINOv2-B ViT-B/14 and BiomedCLIP ViT-B/16) → mean-pool tile embeddings to one scan-level vector → per-encoder StandardScaler + LogisticRegression with balanced class weights → arithmetic mean of softmaxes → argmax.
+---
 
-## Orchestration pattern
+## Red-team discipline
 
-This project was built by an LLM-orchestrated research pipeline:
-- **Orchestrator** (Claude Opus) maintains `STATE.md` and dispatches sub-agents in parallel rounds
-- **Specialist agents** (general-purpose Claude sub-agents) do focused work: implement experiments, validate, synthesize, build demos
-- **Red-team agents** audit every F1 > baseline claim — rejected 3 inflated claims (0.67–0.69) before adoption
-- **~20 sub-agents across 5 waves** produced features, embeddings, ensembles, specialists, LLM-reasoning layers, interpretability artifacts, and a working Gradio demo
+Every score above baseline is independently audited by a red-team sub-agent (bootstrap CI + leakage scan + nested-CV recheck). **Nine contaminations were caught before any went live**, including:
 
-## Honest negatives
+- Image-level vs person-level eye grouping (Wave 1)
+- OOF threshold/bias tuning leakage (Waves 2–6)
+- VLM filename leak via `.png` paths — twice in different scripts (Waves 9 + 14)
+- Patient-level "0.8177" using apples-to-oranges baseline (Wave 18)
 
-- Hard-override cascade: −0.048 (low-confidence ≠ wrong)
-- LLM prediction override: −0.012
-- 4-component concat + bias tuning (nested): 0.633 (regression)
-- Crystal Graph NN alone: 0.365 (data-starved)
-- SupCon SSL projection: 0.612 (below baseline, expected for small data)
+After the second filename-leak we built [`teardrop/safe_paths.py`](teardrop/safe_paths.py) — a runtime guard that physically prevents class names from appearing in prompt paths, with 12 unit tests and AST-based lint enforcement.
+
+---
 
 ## Key limitation
 
-**SucheOko has only 2 unique persons in the training set.** F1 = 0.00 is a ceiling set by the data, not the model. 57% of non-near-miss errors come from this single class.
+**SucheOko has only 2 unique patients in the dataset.** Per-class F1 is structurally bounded — no model can recover this without more samples. Per-class F1 = 0.00 is a *data-collection problem*, not a model problem.
 
-## License / contact
+---
 
-Hackathon artifact. Contact via project repo issues.
+## License
+
+Hackathon artifact. MIT.
+
+## Contact
+
+Built for Hack Košice 2026. Contact via repo issues.

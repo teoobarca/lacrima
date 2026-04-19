@@ -26,6 +26,7 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from teardrop.data import CLASSES, enumerate_samples, preprocess_spm  # noqa: E402
+from teardrop.safe_paths import assert_prompt_safe  # noqa: E402
 
 N_SANITY = 15  # 3 per class, stratified
 
@@ -52,6 +53,7 @@ SYSTEM_APPEND = (
 
 def run_one(img_path: Path) -> dict:
     prompt = PROMPT_TEMPLATE.format(img_path=str(img_path))
+    assert_prompt_safe(prompt)
     try:
         proc = subprocess.run(
             ["claude", "-p", "--model", "claude-haiku-4-5",

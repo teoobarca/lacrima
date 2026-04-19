@@ -36,6 +36,7 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from teardrop.data import CLASSES, enumerate_samples, preprocess_spm  # noqa: E402
+from teardrop.safe_paths import assert_prompt_safe  # noqa: E402
 
 CACHE = REPO / "cache"
 TILE_DIR = CACHE / "vlm_tiles_honest"
@@ -96,6 +97,7 @@ def classify_one(task: tuple) -> tuple:
     """Run claude -p on one rendered tile. Called in worker process."""
     key, img_path, model = task
     prompt = PROMPT_TEMPLATE.format(img_path=str(img_path))
+    assert_prompt_safe(prompt)
     try:
         cmd = [
             "claude", "-p",

@@ -13,3 +13,10 @@ reports/pitch/*.png
 reports/samples/*.png
 reports/raw_samples/*.png
 models/**/train_predictions.csv
+
+# Pitch deck depends on these — unignore explicitly so html stays usable on clone
+!reports/pitch/02_class_morphology_grid.jpg
+!reports/pitch/04_confusion_matrix.png
+
+# Per-agent transcript dumps from internal task system (not portable)
+.claude/

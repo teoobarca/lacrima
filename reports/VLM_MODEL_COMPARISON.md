@@ -1,3 +1,10 @@
+> [!WARNING]
+> **CONTAMINATED — DO NOT CITE.** This report used `cache/vlm_few_shot_collages/<CLASS>__<scan>.png` paths whose filename leaked the class label to the VLM. Caught by red-team audit `reports/RED_TEAM_SONNET_0_8873.md` on 2026-04-18.
+> Honest replacement: `reports/VLM_SONNET_HONEST.md` (Sonnet honest wF1 = 0.3424, inflation +0.545).
+> Leakage prevention infra: `teardrop/safe_paths.py` + `reports/LEAKAGE_PREVENTION.md`.
+
+---
+
 # VLM Model Comparison: Haiku 4.5 vs Sonnet 4.6 vs Opus 4.7
 
 Task: direct-image AFM tear-droplet classification (5 classes). Prompt and rendering identical to `scripts/vlm_direct_classify.py` baseline. Only variable is the `--model` flag passed to `claude -p`.

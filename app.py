@@ -48,7 +48,7 @@ from teardrop.features import (  # noqa: E402
     roughness_features,
 )
 from teardrop.infer import preprocess_and_tile_spm  # noqa: E402
-from models.ensemble_v2_tta.predict import TTAPredictorV2 as TTAPredictor  # noqa: E402
+from models.ensemble_v4_multiscale.predict import TTAPredictorV4 as TTAPredictor  # noqa: E402
 from teardrop.clinical_report import (  # noqa: E402
     DEFAULT_MODEL_DIR as CLINICAL_MODEL_DIR,
     DEFAULT_RETRIEVAL_CACHE as CLINICAL_RETRIEVAL_CACHE,
@@ -150,8 +150,8 @@ DEMO_SAMPLES = {
 # One-time startup: load predictor + retrieval cache
 # ---------------------------------------------------------------------------
 
-print("[app] Loading TTA ensemble bundle — this may take ~60s on cold start...")
-PREDICTOR = TTAPredictor.load(PROJECT_ROOT / "models/ensemble_v2_tta")
+print("[app] Loading v4 multi-scale ensemble bundle — this may take ~60s on cold start...")
+PREDICTOR = TTAPredictor.load(PROJECT_ROOT / "models/ensemble_v4_multiscale")
 print("[app] Predictor ready.")
 
 print("[app] Loading DINOv2-B retrieval cache...")
@@ -822,7 +822,7 @@ Full history: `reports/FINAL_REPORT.md`, `reports/RED_TEAM_ENSEMBLE_AUDIT.md`.
 
 ---
 
-*Demo built with Gradio {v}. Model bundle:* `models/ensemble_v2_tta/` (0.6562 F1).
+*Demo built with Gradio {v}. Model bundle:* `models/ensemble_v4_multiscale/` (weighted F1 = 0.6887, person-LOPO honest).
 """.format(v=gr.__version__)
             )
 

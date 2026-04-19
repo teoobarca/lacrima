@@ -584,6 +584,135 @@ def write_markdown(summary: dict) -> None:
     print(f"[saved] reports/FOUNDATION_ZOO_RESULTS.md")
 
 
+def write_markdown_v2(summary: dict, boot: dict, greedy: list) -> None:
+    """FOUNDATION_ZOO.md -- extended report with greedy trace + bootstrap."""
+    per = summary["per_encoder"]
+    ens = summary["ensembles"]
+    lines: list[str] = []
+    lines.append("# Foundation-Model Zoo — Wave 6 Report\n")
+    lines.append(
+        "**Hypothesis:** foundation-model diversity (DINOv2-L, SigLIP-SO400M, "
+        "EVA-02, OpenCLIP-L, PubMedCLIP) beats the single-track v4 "
+        "(DINOv2-B 90nm + DINOv2-B 45nm + BiomedCLIP-TTA, wF1=0.6887).\n"
+    )
+    lines.append("## Protocol\n")
+    lines.append(
+        "- Person-level LOPO (35 folds, `StratifiedGroupKFold` via `teardrop.cv`).\n"
+        "- Identical encode recipe for all zoo members: 90 nm/px resample, "
+        "plane-level, robust-norm, 9 non-overlapping 512² afmhot tiles, "
+        "mean-pool to scan embedding, no TTA.\n"
+        "- Head: L2-norm → StandardScaler → LogisticRegression(class_weight='balanced', "
+        "C=1.0). Identical across encoders; no per-encoder tuning.\n"
+        "- Ensembles: geometric mean of class softmaxes.\n"
+        "- Bootstrap: 1000× paired resample on wF1, scan-level.\n"
+    )
+
+    lines.append("## Per-encoder standalone (person-LOPO)\n")
+    lines.append("| Encoder | Status | Dim | Encode(s) | wF1 | Macro F1 |")
+    lines.append("|---|---|---:|---:|---:|---:|")
+    for row in per:
+        et = row.get("encode_time_s")
+        et_str = f"{et:.1f}" if isinstance(et, (int, float)) else "-"
+        dim_str = str(row.get("dim") or "-")
+        if row.get("weighted_f1") is not None:
+            lines.append(
+                f"| {row['pretty']} | {row['status']} | {dim_str} | {et_str} | "
+                f"{row['weighted_f1']:.4f} | {row['macro_f1']:.4f} |"
+            )
+        else:
+            lines.append(
+                f"| {row['pretty']} | {row['status']} | {dim_str} | {et_str} | - | - |"
+            )
+    lines.append("")
+
+    succ = [r for r in per if r.get("per_class_f1")]
+    if succ:
+        lines.append("## Per-class F1 (standalone)\n")
+        lines.append("| Encoder | " + " | ".join(CLASSES) + " |")
+        lines.append("|---|" + "|".join([":---:"] * len(CLASSES)) + "|")
+        for row in succ:
+            pcf1 = row["per_class_f1"]
+            lines.append(
+                f"| {row['pretty']} | " + " | ".join(f"{v:.4f}" for v in pcf1) + " |"
+            )
+        lines.append("")
+
+    lines.append("## Ensemble sweep (geom-mean softmax, person-LOPO)\n")
+    lines.append("| Config | Members | wF1 | Macro F1 | Δ vs v4 (0.6887) |")
+    lines.append("|---|---|---:|---:|---:|")
+    for row in ens:
+        delta = row["weighted_f1"] - CHAMP_V4
+        members = ", ".join(row["members"])
+        lines.append(
+            f"| **{row['name']}** | {members} | {row['weighted_f1']:.4f} | "
+            f"{row['macro_f1']:.4f} | {delta:+.4f} |"
+        )
+    lines.append("")
+
+    lines.append("## Greedy forward selection (start from v4)\n")
+    lines.append("Rule: at each step, try adding every remaining zoo encoder; keep "
+                 "the one that improves wF1 the most. Stop when no candidate improves.\n")
+    lines.append("| Step | Added | Members | wF1 | Δ vs v4 |")
+    lines.append("|---:|---|---|---:|---:|")
+    for gt in greedy:
+        added = gt["added"] or "-"
+        lines.append(
+            f"| {gt['step']} | {added} | {', '.join(gt['members'])} | "
+            f"{gt['weighted_f1']:.4f} | {gt['delta_vs_v4']:+.4f} |"
+        )
+    lines.append("")
+
+    lines.append("## Bootstrap best-zoo vs v4 (1000× paired)\n")
+    lines.append(f"- Best ensemble: **{boot['best_ensemble_name']}** "
+                 f"(members: {', '.join(boot['best_ensemble_members'])})")
+    lines.append(f"- Best wF1 (point): {boot['best_ensemble_wf1']:.4f}")
+    lines.append(f"- v4 wF1 (point): {boot['v4_wf1_point']:.4f}")
+    lines.append(f"- Bootstrap mean Δ = {boot['mean_delta']:+.4f}")
+    lines.append(f"- 95% CI on Δ = [{boot['ci_lo_2.5']:+.4f}, {boot['ci_hi_97.5']:+.4f}]")
+    lines.append(f"- **P(Δ > 0) = {boot['p_delta_gt_0']:.3f}**")
+    lines.append("")
+
+    lines.append("## Verdict\n")
+    champ = summary.get("champion_candidate", False)
+    if champ:
+        lines.append(
+            f"**CHAMPION CANDIDATE.** {boot['best_ensemble_name']} crosses both "
+            f"gates: wF1 > 0.70 and P(Δ>0 vs v4) > 0.90. Recommend red-team pipeline "
+            f"(blind eval + leakage audit).\n"
+        )
+    else:
+        lines.append(
+            f"**v4 REMAINS CHAMPION.** No zoo ensemble reaches the required bar "
+            f"(wF1 > 0.70 AND P(Δ>0) > 0.90). Best zoo ensemble: "
+            f"**{boot['best_ensemble_name']}** @ {boot['best_ensemble_wf1']:.4f} wF1 "
+            f"(Δmean = {boot['mean_delta']:+.4f}, P(Δ>0) = {boot['p_delta_gt_0']:.3f}).\n"
+        )
+        lines.append("### Why diversity did not help\n")
+        lines.append(
+            "- Every added zoo encoder underperforms DINOv2-B standalone (best zoo "
+            "single = EVA02-L @ 0.5832). Geom-mean of softmaxes penalises members "
+            "that confidently disagree with the majority, so a weaker member pulls "
+            "the ensemble down, not up.\n"
+            "- The v4 stack already has latent-space diversity from 3 complementary "
+            "sources: two DINOv2-B scales (90 nm vs 45 nm) plus D4-TTA BiomedCLIP. "
+            "Adding a fourth non-medical encoder is marginal redundancy rather than "
+            "new information.\n"
+            "- No zoo encoder solves SucheOko (F1=0.00 across the board). That is "
+            "the class bottleneck, not encoder capacity.\n"
+        )
+
+    lines.append("## Artefacts\n")
+    lines.append(
+        "- `reports/foundation_zoo_results.json` — structured summary.\n"
+        "- `cache/zoo_predictions.json` — per-variant OOF softmax + preds.\n"
+        "- `cache/tiled_emb_<encoder>_afmhot_t512_n9.npz` — cached tile embeddings "
+        "(reusable for future ensembles, linear probes, stacking).\n"
+    )
+
+    (REPORTS / "FOUNDATION_ZOO.md").write_text("\n".join(lines))
+    print(f"[saved] reports/FOUNDATION_ZOO.md")
+
+
 # ---------------------------------------------------------------------------
 # Main
 # ---------------------------------------------------------------------------
@@ -775,6 +904,139 @@ def main():
                  ["dinov2b_90", "dinov2b_45", "biomedclip_tta", "openclip_vitl14_laion2b"],
                  [P_d90, P_d45, P_bc, zoo_probs["openclip_vitl14_laion2b"]])
 
+    # ---- 3b. Greedy forward selection starting from v4 ----
+    # Rule: start with v4 (the 3 fixed members). For each candidate zoo encoder,
+    # try adding it; keep the candidate that yields the biggest wF1 improvement
+    # over the current ensemble. Iterate until no candidate improves wF1.
+    # Because all member softmaxes are computed with FIXED hyperparameters
+    # (v2 recipe, C=1.0, no threshold tuning) and we only select on argmax
+    # wF1 (no OOF model re-fit per step), this is OOF-safe in the sense that
+    # the search doesn't tune anything per-fold -- only the ensemble
+    # composition is chosen.
+    print("\n  [greedy] forward selection starting from v4 baseline")
+    current_members = ["dinov2b_90", "dinov2b_45", "biomedclip_tta"]
+    current_probs = {
+        "dinov2b_90": P_d90, "dinov2b_45": P_d45, "biomedclip_tta": P_bc,
+    }
+    greedy_trace = []
+    current_f1 = metrics_of(
+        geom_mean_probs([current_probs[k] for k in current_members]), y_ref,
+    )["weighted_f1"]
+    greedy_trace.append({
+        "step": 0, "added": None, "members": list(current_members),
+        "weighted_f1": current_f1, "delta_vs_v4": 0.0,
+    })
+    print(f"    step 0: members={current_members} W-F1={current_f1:.4f}")
+
+    candidates = [n for n in zoo_probs.keys() if n not in current_members]
+    step = 1
+    while True:
+        best_cand = None
+        best_f1 = current_f1
+        for cand in candidates:
+            probs_list = [current_probs[k] for k in current_members] + [zoo_probs[cand]]
+            f1 = metrics_of(geom_mean_probs(probs_list), y_ref)["weighted_f1"]
+            if f1 > best_f1 + 1e-6:
+                best_f1 = f1
+                best_cand = cand
+        if best_cand is None:
+            print(f"    step {step}: no improvement; stopping")
+            break
+        current_members = current_members + [best_cand]
+        current_probs[best_cand] = zoo_probs[best_cand]
+        candidates = [c for c in candidates if c != best_cand]
+        delta = best_f1 - CHAMP_V4
+        greedy_trace.append({
+            "step": step, "added": best_cand, "members": list(current_members),
+            "weighted_f1": best_f1, "delta_vs_v4": delta,
+        })
+        print(f"    step {step}: added {best_cand} -> W-F1={best_f1:.4f} "
+              f"(Δ vs v4={delta:+.4f})")
+        current_f1 = best_f1
+        step += 1
+
+    # Final greedy ensemble
+    greedy_probs = geom_mean_probs([current_probs[k] for k in current_members])
+    greedy_metrics = metrics_of(greedy_probs, y_ref)
+    print(f"    greedy final members={current_members} "
+          f"W-F1={greedy_metrics['weighted_f1']:.4f} "
+          f"M-F1={greedy_metrics['macro_f1']:.4f}")
+
+    # Append greedy as an ensemble entry
+    ensembles.append({
+        "name": "greedy_forward_from_v4",
+        "members": list(current_members),
+        "weighted_f1": greedy_metrics["weighted_f1"],
+        "macro_f1": greedy_metrics["macro_f1"],
+        "per_class_f1": greedy_metrics["per_class_f1"],
+    })
+
+    # ---- 3c. Bootstrap best-zoo vs v4 ----
+    # Identify the best ensemble that actually contains at least one zoo encoder
+    # (i.e. differs in members from v4_baseline). If greedy picked nothing,
+    # its members equal v4 and we skip it here.
+    print("\n  [bootstrap] paired 1000x resampling, best zoo vs v4")
+    v4_members_set = {"dinov2b_90", "dinov2b_45", "biomedclip_tta"}
+    candidate_ens = [
+        e for e in ensembles
+        if e["name"] != "v4_baseline" and set(e["members"]) != v4_members_set
+    ]
+    if not candidate_ens:
+        candidate_ens = [e for e in ensembles if e["name"] != "v4_baseline"]
+    best_ens = max(candidate_ens, key=lambda e: e["weighted_f1"])
+    # Rebuild best_ens probs for prediction vector
+    best_probs_list = []
+    for m in best_ens["members"]:
+        if m == "dinov2b_90":
+            best_probs_list.append(P_d90)
+        elif m == "dinov2b_45":
+            best_probs_list.append(P_d45)
+        elif m == "biomedclip_tta":
+            best_probs_list.append(P_bc)
+        else:
+            best_probs_list.append(zoo_probs[m])
+    best_probs = geom_mean_probs(best_probs_list)
+    best_preds = best_probs.argmax(1)
+    v4_probs = geom_mean_probs([P_d90, P_d45, P_bc])
+    v4_preds = v4_probs.argmax(1)
+
+    rng = np.random.default_rng(42)
+    n_iter = 1000
+    n = len(y_ref)
+    deltas = np.empty(n_iter)
+    a_arr = np.empty(n_iter)
+    b_arr = np.empty(n_iter)
+    for i in range(n_iter):
+        idx = rng.integers(0, n, size=n)
+        a = f1_score(y_ref[idx], best_preds[idx], average="weighted", zero_division=0)
+        b = f1_score(y_ref[idx], v4_preds[idx], average="weighted", zero_division=0)
+        deltas[i] = a - b
+        a_arr[i] = a
+        b_arr[i] = b
+    bootstrap_res = {
+        "best_ensemble_name": best_ens["name"],
+        "best_ensemble_members": best_ens["members"],
+        "best_ensemble_wf1": float(best_ens["weighted_f1"]),
+        "v4_wf1_point": float(CHAMP_V4),
+        "n_iter": n_iter,
+        "mean_delta": float(deltas.mean()),
+        "ci_lo_2.5": float(np.percentile(deltas, 2.5)),
+        "ci_hi_97.5": float(np.percentile(deltas, 97.5)),
+        "p_delta_gt_0": float((deltas > 0).mean()),
+        "new_mean_f1": float(a_arr.mean()),
+        "base_mean_f1": float(b_arr.mean()),
+    }
+    print(f"    best='{best_ens['name']}' W-F1={best_ens['weighted_f1']:.4f} "
+          f"vs v4 (0.6887)")
+    print(f"    Δmean={bootstrap_res['mean_delta']:+.4f} "
+          f"CI=[{bootstrap_res['ci_lo_2.5']:+.4f}, {bootstrap_res['ci_hi_97.5']:+.4f}] "
+          f"P(Δ>0)={bootstrap_res['p_delta_gt_0']:.3f}")
+    champion_candidate_flag = (
+        best_ens["weighted_f1"] > 0.70
+        and bootstrap_res["p_delta_gt_0"] > 0.90
+    )
+    print(f"    champion_candidate_flag={champion_candidate_flag}")
+
     # ---- 4. Persist ----
     summary = {
         "person_lopo": True,
@@ -783,11 +1045,71 @@ def main():
         "champions": {"dinov2b_no_tta": CHAMP_DINOV2B, "v4_ensemble": CHAMP_V4},
         "per_encoder": per_encoder,
         "ensembles": ensembles,
+        "greedy_forward": greedy_trace,
+        "bootstrap_best_vs_v4": bootstrap_res,
+        "champion_candidate": bool(champion_candidate_flag),
         "elapsed_s": round(time.time() - t0, 1),
     }
     (REPORTS / "foundation_zoo_results.json").write_text(json.dumps(summary, indent=2))
     print(f"\n[saved] reports/foundation_zoo_results.json")
     write_markdown(summary)
+
+    # ---- 4b. cache/zoo_predictions.json (per-variant OOF softmax + preds) ----
+    zoo_predictions = {
+        "meta": {
+            "person_lopo": True,
+            "n_persons": int(n_persons),
+            "n_scans": int(len(y_ref)),
+            "classes": list(CLASSES),
+            "v4_reference_wf1": float(CHAMP_V4),
+        },
+        "y": y_ref.tolist(),
+        "persons": groups_ref.tolist(),
+        "scan_paths": paths_90,
+        "variants": {},
+    }
+
+    def _record_variant(name: str, probs: np.ndarray, members: list[str]):
+        m = metrics_of(probs, y_ref)
+        zoo_predictions["variants"][name] = {
+            "members": members,
+            "weighted_f1": m["weighted_f1"],
+            "macro_f1": m["macro_f1"],
+            "per_class_f1": m["per_class_f1"],
+            "preds": probs.argmax(1).tolist(),
+            # Keep softmax compact: round to 6 decimals to avoid bloat.
+            "proba": np.round(probs, 6).tolist(),
+        }
+
+    # Single-encoder variants
+    for name, P in zoo_probs.items():
+        _record_variant(f"single::{name}", P, [name])
+    # v4 baseline
+    _record_variant("ens::v4_baseline", v4_probs,
+                    ["dinov2b_90", "dinov2b_45", "biomedclip_tta"])
+    # Every explored ensemble (including greedy)
+    for e in ensembles:
+        if e["name"] == "v4_baseline":
+            continue
+        probs_list = []
+        for m in e["members"]:
+            if m == "dinov2b_90":
+                probs_list.append(P_d90)
+            elif m == "dinov2b_45":
+                probs_list.append(P_d45)
+            elif m == "biomedclip_tta":
+                probs_list.append(P_bc)
+            else:
+                probs_list.append(zoo_probs[m])
+        P_ens = geom_mean_probs(probs_list)
+        _record_variant(f"ens::{e['name']}", P_ens, e["members"])
+
+    (CACHE / "zoo_predictions.json").write_text(json.dumps(zoo_predictions))
+    print(f"[saved] cache/zoo_predictions.json ({len(zoo_predictions['variants'])} variants)")
+
+    # ---- 4c. reports/FOUNDATION_ZOO.md (the "v2" report required by task) ----
+    write_markdown_v2(summary, bootstrap_res, greedy_trace)
+
     print(f"\n[done] elapsed {time.time() - t0:.1f}s")
     return summary
 

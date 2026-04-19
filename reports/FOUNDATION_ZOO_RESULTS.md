@@ -42,6 +42,7 @@
 | **v4 + DINOv2-L + SigLIP (5-way)** | dinov2b_90, dinov2b_45, biomedclip_tta, dinov2_vitl14, siglip_so400m_384 | 0.6533 | 0.5275 | -0.0354 |
 | **v4 + EVA02-L (4-way)** | dinov2b_90, dinov2b_45, biomedclip_tta, eva02_l14 | 0.6520 | 0.5195 | -0.0367 |
 | **v4 + OpenCLIP-L LAION-2B (4-way)** | dinov2b_90, dinov2b_45, biomedclip_tta, openclip_vitl14_laion2b | 0.6627 | 0.5286 | -0.0260 |
+| **greedy_forward_from_v4** | dinov2b_90, dinov2b_45, biomedclip_tta | 0.6887 | 0.5541 | -0.0000 |
 
 ## Verdict
 

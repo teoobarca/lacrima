@@ -46,12 +46,15 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from teardrop.data import CLASSES, enumerate_samples, preprocess_spm  # noqa: E402
+from teardrop.safe_paths import SAFE_ROOT, assert_prompt_safe  # noqa: E402
 
 CACHE_DIR = REPO / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
-TILE_DIR = CACHE_DIR / "vlm_tiles"
+# All VLM-input images go under cache/vlm_safe/few_shot/ with obfuscated
+# names (see teardrop.safe_paths). Labels live in the prediction cache.
+TILE_DIR = SAFE_ROOT / "few_shot" / "tiles"
 TILE_DIR.mkdir(parents=True, exist_ok=True)
-COLLAGE_DIR = CACHE_DIR / "vlm_few_shot_collages"
+COLLAGE_DIR = SAFE_ROOT / "few_shot" / "collages"
 COLLAGE_DIR.mkdir(parents=True, exist_ok=True)
 PRED_CACHE = CACHE_DIR / "vlm_few_shot_predictions.json"
 EMB_PATH = CACHE_DIR / "tta_emb_dinov2_vitb14_afmhot_t512_n9_d4.npz"
@@ -97,11 +100,19 @@ Respond ONLY with a single JSON object, no markdown fence, exactly this shape:
 
 
 def tile_filename(cls: str, raw_path: Path) -> Path:
-    # Use full filename (stem + suffix) so scans that share a stem but
-    # differ by .NNN index get distinct tiles. We replace '.' with '_'
-    # for filename cleanliness.
-    safe = raw_path.name.replace(".", "_")
-    return TILE_DIR / f"{cls}__{safe}.png"
+    """Class-neutral tile path under cache/vlm_safe/few_shot/tiles/.
+
+    Uses sha1 of the relative path — no class, no person, no raw name.
+    The ``cls`` argument is accepted only so callers don't break; it is
+    intentionally NOT used in the filename.
+    """
+    import hashlib as _hl
+    try:
+        rel = str(raw_path.resolve().relative_to(REPO))
+    except ValueError:
+        rel = str(raw_path)
+    tid = _hl.sha1(rel.encode("utf-8")).hexdigest()[:16]
+    return TILE_DIR / f"scan_{tid}.png"
 
 
 def render_scan_tile(raw_path: Path, out_path: Path, *, crop: int = 512) -> Path:
@@ -252,6 +263,7 @@ def _extract_json(text: str) -> dict:
 
 def call_claude_cli(img_path: Path, model: str = "claude-haiku-4-5", timeout_s: int = 120) -> dict:
     prompt = PROMPT_TEMPLATE.format(img_path=str(img_path))
+    assert_prompt_safe(prompt)
     cmd = [
         "claude",
         "-p",
@@ -476,7 +488,14 @@ def run(samples_to_score, all_samples, model: str, time_budget_s: float, cache: 
                     print(f"  anchor render failed {anchor_abs}: {e}")
                     render_fail = True
                     break
-                anchor_info.append((cls, a_tile, a_sample.raw_path.name))
+                # Obfuscate anchor id shown on the composed collage: the
+                # raw filename contains class-leaking fragments (e.g. `_DM`,
+                # `_PGOV`) that a VLM could OCR off the image. Use a sha1
+                # hash instead.
+                import hashlib as _hl_anchor
+                _a_rel = str(a_sample.raw_path.relative_to(REPO))
+                _anchor_visible_id = _hl_anchor.sha1(_a_rel.encode("utf-8")).hexdigest()[:10]
+                anchor_info.append((cls, a_tile, _anchor_visible_id))
                 anchor_meta.append({
                     "class": cls,
                     "rank": rank + 1,
@@ -495,9 +514,12 @@ def run(samples_to_score, all_samples, model: str, time_budget_s: float, cache: 
         for am in anchor_meta:
             assert am["person"] != s.person, f"LEAK: anchor person == query person for {key}"
 
-        # compose collage
-        collage_path = COLLAGE_DIR / f"{s.cls}__{s.raw_path.name.replace('.', '_')}.png"
-        compose_collage(anchor_info, q_tile, s.raw_path.stem, collage_path)
+        # compose collage (obfuscated collage filename — sha1 of relpath)
+        import hashlib as _hl
+        rel_q = str(s.raw_path.relative_to(REPO))
+        collage_id = _hl.sha1(rel_q.encode("utf-8")).hexdigest()[:16]
+        collage_path = COLLAGE_DIR / f"scan_{collage_id}.png"
+        compose_collage(anchor_info, q_tile, collage_id, collage_path)
 
         # call Claude
         res = call_claude_cli(collage_path, model=model)
@@ -575,13 +597,59 @@ def print_eval(name: str, ev: dict[str, Any]) -> None:
         print(f"  {lab[:6]:>6s} " + "  ".join(f"{v:>6d}" for v in row))
 
 
-def compare_to_zeroshot(cache: dict[str, dict], keys: list[str]) -> dict[str, Any]:
+def _load_zero_shot_cache(prefer: str | None = None) -> tuple[dict[str, dict], str] | tuple[None, None]:
+    """Load the zero-shot VLM predictions keyed by repo-relative path.
+
+    Preference order:
+      1. explicit `prefer` path-keyed file (if given)
+      2. `vlm_predictions.json` (legacy original ~88% baseline)
+      3. `vlm_haiku_predictions_subset.json` (haiku zero-shot subset)
+      4. `vlm_honest_predictions.json` (honest baseline, via manifest)
+    """
+    def _load_path_keyed(name: str):
+        p = CACHE_DIR / name
+        if p.exists():
+            return json.loads(p.read_text()), name
+        return None
+
+    candidates = []
+    if prefer:
+        candidates.append(prefer)
+    candidates += [
+        "vlm_predictions.json",
+        "vlm_haiku_predictions_subset.json",
+    ]
+    for name in candidates:
+        res = _load_path_keyed(name)
+        if res is not None:
+            return res
+
+    honest = CACHE_DIR / "vlm_honest_predictions.json"
+    manifest = CACHE_DIR / "vlm_honest_manifest.json"
+    if honest.exists() and manifest.exists():
+        preds = json.loads(honest.read_text())
+        mani = json.loads(manifest.read_text())
+        out: dict[str, dict] = {}
+        for scan_id, entry in preds.items():
+            meta = mani.get(scan_id)
+            if not meta:
+                continue
+            raw = meta.get("raw_path", "")
+            try:
+                rel = str(Path(raw).resolve().relative_to(REPO))
+            except ValueError:
+                continue
+            out[rel] = entry
+        return out, "vlm_honest_predictions.json (via manifest)"
+    return None, None
+
+
+def compare_to_zeroshot(cache: dict[str, dict], keys: list[str], prefer: str | None = None) -> dict[str, Any]:
     """Compare the few-shot predictions to the zero-shot VLM predictions
     on the same scans (when both exist)."""
-    zs_cache_path = CACHE_DIR / "vlm_predictions.json"
-    if not zs_cache_path.exists():
+    zs, zs_name = _load_zero_shot_cache(prefer=prefer)
+    if zs is None:
         return {"error": "no zero-shot cache"}
-    zs = json.loads(zs_cache_path.read_text())
     agree = 0
     both_right = 0
     fs_right_only = 0
@@ -613,6 +681,7 @@ def compare_to_zeroshot(cache: dict[str, dict], keys: list[str]) -> dict[str, An
     fs_acc = (both_right + fs_right_only) / max(1, len(overlap_keys))
     return {
         "n_overlap": len(overlap_keys),
+        "zero_shot_source": zs_name,
         "zero_shot_acc": zs_acc,
         "few_shot_acc": fs_acc,
         "agreement_pct": agree / max(1, len(overlap_keys)),
@@ -624,7 +693,7 @@ def compare_to_zeroshot(cache: dict[str, dict], keys: list[str]) -> dict[str, An
     }
 
 
-def write_markdown_report(args, ev, cmp_zs, total_cost, out_path: Path):
+def write_markdown_report(args, ev, cmp_zs, total_cost, out_path: Path, *, all_cmps: dict | None = None):
     import datetime as dt
     lines: list[str] = []
     lines.append("# VLM Few-Shot Classification Results\n")
@@ -663,8 +732,21 @@ def write_markdown_report(args, ev, cmp_zs, total_cost, out_path: Path):
             lines.append(f"| {lab[:10]} | " + " | ".join(str(v) for v in row) + " |")
         lines.append("")
 
+    if all_cmps:
+        lines.append("## All available zero-shot baselines (for context)\n")
+        lines.append("| Baseline | N overlap | Zero-shot acc | Few-shot acc | Delta | FS fixes | FS regresses |")
+        lines.append("|---|---|---|---|---|---|---|")
+        for key, c in sorted(all_cmps.items(), key=lambda kv: -kv[1]["n_overlap"]):
+            lines.append(
+                f"| `{key}` | {c['n_overlap']} | {c['zero_shot_acc']:.3f} | "
+                f"{c['few_shot_acc']:.3f} | {c['few_shot_acc']-c['zero_shot_acc']:+.3f} | "
+                f"{c['few_shot_right_only']} | {c['zero_shot_right_only']} |"
+            )
+        lines.append("")
+
     if cmp_zs and "error" not in cmp_zs:
-        lines.append("## Few-Shot vs Zero-Shot Head-to-Head\n")
+        lines.append("## Few-Shot vs Zero-Shot Head-to-Head (largest overlap)\n")
+        lines.append(f"- Zero-shot source: `{cmp_zs.get('zero_shot_source', 'unknown')}`")
         lines.append(f"- Overlap: {cmp_zs['n_overlap']} scans scored by both.")
         lines.append(f"- **Zero-shot accuracy**: {cmp_zs['zero_shot_acc']:.4f}")
         lines.append(f"- **Few-shot accuracy**:  {cmp_zs['few_shot_acc']:.4f}")
@@ -683,8 +765,28 @@ def write_markdown_report(args, ev, cmp_zs, total_cost, out_path: Path):
             lines.append("")
 
     lines.append("## Baselines to compare against\n")
-    lines.append("- Zero-shot VLM (prior run): ~0.88 accuracy on 30-scan subset")
+    lines.append("- Zero-shot VLM (honest, 40 overlap): 0.225 accuracy")
+    lines.append("- Zero-shot VLM (curated first-scan-per-person subsets): 0.77 - 1.00 on 30-scan overlaps")
     lines.append("- v4 multiscale ensemble: 0.6887 macro-F1 (full 240)\n")
+
+    # reasoning quality showcase
+    try:
+        cache_raw = json.loads(PRED_CACHE.read_text())
+        scored = [v for v in cache_raw.values() if v.get("predicted_class") in CLASSES]
+        correct = [v for v in scored if v.get("predicted_class") == v.get("true_class")]
+        wrong = [v for v in scored if v.get("predicted_class") != v.get("true_class")]
+        lines.append("## Reasoning quality (sample VLM explanations)\n")
+        lines.append("### Correct predictions (cite anchors explicitly)\n")
+        for v in correct[:3]:
+            lines.append(f"- **true={v['true_class']}** pred={v['predicted_class']} (conf {v.get('confidence', 0):.2f}): {v['reasoning']}")
+        lines.append("")
+        if wrong:
+            lines.append("### Wrong predictions (failure modes)\n")
+            for v in wrong[:4]:
+                lines.append(f"- **true={v['true_class']}** pred={v['predicted_class']} (conf {v.get('confidence', 0):.2f}): {v['reasoning']}")
+            lines.append("")
+    except Exception:
+        pass
 
     out_path.write_text("\n".join(lines))
 
@@ -720,19 +822,90 @@ def main() -> int:
     ev = evaluate(cache, scored_keys)
     print_eval("VLM few-shot (10-anchor collage)", ev)
 
-    cmp_zs = compare_to_zeroshot(cache, scored_keys)
-    if cmp_zs and "error" not in cmp_zs:
-        print("\n=== Few-shot vs Zero-shot (overlap) ===")
-        print(f"n_overlap={cmp_zs['n_overlap']}  zs_acc={cmp_zs['zero_shot_acc']:.4f}  fs_acc={cmp_zs['few_shot_acc']:.4f}  delta={cmp_zs['few_shot_acc']-cmp_zs['zero_shot_acc']:+.4f}")
-        print(f"agreement={cmp_zs['agreement_pct']:.1%}  both_right={cmp_zs['both_right']}  both_wrong={cmp_zs['both_wrong']}")
-        print(f"fs_fixes={cmp_zs['few_shot_right_only']}  fs_regresses={cmp_zs['zero_shot_right_only']}")
+    # Compare against every zero-shot baseline we can find
+    baseline_candidates = [
+        "vlm_predictions.json",
+        "vlm_haiku_predictions_subset.json",
+        "vlm_variant_1_predictions.json",
+        "vlm_variant_2_predictions.json",
+        "vlm_variant_3_predictions.json",
+        "vlm_variant_4_predictions.json",
+        "vlm_sonnet_predictions_subset.json",
+        "vlm_opus_predictions_subset.json",
+        "vlm_honest_predictions.json",  # via manifest
+    ]
+    all_cmps: dict[str, dict] = {}
+    for b in baseline_candidates:
+        if b == "vlm_honest_predictions.json":
+            # load honest explicitly (path-mapped via manifest)
+            honest_p = CACHE_DIR / "vlm_honest_predictions.json"
+            mani_p = CACHE_DIR / "vlm_honest_manifest.json"
+            if not (honest_p.exists() and mani_p.exists()):
+                continue
+            hp = json.loads(honest_p.read_text())
+            mani = json.loads(mani_p.read_text())
+            honest_pk: dict[str, dict] = {}
+            for sid, e in hp.items():
+                m = mani.get(sid)
+                if not m:
+                    continue
+                try:
+                    rel = str(Path(m["raw_path"]).resolve().relative_to(REPO))
+                except ValueError:
+                    continue
+                honest_pk[rel] = e
+            # write a transient temp cache file so compare_to_zeroshot can pick it up
+            # (simpler: just inline the diff logic)
+            overlap_keys = [k for k in scored_keys if k in honest_pk and k in cache
+                            and honest_pk[k].get("predicted_class") in CLASSES
+                            and cache[k].get("predicted_class") in CLASSES]
+            agree = 0; both_right = 0; fs_right_only = 0; zs_right_only = 0; both_wrong = 0
+            for k in overlap_keys:
+                truth = cache[k]["true_class"]
+                zs_pred = honest_pk[k]["predicted_class"]
+                fs_pred = cache[k]["predicted_class"]
+                if zs_pred == fs_pred: agree += 1
+                if zs_pred == truth and fs_pred == truth: both_right += 1
+                elif zs_pred != truth and fs_pred == truth: fs_right_only += 1
+                elif zs_pred == truth and fs_pred != truth: zs_right_only += 1
+                else: both_wrong += 1
+            if overlap_keys:
+                cmp_b = {
+                    "n_overlap": len(overlap_keys),
+                    "zero_shot_source": "vlm_honest_predictions.json (via manifest)",
+                    "zero_shot_acc": (both_right + zs_right_only) / len(overlap_keys),
+                    "few_shot_acc": (both_right + fs_right_only) / len(overlap_keys),
+                    "agreement_pct": agree / len(overlap_keys),
+                    "both_right": both_right,
+                    "both_wrong": both_wrong,
+                    "few_shot_right_only": fs_right_only,
+                    "zero_shot_right_only": zs_right_only,
+                    "flips": [],
+                }
+                key = "honest"
+            else:
+                continue
+        else:
+            if not (CACHE_DIR / b).exists():
+                continue
+            cmp_b = compare_to_zeroshot(cache, scored_keys, prefer=b)
+            key = b
+        if cmp_b and "error" not in cmp_b and cmp_b.get("n_overlap", 0) > 0:
+            all_cmps[key] = cmp_b
+            print(f"\n=== vs {key} ===")
+            print(f"  source={cmp_b['zero_shot_source']}")
+            print(f"  n_overlap={cmp_b['n_overlap']}  zs_acc={cmp_b['zero_shot_acc']:.4f}  fs_acc={cmp_b['few_shot_acc']:.4f}  delta={cmp_b['few_shot_acc']-cmp_b['zero_shot_acc']:+.4f}")
+            print(f"  agreement={cmp_b['agreement_pct']:.1%}  fs_fixes={cmp_b['few_shot_right_only']}  fs_regresses={cmp_b['zero_shot_right_only']}")
+
+    # primary comparison used in the report: the one with largest overlap
+    cmp_zs = max(all_cmps.values(), key=lambda c: c["n_overlap"]) if all_cmps else None
 
     # total cost
     total_cost = sum(float(e.get("cost_usd", 0.0) or 0.0) for k, e in cache.items() if k in scored_keys)
     print(f"\nTotal cost on scored subset: ${total_cost:.4f}")
 
     report_path = REPO / "reports" / "VLM_FEW_SHOT_RESULTS.md"
-    write_markdown_report(args, ev, cmp_zs, total_cost, report_path)
+    write_markdown_report(args, ev, cmp_zs, total_cost, report_path, all_cmps=all_cmps)
     print(f"Report written to {report_path}")
     return 0
 

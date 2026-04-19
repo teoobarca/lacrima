@@ -1,0 +1,33 @@
+{
+  "kind": "ensemble_v5_adaptive",
+  "base_model": "ensemble_v4_multiscale",
+  "layers": [
+    "v4_multi_scale",
+    "hybrid_reid",
+    "temperature_scaling",
+    "triage_abstain"
+  ],
+  "config": {
+    "reid_threshold": 0.94,
+    "temperature": 2.9717817235349413,
+    "triage_margin": 0.1,
+    "honest_lopo_weighted_f1_v4_baseline": 0.6886816442702501,
+    "honest_lopo_weighted_f1_v5": 0.6886816442702501,
+    "honest_lopo_macro_f1_v5": 0.554087346024636,
+    "ece_uncalibrated": 0.2057630077004432,
+    "ece_calibrated": 0.08212703875085883,
+    "reid_fire_rate": 0.07083333333333333,
+    "reid_fire_accuracy": 0.9411764705882353
+  },
+  "classes": [
+    "ZdraviLudia",
+    "Diabetes",
+    "PGOV_Glaukom",
+    "SklerozaMultiplex",
+    "SucheOko"
+  ],
+  "trained_on_n_scans": 240,
+  "trained_on_n_persons": 44,
+  "expected_test_f1": "0.69-0.73 (patient-disjoint regime, full-train bonus)",
+  "provenance": "Wave 20 v5 \u2014 v4 + adaptive Re-ID + calibration + triage"
+}

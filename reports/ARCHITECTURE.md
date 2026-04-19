@@ -1,6 +1,71 @@
 # Architecture & Methodology
 
-## 1. Inference pipeline (shipped — `models/ensemble_v2_tta/`, F1 = 0.6562)
+## ⭐ SHIPPED (Wave 7 + Wave 13-19 confirmed): v4 multiscale ensemble
+
+**Honest person-LOPO weighted F1 = 0.6887** (patient-disjoint regime, matches expected test scenario).
+
+```mermaid
+flowchart TB
+    A[Raw AFM scan .spm] --> B[Preprocess<br/>plane level<br/>resample 90nm/px<br/>9 tiles 512x512<br/>render afmhot RGB]
+    B --> C1[DINOv2-B encode<br/>at 90 nm/px]
+    B --> C2[DINOv2-B encode<br/>at 45 nm/px<br/>finer detail]
+    B --> C3[BiomedCLIP encode<br/>D4 TTA = 8 rotations<br/>mean embedding]
+    C1 --> D1[L2 normalize<br/>+ StandardScaler<br/>+ LR head]
+    C2 --> D2[L2 normalize<br/>+ StandardScaler<br/>+ LR head]
+    C3 --> D3[L2 normalize<br/>+ StandardScaler<br/>+ LR head]
+    D1 --> E[Geometric mean<br/>of 3 softmaxes]
+    D2 --> E
+    D3 --> E
+    E --> F[argmax → predicted class<br/>+ calibrated probabilities]
+```
+
+### Why 3 streams not 1
+
+- **DINOv2-B @ 90nm**: overall view of dendritic ferning structure
+- **DINOv2-B @ 45nm**: fine-grained crystal edges, branch tip morphology
+- **BiomedCLIP @ 90nm + D4 TTA**: medical imaging prior (PubMed pretraining), rotation-invariant
+- **3 independent error patterns** → geometric mean cancels uncorrelated mistakes
+
+### What is FROZEN vs TRAINED
+
+- Frozen (no training): all 3 backbone encoders (~150M params total). 240 scans is too small to fine-tune safely (LoRA attempt: -4.1 pp wF1).
+- Trained (per LOPO fold): 3 × LR heads (~12k params total). Class-weighted, balanced.
+
+### Bundle artifacts (`models/ensemble_v4_multiscale/`)
+
+```
+ensemble_v4_multiscale/
+├── meta.json                  # honest_lopo_weighted_f1: 0.6887
+├── predict.py                 # inference entrypoint
+├── README.md
+├── dinov2b_90nm/              # encoder + head + scaler per stream
+├── dinov2b_45nm/
+└── biomedclip_tta/
+```
+
+### Performance breakdown
+
+| Metric | v4 |
+|---|---|
+| Weighted F1 | **0.6887** |
+| Macro F1 | 0.5541 |
+| Per-patient F1 | 0.8011 |
+| Top-2 accuracy | 88% |
+| Per-class F1 | Healthy 0.92 / SM 0.69 / Glaukom 0.58 / Diabetes 0.58 / SucheOko 0.00 |
+| SucheOko ceiling | 2 patients = structural limit |
+
+### Why simpler ensembles failed
+
+| Variant | Wave | wF1 | Why not v4 |
+|---|---|---|---|
+| DINOv2-B alone | 1 | 0.6162 | Single-stream, no diversity |
+| 2-stream (v2) | 5 | 0.6562 | Missing 45nm detail |
+| 4-stream (zoo+) | 18 | 0.6627 | Diminishing returns, weaker encoders drag mean |
+| LoRA fine-tune | 18 | 0.6476 | Overfits 240 samples |
+
+---
+
+## [LEGACY] 1. Inference pipeline (shipped — `models/ensemble_v2_tta/`, F1 = 0.6562)
 
 ```mermaid
 flowchart LR

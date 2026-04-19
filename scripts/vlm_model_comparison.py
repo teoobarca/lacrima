@@ -46,13 +46,18 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from teardrop.data import CLASSES, enumerate_samples  # noqa: E402
+from teardrop.safe_paths import SAFE_ROOT  # noqa: E402
 from scripts.vlm_direct_classify import (  # noqa: E402
     PRED_CACHE as BASELINE_HAIKU_CACHE,
-    TILE_DIR,
     call_claude_cli,
     render_scan_tile,
     stratified_person_disjoint,
 )
+
+# vlm_direct_classify now writes tiles under SAFE_ROOT / "direct" — we
+# reuse the same class-neutral subdir here so the prompt stays safe.
+TILE_DIR = SAFE_ROOT / "direct"
+TILE_DIR.mkdir(parents=True, exist_ok=True)
 
 CACHE_DIR = REPO / "cache"
 
@@ -114,7 +119,12 @@ def run_model(
         if elapsed > time_budget_s:
             print(f"[{short_name}] budget exhausted after {elapsed:.0f}s at {i}/{len(samples)}")
             break
-        img_path = TILE_DIR / f"{s.cls}__{s.raw_path.stem}.png"
+        # Class-neutral tile name — same sha1-based scheme used by
+        # vlm_direct_classify.py so tiles are shared across runs.
+        import hashlib as _hl_img
+        _rel_key = key
+        _tile_id = _hl_img.sha1(_rel_key.encode("utf-8")).hexdigest()[:16]
+        img_path = TILE_DIR / f"scan_{_tile_id}.png"
         try:
             render_scan_tile(s.raw_path, img_path)
         except Exception as e:  # noqa: BLE001

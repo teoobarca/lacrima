@@ -44,11 +44,14 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
 from teardrop.data import CLASSES, enumerate_samples, preprocess_spm  # noqa: E402
+from teardrop.safe_paths import SAFE_ROOT, assert_prompt_safe, safe_tile_path  # noqa: E402
 
 CACHE_DIR = REPO / "cache"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
-TILE_DIR = CACHE_DIR / "vlm_tiles"
-TILE_DIR.mkdir(parents=True, exist_ok=True)
+# Obfuscated VLM tile subdir. Labels are stored in the prediction cache
+# (``vlm_predictions.json``) and the renamed scan_XXXX.png filename carries
+# no class / person / raw-name info.
+TILE_SUBDIR = "direct"
 PRED_CACHE = CACHE_DIR / "vlm_predictions.json"
 
 
@@ -116,6 +119,7 @@ def _extract_json(text: str) -> dict:
 def call_claude_cli(img_path: Path, model: str = "claude-haiku-4-5", timeout_s: int = 90) -> dict:
     """Invoke `claude -p` as a subprocess; return parsed response + meta."""
     prompt = PROMPT_TEMPLATE.format(img_path=str(img_path))
+    assert_prompt_safe(prompt)
     cmd = [
         "claude",
         "-p",
@@ -219,11 +223,15 @@ def run(samples, model: str, time_budget_s: float, cache: dict[str, dict]) -> di
         if elapsed > time_budget_s:
             print(f"[budget] stopping at {i}/{len(samples)} after {elapsed:.0f}s")
             break
-        # Class-neutral, unique tile path — hash the full relative scan path so
-        # no label info leaks via the filename (which the VLM reads).
+        # Class-neutral, unique tile path. The filename is sha1(rel_path)
+        # truncated to 16 hex chars, stored under cache/vlm_safe/direct/
+        # (see teardrop.safe_paths). No class/person info anywhere in the
+        # path passed to claude -p.
         rel_key = str(s.raw_path.relative_to(REPO))
         tile_id = hashlib.sha1(rel_key.encode("utf-8")).hexdigest()[:16]
-        img_path = TILE_DIR / f"scan_{tile_id}.png"
+        tile_dir = SAFE_ROOT / TILE_SUBDIR
+        tile_dir.mkdir(parents=True, exist_ok=True)
+        img_path = tile_dir / f"scan_{tile_id}.png"
         try:
             render_scan_tile(s.raw_path, img_path)
         except Exception as e:

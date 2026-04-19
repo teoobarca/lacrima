@@ -3,8 +3,13 @@
 Living index for the Hack Košice 2026 / UPJŠ tear-film AFM disease-classification project. Everything in one place — start here.
 
 - **Champion (shipped):** `models/ensemble_v4_multiscale/` — honest person-LOPO **weighted F1 = 0.6887** (macro 0.5541). Red-team bootstrap P(Δ > 0) = 0.999.
+- **Production wrapper:** `models/ensemble_v5_adaptive/` — same F1 + temperature calibration (ECE 0.21 → 0.08) + hybrid Re-ID safety net + triage abstain output.
 - **Data:** 240 Bruker Nanoscope SPM scans, 35 unique persons, 5 classes (imbalance 7:1).
-- **Pattern:** LLM-orchestrated research lab. ~20 sub-agents across 11 waves; every headline red-team-audited.
+- **Test regime:** patient-disjoint per-image evaluation (organizer-confirmed). Our person-LOPO directly simulates this.
+- **Pattern:** Karpathy-autoresearch lifted one abstraction higher. **218 sub-agents across 21 waves**; every headline red-team-audited (9 contamination catches).
+- **Master agent log:** [`reports/AGENTS_DOCUMENTATION.md`](reports/AGENTS_DOCUMENTATION.md)
+- **Methodology meta-doc:** [`ORCHESTRATION.md`](ORCHESTRATION.md)
+- **Leakage prevention infra:** [`teardrop/safe_paths.py`](teardrop/safe_paths.py) + [`reports/LEAKAGE_PREVENTION.md`](reports/LEAKAGE_PREVENTION.md)
 
 ---
 

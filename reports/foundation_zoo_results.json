@@ -205,7 +205,56 @@
         0.6631016042780749,
         0.0
       ]
+    },
+    {
+      "name": "greedy_forward_from_v4",
+      "members": [
+        "dinov2b_90",
+        "dinov2b_45",
+        "biomedclip_tta"
+      ],
+      "weighted_f1": 0.6886816442702501,
+      "macro_f1": 0.554087346024636,
+      "per_class_f1": [
+        0.9166666666666666,
+        0.5833333333333334,
+        0.5789473684210527,
+        0.6914893617021277,
+        0.0
+      ]
     }
   ],
-  "elapsed_s": 21.8
+  "greedy_forward": [
+    {
+      "step": 0,
+      "added": null,
+      "members": [
+        "dinov2b_90",
+        "dinov2b_45",
+        "biomedclip_tta"
+      ],
+      "weighted_f1": 0.6886816442702501,
+      "delta_vs_v4": 0.0
+    }
+  ],
+  "bootstrap_best_vs_v4": {
+    "best_ensemble_name": "v4 + OpenCLIP-L LAION-2B (4-way)",
+    "best_ensemble_members": [
+      "dinov2b_90",
+      "dinov2b_45",
+      "biomedclip_tta",
+      "openclip_vitl14_laion2b"
+    ],
+    "best_ensemble_wf1": 0.6627303063517898,
+    "v4_wf1_point": 0.6887,
+    "n_iter": 1000,
+    "mean_delta": -0.026107200833225964,
+    "ci_lo_2.5": -0.04857623479485554,
+    "ci_hi_97.5": -0.006772500101242574,
+    "p_delta_gt_0": 0.0,
+    "new_mean_f1": 0.6628608044301121,
+    "base_mean_f1": 0.688968005263338
+  },
+  "champion_candidate": false,
+  "elapsed_s": 23.4
 }
