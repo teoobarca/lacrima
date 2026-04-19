@@ -645,15 +645,6 @@
       background: var(--ink-faint);
     }
 
-    /* flowing dot pulse on architecture arrows */
-    @keyframes dashflow {
-      to { stroke-dashoffset: -20; }
-    }
-    .slide.is-active .flow-path-active {
-      stroke-dasharray: 4 6;
-      animation: dashflow 1.6s linear infinite;
-    }
-
     /* HUD — only visible before entering fullscreen */
     #hud {
       position: fixed;
@@ -1194,20 +1185,18 @@
         const len = p.getTotalLength ? p.getTotalLength() : 200;
         p.style.strokeDasharray = len;
         p.style.strokeDashoffset = len;
-        const delay = 600 + i * 95;
-        p.style.transition = `stroke-dashoffset 760ms ease ${delay}ms`;
+        const delay = 600 + i * 80;
+        p.style.transition = `stroke-dashoffset 600ms ease ${delay}ms`;
         p.getBoundingClientRect();
         requestAnimationFrame(() => {
           p.style.strokeDashoffset = '0';
           p.dataset.drawn = '1';
         });
-        // upgrade flow-paths to flowing dash after the draw completes
-        if (p.classList.contains('flow-path')) {
-          setTimeout(() => {
-            p.style.transition = '';
-            p.classList.add('flow-path-active');
-          }, delay + 800);
-        }
+        // after draw, clear dasharray so the line is fully solid (no leftover dash artefacts)
+        setTimeout(() => {
+          p.style.strokeDasharray = '';
+          p.style.transition = '';
+        }, delay + 700);
       });
     }
 
