@@ -39,14 +39,28 @@ Running log of all autoresearch-style hypotheses tested across waves. Sorted by 
 | Advanced features (443-dim: multifractal + lacunarity + succolarity + wavelet-packet + multi-scale HOG) | 0.4707 | below handcrafted baseline alone |
 | Error analysis Mode B deep-dive | N/A | confirms data ceiling; not a model problem |
 
-## Wave 7 (multi-scale tile experiment — HIGH PROMISE, awaiting red-team)
+## Wave 8 (v4 packaging, in progress)
+
+- v4 multi-scale champion packaging (`models/ensemble_v4_multiscale/`) from red-team-approved Config D
+- Honest F1 0.6887 (+0.0325 over v2 champion)
+- Inference pipeline: DINOv2-B 90nm (no TTA) + DINOv2-B 45nm (no TTA) + BiomedCLIP-TTA → v2 recipe
+
+## Wave 7b (multi-scale TTA test — NEGATIVE, informative)
+
+- **D-TTA** (add D4 to 90nm + 45nm DINOv2 branches) REGRESSES: 0.6887 → 0.6666 (-0.022)
+- Per-member: DINOv2-B 45nm **non-TTA = 0.6544** vs **TTA = 0.6255**. TTA HURTS at 45 nm/px.
+- Interpretation: at zoom-in 45 nm/px, class-distinguishing features (lipid/mucin texture) are orientation-specific. D4 averaging washes out signal.
+- Insight: TTA helpfulness depends on scale — at coarse 90 nm/px it helps, at fine 45 nm/px it hurts.
+- Config D (non-TTA DINOv2 branches, TTA only on BiomedCLIP) stays honest champion at 0.6887.
+
+## Wave 7 (multi-scale tile experiment — RED-TEAM APPROVED, NEW CHAMPION)
 
 - **Config D**: DINOv2-B 90 nm/px (non-TTA) + DINOv2-B 45 nm/px (non-TTA) + BiomedCLIP-TTA → v2 recipe → geom-mean = **0.6887** (macro 0.5541).
 - **+0.0325 over v2 champion** — 4× larger than the rejected E7 delta (+0.008).
-- Per-class lifts are BROAD (unlike E7): Healthy +0.10, SM +0.07, Diabetes +0.07, Glaukom +0.06, SucheOko 0.
+- Per-class lifts are BROAD (red-team-measured): Healthy +0.048, Diabetes +0.042, SM +0.040, Glaukom +0.015, SucheOko -0.065 (1-scan swing). 4/5 classes improve.
 - 45 nm/px ALONE is a stronger single-scale signal than 90 nm/px (0.6544 vs 0.6162 with DINOv2-B).
-- Caveat: no D4 TTA on DINOv2 branches — parallel v4-TTA agent will add TTA and may widen the lead.
-- Red-team dispatched (bootstrap CI check as with E7). Ship as v4 champion only if 95% CI > 0.
+- **Red-team bootstrap B=1000**: Δ vs v2-noTTA (fair) = +0.039, CI [+0.010, +0.069], **P(Δ>0) = 0.999** strictly positive.
+- **VERDICT: SHIP as v4 champion.** Report: `reports/RED_TEAM_MULTISCALE.md`.
 
 ## Wave 6 (complete — REJECTED by red-team)
 
