@@ -287,7 +287,8 @@
     }
     #s2 .topology-svg {
       width: 100%;
-      height: 220px;
+      height: 240px;
+      overflow: visible;
     }
 
     /* ════════════════════════════════════════════════════════════════
@@ -734,29 +735,50 @@
             <strong>18-hour session</strong>.
           </p>
 
-          <svg class="topology-svg reveal" data-d="5" viewBox="0 0 460 200">
+          <svg class="topology-svg reveal" data-d="5" viewBox="0 0 480 220" preserveAspectRatio="xMidYMid meet">
             <defs>
               <marker id="ar1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
                 <path d="M0,0 L10,5 L0,10 z" fill="#2D3FE3"/>
               </marker>
             </defs>
+
+            <!-- ════════════════════════════════════════════════════════════
+                 GRID (viewBox 480×220, 12px safe margin):
+                 Orchestrator at (240, 50), rect 144×44 → abs x=168–312
+                 Agents at y=170, x=60/180/300/420, rect 104×36 → abs x=8–472
+                 ════════════════════════════════════════════════════════════ -->
+
             <!-- orchestrator -->
-            <g transform="translate(230,50)">
-              <rect x="-72" y="-22" width="144" height="44" rx="2" fill="#2D3FE3"/>
-              <text y="6" text-anchor="middle" font-family="Hanken Grotesk" font-size="13" font-weight="600" fill="#FFFFFF">Orchestrator</text>
+            <g transform="translate(240, 50)">
+              <rect x="-72" y="-22" width="144" height="44" rx="3" fill="#2D3FE3"/>
+              <text y="5" text-anchor="middle" font-family="Hanken Grotesk" font-size="13" font-weight="600" fill="#FFFFFF" letter-spacing="0.02em">Orchestrator</text>
             </g>
-            <!-- agents -->
-            <g font-family="Hanken Grotesk" font-size="11" fill="#1A1A1A">
-              <g transform="translate(50,160)"><rect x="-52" y="-18" width="104" height="36" fill="#F4F6F8" stroke="#E1E4EA"/><text y="4" text-anchor="middle" font-weight="600">Researcher</text></g>
-              <g transform="translate(170,160)"><rect x="-52" y="-18" width="104" height="36" fill="#F4F6F8" stroke="#E1E4EA"/><text y="4" text-anchor="middle" font-weight="600">Implementer</text></g>
-              <g transform="translate(290,160)"><rect x="-52" y="-18" width="104" height="36" fill="#EEF0FE" stroke="#2D3FE3" stroke-width="1.4"/><text y="4" text-anchor="middle" font-weight="600" fill="#1E2BAA">Red-team</text></g>
-              <g transform="translate(410,160)"><rect x="-52" y="-18" width="104" height="36" fill="#F4F6F8" stroke="#E1E4EA"/><text y="4" text-anchor="middle" font-weight="600">Synthesizer</text></g>
+
+            <!-- 4 agent boxes at y=170 -->
+            <g font-family="Hanken Grotesk" font-size="11" fill="#0A0A0A">
+              <g transform="translate(60, 170)">
+                <rect x="-52" y="-18" width="104" height="36" rx="2" fill="#F4F6F8" stroke="#D9DEE5"/>
+                <text y="4" text-anchor="middle" font-weight="600">Researcher</text>
+              </g>
+              <g transform="translate(180, 170)">
+                <rect x="-52" y="-18" width="104" height="36" rx="2" fill="#F4F6F8" stroke="#D9DEE5"/>
+                <text y="4" text-anchor="middle" font-weight="600">Implementer</text>
+              </g>
+              <g transform="translate(300, 170)">
+                <rect x="-52" y="-18" width="104" height="36" rx="2" fill="#EEF0FE" stroke="#2D3FE3" stroke-width="1.4"/>
+                <text y="4" text-anchor="middle" font-weight="600" fill="#1E2BAA">Red-team</text>
+              </g>
+              <g transform="translate(420, 170)">
+                <rect x="-52" y="-18" width="104" height="36" rx="2" fill="#F4F6F8" stroke="#D9DEE5"/>
+                <text y="4" text-anchor="middle" font-weight="600">Synthesizer</text>
+              </g>
             </g>
-            <!-- arrows -->
-            <path class="draw-path" d="M210 70 L70 142" stroke="#2D3FE3" stroke-width="1.2" fill="none" marker-end="url(#ar1)" opacity="0.7"/>
-            <path class="draw-path" d="M222 72 L180 142" stroke="#2D3FE3" stroke-width="1.2" fill="none" marker-end="url(#ar1)" opacity="0.7"/>
-            <path class="draw-path" d="M238 72 L290 142" stroke="#2D3FE3" stroke-width="1.2" fill="none" marker-end="url(#ar1)" opacity="0.7"/>
-            <path class="draw-path" d="M250 70 L400 142" stroke="#2D3FE3" stroke-width="1.2" fill="none" marker-end="url(#ar1)" opacity="0.7"/>
+
+            <!-- arrows from orchestrator bottom (y=72) to agent tops (y=152) -->
+            <path class="draw-path" d="M180 72 L70 150"  stroke="#2D3FE3" stroke-width="1.2" fill="none" marker-end="url(#ar1)" opacity="0.75"/>
+            <path class="draw-path" d="M220 72 L180 150" stroke="#2D3FE3" stroke-width="1.2" fill="none" marker-end="url(#ar1)" opacity="0.75"/>
+            <path class="draw-path" d="M260 72 L300 150" stroke="#2D3FE3" stroke-width="1.2" fill="none" marker-end="url(#ar1)" opacity="0.75"/>
+            <path class="draw-path" d="M300 72 L410 150" stroke="#2D3FE3" stroke-width="1.2" fill="none" marker-end="url(#ar1)" opacity="0.75"/>
           </svg>
 
           <div class="stat-strip reveal" data-d="6">
