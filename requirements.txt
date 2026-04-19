@@ -1,24 +1,43 @@
-numpy
+# Teardrop challenge — UPJŠ Hack Košice 2026
+# Python 3.13 required (pySPM has Python 2 artifacts that break on 3.14)
+
+# Core
+numpy>=2.0
 pillow
 matplotlib
-scikit-image
-scikit-learn
-opencv-python
 pandas
+pyarrow  # parquet support
+tabulate  # df.to_markdown
+
 # ML
-torch
-torchvision
-xgboost
+scikit-learn>=1.4
+scikit-image>=0.21
+xgboost>=2.0
 imbalanced-learn
-# AFM / SPM
-AFMReader
+opencv-python
+
+# Deep learning
+torch>=2.0
+torchvision
+
+# AFM / SPM parsing
+AFMReader  # → pulls in pySPM
+loguru  # AFMReader log redirection
+
 # Texture / topology / graphs
 pywavelets
-giotto-tda
-sknw
-# VLM / foundation models
-open_clip_torch
-transformers
+cripser  # fallback for giotto-tda on Python 3.13 (cubical persistence)
+persim  # persistence images / landscapes
+sknw    # skeleton → graph
+torch_geometric  # GIN / CGNN
+
+# Foundation models
+open_clip_torch  # BiomedCLIP, SigLIP, OpenCLIP
+transformers    # HuggingFace hub for BiomedCLIP text side
+
+# Interactive demo
+gradio
+
 # Utilities
 tqdm
 jupyterlab
