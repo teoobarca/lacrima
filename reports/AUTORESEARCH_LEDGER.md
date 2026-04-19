@@ -39,9 +39,11 @@ Running log of all autoresearch-style hypotheses tested across waves. Sorted by 
 | Advanced features (443-dim: multifractal + lacunarity + succolarity + wavelet-packet + multi-scale HOG) | 0.4707 | below handcrafted baseline alone |
 | Error analysis Mode B deep-dive | N/A | confirms data ceiling; not a model problem |
 
-## Wave 6 (in progress)
+## Wave 6 (complete, awaiting red-team)
 
-- **Multichannel × v2 recipe fusion** — apply L2-norm + geom-mean to cross-channel ensembles (DINOv2-H + DINOv2-RGB, etc.) to see if combining W5-autoresearch recipe with multi-channel encoding pushes past 0.6562.
+- **Multichannel × v2 recipe fusion** — candidate champion E7: DINOv2-B Height + DINOv2-B RGB(H+Amp+Phase) + BiomedCLIP-H-TTA → v2 recipe → geom-mean = **0.6645** (+0.0083).
+- Diabetes +0.13, Glaukom −0.06, SucheOko 1→0 correct (near-zero sample).
+- Δ ≈ 2 scans on 240; bootstrap CI check running. Ship only if CI > 0.
 
 ## Next-wave candidates (Wave 7 if time allows)
 
