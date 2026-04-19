@@ -863,27 +863,26 @@
              ═══════════════════════════════════════════════════════════ -->
 
         <!-- INPUT -->
-        <g transform="translate(15, 150)" filter="url(#softShadow)">
-          <rect x="0" y="0" width="135" height="100" rx="10" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="1.4"/>
+        <g transform="translate(10, 152)" filter="url(#softShadow)">
+          <rect x="0" y="0" width="180" height="96" rx="10" fill="#FFFFFF" stroke="#0A0A0A" stroke-width="1.4"/>
           <!-- teardrop glyph (Lacrima = tear) -->
-          <g transform="translate(28, 50)" stroke="#0A0A0A" stroke-width="1.4" fill="#FFFFFF" stroke-linejoin="round">
+          <g transform="translate(34, 48)" stroke="#0A0A0A" stroke-width="1.4" fill="#FFFFFF" stroke-linejoin="round">
             <path d="M0 -16 C 9 -2, 12 6, 6 12 A 8.5 8.5 0 0 1 -6 12 C -12 6, -9 -2, 0 -16 Z"/>
-            <!-- inner highlight -->
             <ellipse cx="-2" cy="-4" rx="1.6" ry="3" fill="#0A0A0A" stroke="none" opacity="0.85"/>
           </g>
-          <text x="80" y="42" font-family="Newsreader" font-size="15" font-weight="500" fill="#0A0A0A">AFM scan</text>
-          <text x="80" y="60" font-family="JetBrains Mono" font-size="9" fill="#525866">.spm · 512²</text>
-          <text x="80" y="74" font-family="JetBrains Mono" font-size="9" fill="#99A0AE">9-tile · D4</text>
+          <text x="68" y="36" font-family="Newsreader" font-size="16" font-weight="500" fill="#0A0A0A">AFM scan</text>
+          <text x="68" y="56" font-family="JetBrains Mono" font-size="10" fill="#525866">.spm · 512²</text>
+          <text x="68" y="72" font-family="JetBrains Mono" font-size="10" fill="#99A0AE">9-tile · D4</text>
         </g>
-        <text x="82" y="275" text-anchor="middle" font-family="Hanken Grotesk" font-size="9" letter-spacing="0.28em" font-weight="600" fill="#99A0AE">INPUT</text>
+        <text x="100" y="270" text-anchor="middle" font-family="Hanken Grotesk" font-size="9" letter-spacing="0.28em" font-weight="600" fill="#99A0AE">INPUT</text>
 
         <!-- ─── BRANCH ARROWS (input → 3 encoders) ─── -->
-        <path class="draw-path flow-path" d="M155 195 L195 60"  stroke="#2D3FE3" stroke-width="1.3" fill="none" marker-end="url(#ar2)"/>
-        <path class="draw-path flow-path" d="M155 200 L195 200" stroke="#2D3FE3" stroke-width="1.3" fill="none" marker-end="url(#ar2)"/>
-        <path class="draw-path flow-path" d="M155 205 L195 340" stroke="#2D3FE3" stroke-width="1.3" fill="none" marker-end="url(#ar2)"/>
+        <path class="draw-path flow-path" d="M195 195 L225 60"  stroke="#2D3FE3" stroke-width="1.3" fill="none" marker-end="url(#ar2)"/>
+        <path class="draw-path flow-path" d="M195 200 L225 200" stroke="#2D3FE3" stroke-width="1.3" fill="none" marker-end="url(#ar2)"/>
+        <path class="draw-path flow-path" d="M195 205 L225 340" stroke="#2D3FE3" stroke-width="1.3" fill="none" marker-end="url(#ar2)"/>
 
         <!-- ─── ENCODER 01 ─── -->
-        <g transform="translate(200, 20)" filter="url(#softShadow)">
+        <g transform="translate(230, 20)" filter="url(#softShadow)">
           <rect width="320" height="80" rx="8" fill="url(#encGrad)" stroke="#D9DEE5"/>
           <g transform="translate(14, 14)">
             <rect width="20" height="14" rx="3" fill="#0A0A0A"/>
@@ -897,7 +896,7 @@
         </g>
 
         <!-- ─── ENCODER 02 ─── -->
-        <g transform="translate(200, 160)" filter="url(#softShadow)">
+        <g transform="translate(230, 160)" filter="url(#softShadow)">
           <rect width="320" height="80" rx="8" fill="url(#encGrad)" stroke="#D9DEE5"/>
           <g transform="translate(14, 14)">
             <rect width="20" height="14" rx="3" fill="#0A0A0A"/>
@@ -911,7 +910,7 @@
         </g>
 
         <!-- ─── ENCODER 03 ─── -->
-        <g transform="translate(200, 300)" filter="url(#softShadow)">
+        <g transform="translate(230, 300)" filter="url(#softShadow)">
           <rect width="320" height="80" rx="8" fill="url(#encGradAccent)" stroke="#BFC8EE"/>
           <g transform="translate(14, 14)">
             <rect width="20" height="14" rx="3" fill="#2D3FE3"/>
@@ -925,9 +924,9 @@
         </g>
 
         <!-- ─── ENC → SOFTMAX ARROWS ─── -->
-        <path class="draw-path flow-path" d="M520 60  L585 60"  stroke="#2D3FE3" stroke-width="1.3" fill="none" marker-end="url(#ar2)"/>
-        <path class="draw-path flow-path" d="M520 200 L585 200" stroke="#2D3FE3" stroke-width="1.3" fill="none" marker-end="url(#ar2)"/>
-        <path class="draw-path flow-path" d="M520 340 L585 340" stroke="#2D3FE3" stroke-width="1.3" fill="none" marker-end="url(#ar2)"/>
+        <path class="draw-path flow-path" d="M550 60  L585 60"  stroke="#2D3FE3" stroke-width="1.3" fill="none" marker-end="url(#ar2)"/>
+        <path class="draw-path flow-path" d="M550 200 L585 200" stroke="#2D3FE3" stroke-width="1.3" fill="none" marker-end="url(#ar2)"/>
+        <path class="draw-path flow-path" d="M550 340 L585 340" stroke="#2D3FE3" stroke-width="1.3" fill="none" marker-end="url(#ar2)"/>
 
         <!-- ─── SOFTMAX HISTOGRAMS (5 bars per encoder = 5 classes) ─── -->
         <!-- softmax 01 -->
