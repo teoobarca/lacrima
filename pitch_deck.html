@@ -227,7 +227,7 @@
     #s1 .partner-logos {
       display: flex;
       align-items: center;
-      gap: 26px;
+      gap: 22px;
     }
     #s1 .partner-logos img {
       display: block;
@@ -237,7 +237,8 @@
       transition: opacity 200ms ease;
     }
     #s1 .partner-logos img:hover { opacity: 1; }
-    #s1 .logo-hk   { height: 38px; }
+    /* HK svg has built-in whitespace — pull next logo closer to compensate */
+    #s1 .logo-hk   { height: 38px; margin-right: -8px; }
     #s1 .logo-upjs { height: 50px; border-radius: 4px; }
     #s1 .logo-mlh  { height: 44px; border-radius: 4px; }
 
